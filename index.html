@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SVA CRM - Professional Management System</title>
+    <title>Loan Leads CRM - Professional Management System</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -1644,7 +1644,8 @@
                         loanAmount: 5000000,
                         status: 'approved',
                         notes: 'Looking for a home loan in Mumbai',
-                        assignedTo: 'agent1'
+                        assignedTo: 'agent1',
+                        createdDate: new Date().toISOString()
                     },
                     {
                         id: 2,
@@ -1655,7 +1656,8 @@
                         loanAmount: 1000000,
                         status: 'in-progress',
                         notes: 'Personal loan for wedding expenses',
-                        assignedTo: 'agent2'
+                        assignedTo: 'agent2',
+                        createdDate: new Date().toISOString()
                     },
                     {
                         id: 3,
@@ -1666,7 +1668,8 @@
                         loanAmount: 2500000,
                         status: 'pending',
                         notes: 'Business expansion loan required',
-                        assignedTo: null
+                        assignedTo: null,
+                        createdDate: new Date().toISOString()
                     }
                 ];
                 localStorage.setItem('crm_leads', JSON.stringify(leads));
@@ -1719,7 +1722,8 @@
                         assignedTo: 'agent1',
                         status: 'pending',
                         reminder: 60,
-                        createdBy: 'admin'
+                        createdBy: 'admin',
+                        reminderShown: false
                     },
                     {
                         id: 2,
@@ -1730,7 +1734,8 @@
                         assignedTo: 'agent2',
                         status: 'pending',
                         reminder: 30,
-                        createdBy: 'admin'
+                        createdBy: 'admin',
+                        reminderShown: false
                     }
                 ];
                 localStorage.setItem('crm_tasks', JSON.stringify(tasks));
@@ -1933,7 +1938,7 @@
             const upcomingTasksList = document.getElementById('upcomingTasksList');
             const userTasks = currentUser.role === 'admin' 
                 ? tasks 
-                : tasks.filter(t => t.assignedTo === currentUser.username || t.assignedTo === 'all');
+                : tasks.filter(t => t.assignedTo === currentUser.email || t.assignedTo === 'all');
             
             const upcomingTasks = userTasks
                 .filter(t => t.status === 'pending')
@@ -1971,7 +1976,7 @@
             const tasksList = document.getElementById('tasksList');
             const userTasks = currentUser.role === 'admin' 
                 ? tasks 
-                : tasks.filter(t => t.assignedTo === currentUser.username || t.assignedTo === 'all');
+                : tasks.filter(t => t.assignedTo === currentUser.email || t.assignedTo === 'all');
             
             if (userTasks.length === 0) {
                 tasksList.innerHTML = '<p class="text-gray-500 text-center py-8">No tasks found</p>';
@@ -1996,7 +2001,7 @@
                                 <div class="flex items-center gap-4 text-sm text-gray-500">
                                     <span class="task-priority priority-${task.priority}">${task.priority}</span>
                                     <span><i class="fas fa-clock mr-1"></i>${new Date(task.dueDate).toLocaleString()}</span>
-                                    <span><i class="fas fa-user mr-1"></i>${task.assignedTo}</span>
+                                    <span><i class="fas fa-user mr-1"></i>${task.assignedTo || 'Unassigned'}</span>
                                 </div>
                             </div>
                             <div class="flex gap-2">
@@ -2103,7 +2108,8 @@
                 assignedTo: document.getElementById('taskAssignedTo').value || currentUser.email,
                 reminder: document.getElementById('taskReminder').value,
                 status: 'pending',
-                createdBy: currentUser.email
+                createdBy: currentUser.email,
+                reminderShown: false
             };
             
             if (editingTask) {
@@ -3392,5 +3398,3 @@
     </script>
 </body>
 </html>
-
-
