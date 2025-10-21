@@ -832,6 +832,71 @@
           text-transform: uppercase;
           letter-spacing: 0.05em;
       }
+      /* director member styles */
+      .director-member-section {
+          border: 2px solid #e5e7eb;
+          border-radius: 0.75rem;
+          padding: 1.5rem;
+          margin-bottom: 1.5rem;
+          background: #f8fafc;
+      }
+
+      .director-member-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 1rem;
+          padding-bottom: 0.75rem;
+          border-bottom: 2px solid #3b82f6;
+      }
+
+      .member-number {
+          font-size: 1.125rem;
+          font-weight: 600;
+          color: #1f2937;
+      }
+
+      .remove-member-btn {
+          background: #ef4444;
+          color: white;
+          border: none;
+          padding: 0.375rem 0.75rem;
+          border-radius: 0.375rem;
+          cursor: pointer;
+          font-size: 0.75rem;
+      }
+
+      .member-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+          gap: 1rem;
+      }
+
+      .member-document-section {
+          background: white;
+          border: 1px solid #e5e7eb;
+          border-radius: 0.5rem;
+          padding: 1rem;
+          margin-top: 1rem;
+      }
+
+      .document-item {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding: 0.5rem;
+          border-bottom: 1px solid #f3f4f6;
+      }
+
+      .upload-btn {
+          background: #3b82f6;
+          color: white;
+          border: none;
+          padding: 0.375rem 0.75rem;
+          border-radius: 0.375rem;
+          font-size: 0.75rem;
+          cursor: pointer;
+      }
   </style>
 </head>
 <body class="bg-gray-50">
@@ -1080,7 +1145,7 @@
         </div>
       </div>
 
-      <!-- Entity Type Section -->
+     <!-- Entity Type Section -->
       <div class="form-section">
         <div class="section-header">
           <h2>1. Entity Type</h2>
@@ -1367,7 +1432,50 @@
         <!-- Partnership Requirements -->
         <div id="partnershipRequirements" class="entity-requirements hidden">
           <h4 class="font-semibold text-lg mb-4 text-blue-600">Partnership Document Requirements</h4>
-          
+<!-- Fixed partnership member section in HTML -->
+<div class="document-section" style="margin-bottom: 1.5rem; padding: 1rem; border: 1px solid #e5e7eb; border-radius: 0.5rem; background: #f9fafb;">
+  <h5 style="font-weight: 600; color: #374151; margin-bottom: 0.75rem; font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.05em;">PARTNERSHIP MEMBERS</h5>
+  <div class="space-y-4">
+    <div class="form-group" style="margin-bottom: 1.5rem;">
+      <label class="block text-sm font-medium text-gray-700 mb-2">Number of Partners</label>
+      <select id="partnershipMemberCount" class="form-input">
+        <option value="2">2 Partners</option>
+        <option value="3">3 Partners</option>
+        <option value="4">4 Partners</option>
+        <option value="5">5 Partners</option>
+        <option value="6">6 Partners</option>
+        <option value="7">7 Partners</option>
+        <option value="8">8 Partners</option>
+        <option value="9">9 Partners</option>
+        <option value="10">10 Partners</option>
+        <option value="11">11 Partners</option>
+        <option value="12">12 Partners</option>
+        <option value="13">13 Partners</option>
+        <option value="14">14 Partners</option>
+        <option value="15">15 Partners</option>
+        <option value="16">16 Partners</option>
+        <option value="17">17 Partners</option>
+        <option value="18">18 Partners</option>
+        <option value="19">19 Partners</option>
+        <option value="20">20 Partners</option>
+      </select>
+    </div>
+    
+    <div id="partnershipMembersContainer">
+      <!-- Partnership members will be dynamically added here -->
+    </div>
+    
+    <div class="flex gap-3">
+      <button type="button" onclick="addPartnershipMember()" class="btn-primary">
+        <i class="fas fa-plus mr-2"></i>Add Partner
+      </button>
+      <button type="button" onclick="removePartnershipMember()" class="btn-secondary">
+        <i class="fas fa-minus mr-2"></i>Remove Partner
+      </button>
+    </div>
+  </div>
+</div>
+
           <div class="document-section">
             <h5>APPLICANT KYC</h5>
             <div class="space-y-3">
@@ -1668,6 +1776,50 @@
         <!-- Private Limited Requirements -->
         <div id="privateRequirements" class="entity-requirements hidden">
           <h4 class="font-semibold text-lg mb-4 text-blue-600">Private Limited Company Document Requirements</h4>
+
+           <!-- Director Member Selection -->
+          <div class="document-section" style="margin-bottom: 1.5rem; padding: 1rem; border: 1px solid #e5e7eb; border-radius: 0.5rem; background: #f9fafb;">
+            <h5 style="font-weight: 600; color: #374151; margin-bottom: 0.75rem; font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.05em;">DIRECTOR MEMBERS</h5>
+            <div class="space-y-4">
+              <div class="form-group" style="margin-bottom: 1.5rem;">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Number of director</label>
+                <select id="DirectorMemberCount" class="form-input">
+                  <option value="2">2 director</option>
+                  <option value="3">3 director</option>
+                  <option value="4">4 director</option>
+                  <option value="5">5 director</option>
+                  <option value="6">6 director</option>
+                  <option value="7">7 director</option>
+                  <option value="8">8 director</option>
+                  <option value="9">9 director</option>
+                  <option value="10">10 director</option>
+                  <option value="11">11 director</option>
+                  <option value="12">12 director</option>
+                  <option value="13">13 director</option>
+                  <option value="14">14 director</option>
+                  <option value="15">15 director</option>
+                  <option value="16">16 director</option>
+                  <option value="17">17 director</option>
+                  <option value="18">18 director</option>
+                  <option value="19">19 director</option>
+                  <option value="20">20 director</option>
+                </select>
+              </div>
+              
+              <div id="DirectorMembersContainer">
+                <!-- Director members will be dynamically added here -->
+              </div>
+              
+              <div class="flex gap-3">
+                <button type="button" onclick="addDirectorMember()" class="btn-primary">
+                  <i class="fas fa-plus mr-2"></i>Add Director
+                </button>
+                <button type="button" onclick="removeDirectorMember()" class="btn-secondary">
+                  <i class="fas fa-minus mr-2"></i>Remove Director
+                </button>
+              </div>
+            </div>
+          </div>
           
           <div class="document-section">
             <h5>APPLICANT KYC</h5>
@@ -2143,7 +2295,6 @@
     </div>
   </div>
 </div>
-
 
 <!-- Login Page -->
 <div id="loginPage" class="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
@@ -2979,6 +3130,16 @@
   let callStartTime = null;
   let currentCall = null;
   let dialPadNumber = '';
+  
+  // Partnership member count variables
+  let partnershipMemberCount = 2;
+  let maxPartnershipMembers = 20;
+  let minPartnershipMembers = 2;
+
+  // Director member count variables
+  let directorMemberCount = 2;
+  let maxdirectorMembers = 20;
+  let mindirectorMembers = 2;
 
   // Initialize Application
   document.addEventListener('DOMContentLoaded', function() {
@@ -3091,12 +3252,34 @@
           document.getElementById('proprietorshipRequirements').classList.remove('hidden');
         } else if (selectedValue === 'partnership') {
           document.getElementById('partnershipRequirements').classList.remove('hidden');
+          // Initialize partnership members when partnership is selected
+          renderPartnershipMembers();
         } else {
           // Hide entity requirements if no valid selection
           document.getElementById('entityRequirements').classList.add('hidden');
         }
       });
     }
+  }
+
+  // Partnership member count change handler
+  const memberCountSelect = document.getElementById('partnershipMemberCount');
+  if (memberCountSelect) {
+    memberCountSelect.addEventListener('change', function() {
+      console.log('Member count changed to:', this.value);
+      partnershipMemberCount = parseInt(this.value);
+      renderPartnershipMembers();
+    });
+  }
+
+  // Director member count change handler
+  const directorCountSelect = document.getElementById('DirectorMemberCount');
+  if (directorCountSelect) {
+    directorCountSelect.addEventListener('change', function() {
+      console.log('Director count changed to:', this.value);
+      directorMemberCount = parseInt(this.value);
+      renderDirectorMembers();
+    });
   }
 
   // Enhanced Business Nature Handler
@@ -4282,8 +4465,8 @@
     let csvContent = '';
 
     if (type === 'daily') {
-      csvContent = `Daily Worksheet Report\nDate: ${date}\nAgent: ${agent || 'All Agents'}\n\n`;
-      csvContent += 'Customer,Loan Amount,Status\n';
+      csvContent = `Daily Worksheet Report\\nDate: ${date}\\nAgent: ${agent || 'All Agents'}\\n\\n`;
+      csvContent += 'Customer,Loan Amount,Status\\n';
 
       const filteredLeads = leads.filter(lead => {
         const leadDate = new Date(lead.createdDate).toISOString().split('T')[0];
@@ -4291,7 +4474,7 @@
       });
 
       filteredLeads.forEach(lead => {
-        csvContent += `"${lead.customerName}",${lead.loanAmount},${lead.status}\n`;
+        csvContent += `"${lead.customerName}",${lead.loanAmount},${lead.status}\\n`;
       });
     }
 
@@ -4649,7 +4832,38 @@
       'moaAoaUpload': 'moaAoa',
       'coapplicantAadhaarUpload': 'coapplicantAadhaar',
       'coapplicantPanUpload': 'coapplicantPan',
-      'coapplicantPhotoUpload': 'coapplicantPhoto'
+      'coapplicantPhotoUpload': 'coapplicantPhoto',
+      'partAadhaarUpload': 'partAadhaar',
+      'partPanUpload': 'partPan',
+      'partPhotoUpload': 'partPhoto',
+      'partBankStatementUpload': 'partBankStatement',
+      'partHouseProofUpload': 'partHouseProof',
+      'partItrUpload': 'partItr',
+      'partGstUpload': 'partGst',
+      'partUdyamUpload': 'partUdyam',
+      'partLabourUpload': 'partLabour',
+      'partCompanyPanUpload': 'partCompanyPan',
+      'partPartnershipDeedUpload': 'partPartnershipDeed',
+      'partGst3bUpload': 'partGst3b',
+      'partCoapplicantAadhaarUpload': 'partCoapplicantAadhaar',
+      'partCoapplicantPanUpload': 'partCoapplicantPan',
+      'partCoapplicantPhotoUpload': 'partCoapplicantPhoto',
+      'privateAadhaarUpload': 'privateAadhaar',
+      'privatePanUpload': 'privatePan',
+      'privatePhotoUpload': 'privatePhoto',
+      'privateBankStatementUpload': 'privateBankStatement',
+      'privateItrUpload': 'privateItr',
+      'privateGstUpload': 'privateGst',
+      'privateHouseProofUpload': 'privateHouseProof',
+      'privateLabourUpload': 'privateLabour',
+      'privateCompanyPanUpload': 'privateCompanyPan',
+      'privateIncorporationUpload': 'privateIncorporation',
+      'privateMoaUpload': 'privateMoa',
+      'privateAoaUpload': 'privateAoa',
+      'privateCoapplicantAadhaarUpload': 'privateCoapplicantAadhaar',
+      'privateCoapplicantPanUpload': 'privateCoapplicantPan',
+      'privateCoapplicantPhotoUpload': 'privateCoapplicantPhoto',
+      'privateGst3bUpload': 'privateGst3b'
     };
 
     Object.entries(uploadHandlers).forEach(([inputId, docType]) => {
@@ -5110,7 +5324,7 @@
         lead.status,
         new Date(lead.createdDate).toLocaleDateString()
       ])
-    ].map(row => row.join(',')).join('\n');
+    ].map(row => row.join(',')).join('\\n');
 
     // Download CSV
     const blob = new Blob([csv], { type: 'text/csv' });
@@ -5189,11 +5403,292 @@
 
   function sendEmail(email, name) {
     const subject = encodeURIComponent('Regarding Your Loan Application - Loan Leads CRM');
-    const body = encodeURIComponent(`Dear ${name},\n\nThank you for your interest in our loan services. We would like to discuss your loan application further.\n\nPlease let us know a convenient time for a discussion.\n\nBest regards,\nLoan Leads CRM Team`);
+    const body = encodeURIComponent(`Dear ${name},\\n\\nThank you for your interest in our loan services. We would like to discuss your loan application further.\\n\\nPlease let us know a convenient time for a discussion.\\n\\nBest regards,\\nLoan Leads CRM Team`);
 
     window.open(`mailto:${email}?subject=${subject}&body=${body}`, '_blank');
     showToast(`Email composer opened for ${name}`, 'success');
   }
+
+ // Fixed partnership member functions
+function addPartnershipMember() {
+  if (partnershipMemberCount < maxPartnershipMembers) {
+    partnershipMemberCount++;
+    const select = document.getElementById('partnershipMemberCount');
+    if (select) {
+      select.value = partnershipMemberCount;
+    }
+    renderPartnershipMembers();
+    showToast(`Added partner ${partnershipMemberCount}`, 'success');
+  } else {
+    showToast(`Maximum ${maxPartnershipMembers} partners allowed`, 'warning');
+  }
+}
+
+function removePartnershipMember() {
+  if (partnershipMemberCount > minPartnershipMembers) {
+    partnershipMemberCount--;
+    const select = document.getElementById('partnershipMemberCount');
+    if (select) {
+      select.value = partnershipMemberCount;
+    }
+    renderPartnershipMembers();
+    showToast(`Removed partner`, 'success');
+  } else {
+    showToast(`Minimum ${minPartnershipMembers} partners required`, 'warning');
+  }
+}
+
+function removeSpecificPartner(partnerNumber) {
+  if (partnershipMemberCount > minPartnershipMembers) {
+    partnershipMemberCount--;
+    const select = document.getElementById('partnershipMemberCount');
+    if (select) {
+      select.value = partnershipMemberCount;
+    }
+    renderPartnershipMembers();
+    showToast(`Partner ${partnerNumber} removed`, 'success');
+  } else {
+    showToast(`Minimum ${minPartnershipMembers} partners required`, 'warning');
+  }
+}
+
+function renderPartnershipMembers() {
+  const container = document.getElementById('partnershipMembersContainer');
+  if (!container) {
+    console.error('Partnership members container not found');
+    return;
+  }
+
+  console.log(`Rendering ${partnershipMemberCount} partnership members`);
+  container.innerHTML = '';
+
+  for (let i = 1; i <= partnershipMemberCount; i++) {
+    const memberSection = document.createElement('div');
+    memberSection.className = 'partnership-member-section';
+    memberSection.innerHTML = `
+      <div class="partnership-member-header">
+        <span class="member-number">Partner ${i} ${i === 1 ? '(Managing Partner)' : ''}</span>
+        ${i > minPartnershipMembers ? `
+          <button type="button" onclick="removeSpecificPartner(${i})" class="remove-member-btn">
+            <i class="fas fa-times mr-1"></i>Remove
+          </button>
+        ` : ''}
+      </div>
+      
+      <div class="member-grid">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Full Name *</label>
+          <input type="text" class="form-input" placeholder="Enter partner's full name" required>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Contact Number</label>
+          <input type="tel" class="form-input" placeholder="+91XXXXXXXXXX">
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+          <input type="email" class="form-input" placeholder="partner${i}@email.com">
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Ownership Percentage</label>
+          <input type="number" class="form-input" placeholder="%" min="0" max="100">
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Designation</label>
+          <input type="text" class="form-input" placeholder="Partner/Director" value="${i === 1 ? 'Managing Partner' : 'Partner'}">
+        </div>
+      </div>
+
+      <div class="member-document-section">
+        <h6 class="font-medium text-gray-900 mb-3">KYC Documents - Partner ${i}</h6>
+        <div class="space-y-3">
+          <div class="document-item">
+            <div class="document-info">
+              <div class="document-name">Aadhaar Card</div>
+              <div class="document-status">Required for identity verification</div>
+            </div>
+            <div class="document-actions">
+              <span class="status-badge status-pending">Pending</span>
+              <input type="file" class="hidden" id="partner${i}AadhaarUpload" accept=".pdf,.jpg,.jpeg,.png">
+              <button onclick="document.getElementById('partner${i}AadhaarUpload').click()" class="upload-btn">
+                <i class="fas fa-upload mr-1"></i>Upload
+              </button>
+            </div>
+          </div>
+          
+          <div class="document-item">
+            <div class="document-info">
+              <div class="document-name">PAN Card</div>
+              <div class="document-status">Required for tax identification</div>
+            </div>
+            <div class="document-actions">
+              <span class="status-badge status-pending">Pending</span>
+              <input type="file" class="hidden" id="partner${i}PanUpload" accept=".pdf,.jpg,.jpeg,.png">
+              <button onclick="document.getElementById('partner${i}PanUpload').click()" class="upload-btn">
+                <i class="fas fa-upload mr-1"></i>Upload
+              </button>
+            </div>
+          </div>
+          
+          <div class="document-item">
+            <div class="document-info">
+              <div class="document-name">Passport-size Photo</div>
+              <div class="document-status">Recent photograph</div>
+            </div>
+            <div class="document-actions">
+              <span class="status-badge status-pending">Pending</span>
+              <input type="file" class="hidden" id="partner${i}PhotoUpload" accept=".jpg,.jpeg,.png">
+              <button onclick="document.getElementById('partner${i}PhotoUpload').click()" class="upload-btn">
+                <i class="fas fa-upload mr-1"></i>Upload
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+    container.appendChild(memberSection);
+  }
+}
+
+  // Fixed director member functions
+  function addDirectorMember() {
+    if (directorMemberCount < maxdirectorMembers) {
+      directorMemberCount++;
+      const select = document.getElementById('DirectorMemberCount');
+      if (select) {
+        select.value = directorMemberCount;
+      }
+      renderDirectorMembers();
+      showToast(`Added director ${directorMemberCount}`, 'success');
+    } else {
+      showToast(`Maximum ${maxdirectorMembers} directors allowed`, 'warning');
+    }
+  }
+
+  function removeDirectorMember() {
+    if (directorMemberCount > mindirectorMembers) {
+      directorMemberCount--;
+      const select = document.getElementById('DirectorMemberCount');
+      if (select) {
+        select.value = directorMemberCount;
+      }
+      renderDirectorMembers();
+      showToast(`Removed director`, 'success');
+    } else {
+      showToast(`Minimum ${mindirectorMembers} directors required`, 'warning');
+    }
+  }
+
+  function removeSpecificDirector(directorNumber) {
+    if (directorMemberCount > mindirectorMembers) {
+      directorMemberCount--;
+      const select = document.getElementById('DirectorMemberCount');
+      if (select) {
+        select.value = directorMemberCount;
+      }
+      renderDirectorMembers();
+      showToast(`Director ${directorNumber} removed`, 'success');
+    } else {
+      showToast(`Minimum ${mindirectorMembers} directors required`, 'warning');
+    }
+  }
+
+  function renderDirectorMembers() {
+    const container = document.getElementById('DirectorMembersContainer');
+    if (!container) {
+      console.error('Director members container not found');
+      return;
+    }
+
+    console.log(`Rendering ${directorMemberCount} director members`);
+    container.innerHTML = '';
+
+    for (let i = 1; i <= directorMemberCount; i++) {
+      const memberSection = document.createElement('div');
+      memberSection.className = 'director-member-section';
+      memberSection.innerHTML = `
+        <div class="director-member-header">
+          <span class="member-number">Director ${i} ${i === 1 ? '(Managing Director)' : ''}</span>
+          ${i > mindirectorMembers ? `
+            <button type="button" onclick="removeSpecificDirector(${i})" class="remove-member-btn">
+              <i class="fas fa-times mr-1"></i>Remove
+            </button>
+          ` : ''}
+        </div>
+        
+        <div class="member-grid">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Full Name *</label>
+            <input type="text" class="form-input" placeholder="Enter director's full name" required>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Contact Number</label>
+            <input type="tel" class="form-input" placeholder="+91XXXXXXXXXX">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+            <input type="email" class="form-input" placeholder="director${i}@email.com">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Ownership Percentage</label>
+            <input type="number" class="form-input" placeholder="%" min="0" max="100">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Designation</label>
+            <input type="text" class="form-input" placeholder="Director" value="${i === 1 ? 'Managing Director' : 'Director'}">
+          </div>
+        </div>
+
+        <div class="member-document-section">
+          <h6 class="font-medium text-gray-900 mb-3">KYC Documents - Director ${i}</h6>
+          <div class="space-y-3">
+            <div class="document-item">
+              <div class="document-info">
+                <div class="document-name">Aadhaar Card</div>
+                <div class="document-status">Required for identity verification</div>
+              </div>
+              <div class="document-actions">
+                <span class="status-badge status-pending">Pending</span>
+                <input type="file" class="hidden" id="director${i}AadhaarUpload" accept=".pdf,.jpg,.jpeg,.png">
+                <button onclick="document.getElementById('director${i}AadhaarUpload').click()" class="upload-btn">
+                  <i class="fas fa-upload mr-1"></i>Upload
+                </button>
+              </div>
+            </div>
+            
+            <div class="document-item">
+              <div class="document-info">
+                <div class="document-name">PAN Card</div>
+                <div class="document-status">Required for tax identification</div>
+              </div>
+              <div class="document-actions">
+                <span class="status-badge status-pending">Pending</span>
+                <input type="file" class="hidden" id="director${i}PanUpload" accept=".pdf,.jpg,.jpeg,.png">
+                <button onclick="document.getElementById('director${i}PanUpload').click()" class="upload-btn">
+                  <i class="fas fa-upload mr-1"></i>Upload
+                </button>
+              </div>
+            </div>
+            
+            <div class="document-item">
+              <div class="document-info">
+                <div class="document-name">Passport-size Photo</div>
+                <div class="document-status">Recent photograph</div>
+              </div>
+              <div class="document-actions">
+                <span class="status-badge status-pending">Pending</span>
+                <input type="file" class="hidden" id="director${i}PhotoUpload" accept=".jpg,.jpeg,.png">
+                <button onclick="document.getElementById('director${i}PhotoUpload').click()" class="upload-btn">
+                  <i class="fas fa-upload mr-1"></i>Upload
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+      container.appendChild(memberSection);
+    }
+  }
+
 </script>
 </body>
 </html>
