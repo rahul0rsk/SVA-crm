@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Loan Leads CRM - Professional Management System</title>
+  <title>SVA Loan CRM - Professional Management System</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
@@ -89,6 +89,112 @@
           padding: 1.5rem;
           box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
           transition: all 0.3s;
+      }
+
+      /* Enhanced Sidebar Styles */
+      .sidebar {
+          width: 280px;
+          background: white;
+          border-right: 1px solid #e5e7eb;
+          height: 100vh;
+          position: fixed;
+          left: 0;
+          top: 0;
+          z-index: 1000;
+          transform: translateX(-100%);
+          transition: transform 0.3s ease;
+          display: flex;
+          flex-direction: column;
+          box-shadow: none;
+      }
+
+      .sidebar.open {
+          transform: translateX(0);
+          box-shadow: 4px 0 15px rgba(0, 0, 0, 0.1);
+      }
+
+      .main-content {
+          margin-left: 0;
+          transition: margin-left 0.3s ease;
+          width: 100%;
+      }
+
+      .main-content.sidebar-open {
+          margin-left: 0;
+      }
+
+      .sidebar-link.active {
+          background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+          color: white;
+          box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.3);
+      }
+
+      .sidebar-link.active:hover {
+          background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+      }
+
+      /* Mobile overlay */
+      .sidebar-overlay {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background: rgba(0, 0, 0, 0.5);
+          z-index: 999;
+          display: none;
+      }
+
+      .sidebar-overlay.active {
+          display: block;
+      }
+
+      @media (min-width: 768px) {
+          .sidebar {
+              transform: translateX(0);
+              box-shadow: none;
+          }
+          
+          .main-content {
+              margin-left: 280px;
+              width: calc(100% - 280px);
+          }
+          
+          .main-content.sidebar-open {
+              margin-left: 280px;
+          }
+          
+          .sidebar-overlay {
+              display: none !important;
+          }
+          
+          #closeSidebar {
+              display: none;
+          }
+      }
+
+      /* Scrollbar styling for sidebar */
+      .sidebar nav {
+          scrollbar-width: thin;
+          scrollbar-color: #c1c1c1 #f1f1f1;
+      }
+
+      .sidebar nav::-webkit-scrollbar {
+          width: 4px;
+      }
+
+      .sidebar nav::-webkit-scrollbar-track {
+          background: #f1f1f1;
+          border-radius: 2px;
+      }
+
+      .sidebar nav::-webkit-scrollbar-thumb {
+          background: #c1c1c1;
+          border-radius: 2px;
+      }
+
+      .sidebar nav::-webkit-scrollbar-thumb:hover {
+          background: #a8a8a8;
       }
 
       .metric-card:hover {
@@ -227,42 +333,6 @@
       .toast.error { border-left: 4px solid #ef4444; }
       .toast.warning { border-left: 4px solid #f59e0b; }
 
-      .sidebar {
-          width: 250px;
-          background: white;
-          border-right: 1px solid #e5e7eb;
-          height: 100vh;
-          position: fixed;
-          left: 0;
-          top: 0;
-          z-index: 100;
-          transform: translateX(-100%);
-          transition: transform 0.3s ease;
-      }
-
-      .sidebar.open {
-          transform: translateX(0);
-      }
-
-      .main-content {
-          margin-left: 0;
-          transition: margin-left 0.3s ease;
-      }
-
-      .main-content.sidebar-open {
-          margin-left: 250px;
-      }
-
-      @media (min-width: 768px) {
-          .sidebar {
-              transform: translateX(0);
-          }
-
-          .main-content {
-              margin-left: 250px;
-          }
-      }
-
       .form-input {
           width: 100%;
           padding: 0.5rem 0.75rem;
@@ -329,12 +399,25 @@
           box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
           display: none;
           z-index: 1500;
-          min-width: 300px;
+          min-width: 320px;
+          max-width: 400px;
+          border: 1px solid #e5e7eb;
       }
 
       .call-modal.active {
           display: block;
-          animation: slideIn 0.3s ease-out;
+          animation: slideInUp 0.3s ease-out;
+      }
+
+      @keyframes slideInUp {
+          from {
+              opacity: 0;
+              transform: translateY(20px);
+          }
+          to {
+              opacity: 1;
+              transform: translateY(0);
+          }
       }
 
       .call-animation {
@@ -347,10 +430,59 @@
           animation: pulse 2s infinite;
       }
 
-      @keyframes pulse {
-          0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
-          70% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
-          100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+      .call-animation.connecting {
+          background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+      }
+
+      .call-animation.connected {
+          background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      }
+
+      .call-animation.hold {
+          background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+          animation: none;
+      }
+
+      .call-animation.recording {
+          background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+          animation: recordingPulse 1s infinite;
+      }
+
+      @keyframes recordingPulse {
+          0% { 
+              transform: scale(1);
+              box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); 
+          }
+          50% { 
+              transform: scale(1.05);
+          }
+          70% { 
+              box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); 
+          }
+          100% { 
+              transform: scale(1);
+              box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); 
+          }
+      }
+
+      /* Button states */
+      .btn-muted {
+          background: #fef3c7 !important;
+          color: #92400e !important;
+          border-color: #f59e0b !important;
+      }
+
+      .btn-hold {
+          background: #fed7aa !important;
+          color: #9a3412 !important;
+          border-color: #ea580c !important;
+      }
+
+      .btn-recording {
+          background: #fee2e2 !important;
+          color: #991b1b !important;
+          border-color: #dc2626 !important;
+          animation: recordingPulse 1s infinite;
       }
 
       .action-buttons {
@@ -552,6 +684,7 @@
           gap: 0.5rem;
           align-items: center;
       }
+
       .btn-email {
           background: #3b82f6;
           color: white;
@@ -832,6 +965,7 @@
           text-transform: uppercase;
           letter-spacing: 0.05em;
       }
+
       /* director member styles */
       .director-member-section {
           border: 2px solid #e5e7eb;
@@ -880,22 +1014,21 @@
           margin-top: 1rem;
       }
 
-      .document-item {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          padding: 0.5rem;
-          border-bottom: 1px solid #f3f4f6;
+      .partnership-member-section {
+          border: 2px solid #e5e7eb;
+          border-radius: 0.75rem;
+          padding: 1.5rem;
+          margin-bottom: 1.5rem;
+          background: #f8fafc;
       }
 
-      .upload-btn {
-          background: #3b82f6;
-          color: white;
-          border: none;
-          padding: 0.375rem 0.75rem;
-          border-radius: 0.375rem;
-          font-size: 0.75rem;
-          cursor: pointer;
+      .partnership-member-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 1rem;
+          padding-bottom: 0.75rem;
+          border-bottom: 2px solid #3b82f6;
       }
   </style>
 </head>
@@ -906,35 +1039,124 @@
   <span id="toastMessage">Operation successful!</span>
 </div>
 
-<!-- IVR Call Modal -->
+<!-- Enhanced IVR Call Modal -->
 <div id="callModal" class="call-modal">
   <div class="flex items-center justify-between mb-4">
-    <h3 class="text-lg font-semibold text-gray-900">IVR Call in Progress</h3>
-    <button onclick="endCall()" class="text-gray-400 hover:text-gray-600">
+    <h3 class="text-lg font-semibold text-gray-900">IVR Call Center</h3>
+    <button onclick="closeCallModal()" class="text-gray-400 hover:text-gray-600">
       <i class="fas fa-times"></i>
     </button>
   </div>
+  
   <div class="text-center mb-4">
-    <div class="call-animation mx-auto mb-3 flex items-center justify-center">
+    <div id="callAnimation" class="call-animation mx-auto mb-3 flex items-center justify-center">
       <i class="fas fa-phone text-white text-2xl"></i>
     </div>
     <p class="text-sm text-gray-600">Calling: <span id="callingNumber" class="font-semibold"></span></p>
     <p class="text-xs text-gray-500 mt-1">Duration: <span id="callDuration">00:00</span></p>
-    <div id="agentDetails" class="mt-2 text-sm text-gray-600 hidden">
-      <p>Agent: <span id="agentName"></span></p>
-      <p>Assigned to: <span id="agentAssigned"></span></p>
+    
+    <!-- Call Status -->
+    <div id="callStatus" class="mt-2">
+      <span class="status-badge status-new">Connecting...</span>
     </div>
   </div>
+  
+  <!-- Call Notes -->
+  <div class="mb-4">
+    <label class="block text-sm font-medium text-gray-700 mb-1">Call Notes</label>
+    <textarea id="callNotes" class="form-input text-sm" rows="2" placeholder="Add notes about the call..."></textarea>
+  </div>
+
+  <!-- Call Disposition -->
+  <div class="mb-4">
+    <label class="block text-sm font-medium text-gray-700 mb-2">Call Disposition</label>
+    <select id="callDisposition" class="form-input text-sm">
+      <option value="">Select disposition</option>
+      <option value="interested">Interested - Will Apply</option>
+      <option value="callback">Callback Scheduled</option>
+      <option value="information">Need More Information</option>
+      <option value="documents">Documents Required</option>
+      <option value="not-interested">Not Interested</option>
+      <option value="wrong-number">Wrong Number</option>
+      <option value="not-reachable">Not Reachable</option>
+      <option value="busy">Busy - Try Later</option>
+    </select>
+  </div>
+
+  <!-- Quick Actions -->
+  <div class="mb-4">
+    <h4 class="text-sm font-medium text-gray-700 mb-2">Quick Actions</h4>
+    <div class="grid grid-cols-2 gap-2">
+      <button onclick="scheduleCallback()" class="btn-secondary text-xs py-2">
+        <i class="fas fa-clock mr-1"></i>Schedule Callback
+      </button>
+      <button onclick="sendSMS()" class="btn-secondary text-xs py-2">
+        <i class="fas fa-sms mr-1"></i>Send SMS
+      </button>
+    </div>
+  </div>
+
   <div class="space-y-2">
+    <!-- Call Controls -->
+    <div class="grid grid-cols-2 gap-2">
+      <button onclick="toggleMuteCall()" id="muteBtn" class="btn-secondary text-sm">
+        <i class="fas fa-microphone mr-2"></i>Mute
+      </button>
+      <button onclick="toggleHoldCall()" id="holdBtn" class="btn-secondary text-sm">
+        <i class="fas fa-pause mr-2"></i>Hold
+      </button>
+    </div>
+    
+    <!-- Main Call Controls -->
     <button onclick="transferCall()" class="w-full btn-secondary text-sm">
       <i class="fas fa-phone-alt mr-2"></i>Transfer Call
     </button>
-    <button onclick="recordCall()" class="w-full btn-secondary text-sm">
-      <i class="fas fa-microphone mr-2"></i>Record Call
+    <button onclick="toggleRecordCall()" id="recordBtn" class="w-full btn-secondary text-sm">
+      <i class="fas fa-microphone mr-2"></i><span id="recordText">Record Call</span>
     </button>
-    <button onclick="endCall()" class="w-full btn-call text-sm">
+    <button onclick="endCall()" class="w-full bg-red-600 hover:bg-red-700 text-white text-sm py-2 px-4 rounded-lg transition-colors duration-200">
       <i class="fas fa-phone-slash mr-2"></i>End Call
     </button>
+  </div>
+</div>
+
+<!-- Schedule Callback Modal -->
+<div id="callbackModal" class="modal">
+  <div class="modal-content">
+    <div class="flex justify-between items-center mb-6">
+      <h3 class="text-xl font-semibold text-gray-900">Schedule Callback</h3>
+      <button onclick="closeCallbackModal()" class="text-gray-400 hover:text-gray-600">
+        <i class="fas fa-times text-xl"></i>
+      </button>
+    </div>
+    
+    <form id="callbackForm" class="space-y-4">
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Callback Date & Time</label>
+        <input type="datetime-local" id="callbackDateTime" class="form-input" required>
+      </div>
+      
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Priority</label>
+        <select id="callbackPriority" class="form-input">
+          <option value="low">Low</option>
+          <option value="medium" selected>Medium</option>
+          <option value="high">High</option>
+        </select>
+      </div>
+      
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Notes</label>
+        <textarea id="callbackNotes" class="form-input" rows="3" placeholder="Reason for callback..."></textarea>
+      </div>
+      
+      <div class="flex justify-end space-x-3 pt-4">
+        <button type="button" onclick="closeCallbackModal()" class="btn-secondary">Cancel</button>
+        <button type="submit" class="btn-primary">
+          <i class="fas fa-calendar-plus mr-2"></i>Schedule Callback
+        </button>
+      </div>
+    </form>
   </div>
 </div>
 
@@ -1076,6 +1298,7 @@
     </form>
   </div>
 </div>
+
 <!-- Enhanced Client Documents Modal -->
 <div id="clientDocumentsModal" class="modal">
   <div class="modal-content" style="max-width: 800px;">
@@ -2348,77 +2571,112 @@
 <!-- Main Application -->
 <div id="mainApp" class="hidden">
   <!-- Sidebar -->
-  <aside id="sidebar" class="sidebar">
-    <div class="p-6 border-b">
+<aside id="sidebar" class="sidebar">
+  <div class="p-6 border-b border-gray-200">
+    <div class="flex items-center justify-between">
       <div class="flex items-center">
         <div class="h-8 w-8 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-md flex items-center justify-center mr-3">
           <i class="fas fa-building text-white text-sm"></i>
         </div>
         <h1 class="text-xl font-semibold text-gray-900">Loan CRM</h1>
       </div>
+      <button id="closeSidebar" class="md:hidden text-gray-500 hover:text-gray-700">
+        <i class="fas fa-times"></i>
+      </button>
     </div>
+  </div>
 
-    <nav class="p-4">
-      <ul class="space-y-2">
+  <nav class="p-4 flex-1 overflow-y-auto">
+    <div class="mb-6">
+      <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Main</h3>
+      <ul class="space-y-1">
         <li>
-          <a href="#" data-page="dashboard" class="sidebar-link flex items-center p-3 rounded-lg hover:bg-gray-100 text-gray-700">
+          <a href="#" data-page="dashboard" class="sidebar-link flex items-center p-3 rounded-lg text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors duration-200">
             <i class="fas fa-tachometer-alt w-5 mr-3"></i>
             Dashboard
           </a>
         </li>
         <li>
-          <a href="#" data-page="leads" class="sidebar-link flex items-center p-3 rounded-lg hover:bg-gray-100 text-gray-700">
+          <a href="#" data-page="leads" class="sidebar-link flex items-center p-3 rounded-lg text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors duration-200">
             <i class="fas fa-users w-5 mr-3"></i>
             Leads Management
           </a>
         </li>
         <li>
-          <a href="#" data-page="tasks" class="sidebar-link flex items-center p-3 rounded-lg hover:bg-gray-100 text-gray-700 relative">
+          <a href="#" data-page="tasks" class="sidebar-link flex items-center p-3 rounded-lg text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors duration-200 relative">
             <i class="fas fa-tasks w-5 mr-3"></i>
             Tasks
             <span id="taskNotificationBadge" class="notification-badge hidden">0</span>
           </a>
         </li>
         <li>
-          <a href="#" data-page="callHistory" class="sidebar-link flex items-center p-3 rounded-lg hover:bg-gray-100 text-gray-700">
+          <a href="#" data-page="callHistory" class="sidebar-link flex items-center p-3 rounded-lg text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors duration-200">
             <i class="fas fa-phone-alt w-5 mr-3"></i>
             Call History
           </a>
         </li>
         <li>
-          <a href="#" data-page="files" class="sidebar-link flex items-center p-3 rounded-lg hover:bg-gray-100 text-gray-700">
+          <a href="#" data-page="files" class="sidebar-link flex items-center p-3 rounded-lg text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors duration-200">
             <i class="fas fa-folder w-5 mr-3"></i>
             Files
           </a>
         </li>
-        <li id="adminMenu" class="hidden">
-          <a href="#" data-page="admin" class="sidebar-link flex items-center p-3 rounded-lg hover:bg-gray-100 text-gray-700">
+      </ul>
+    </div>
+
+    <div id="adminSection" class="mb-6 hidden">
+      <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Admin</h3>
+      <ul class="space-y-1">
+        <li>
+          <a href="#" data-page="admin" class="sidebar-link flex items-center p-3 rounded-lg text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors duration-200">
             <i class="fas fa-user-shield w-5 mr-3"></i>
             Admin Panel
           </a>
         </li>
-        <li id="reportsMenu" class="hidden">
-          <a href="#" data-page="reports" class="sidebar-link flex items-center p-3 rounded-lg hover:bg-gray-100 text-gray-700">
+        <li>
+          <a href="#" data-page="reports" class="sidebar-link flex items-center p-3 rounded-lg text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors duration-200">
             <i class="fas fa-chart-bar w-5 mr-3"></i>
             Reports
           </a>
         </li>
+      </ul>
+    </div>
+
+    <div class="mb-6">
+      <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Account</h3>
+      <ul class="space-y-1">
         <li>
-          <a href="#" data-page="profile" class="sidebar-link flex items-center p-3 rounded-lg hover:bg-gray-100 text-gray-700">
+          <a href="#" data-page="profile" class="sidebar-link flex items-center p-3 rounded-lg text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors duration-200">
             <i class="fas fa-user w-5 mr-3"></i>
             Profile
           </a>
         </li>
         <li>
-          <a href="#" id="logoutBtn" class="flex items-center p-3 rounded-lg hover:bg-gray-100 text-red-600">
+          <a href="#" id="logoutBtn" class="flex items-center p-3 rounded-lg text-gray-700 hover:bg-red-50 hover:text-red-600 transition-colors duration-200">
             <i class="fas fa-sign-out-alt w-5 mr-3"></i>
             Logout
           </a>
         </li>
       </ul>
-    </nav>
-  </aside>
+    </div>
+  </nav>
 
+  <!-- User Info Section -->
+  <div class="p-4 border-t border-gray-200 bg-gray-50">
+    <div class="flex items-center">
+      <div class="h-8 w-8 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center mr-3">
+        <span id="sidebarUserInitials" class="text-white text-xs font-semibold">AU</span>
+      </div>
+      <div class="flex-1 min-w-0">
+        <p id="sidebarUserName" class="text-sm font-medium text-gray-900 truncate">Admin User</p>
+        <p id="sidebarUserRole" class="text-xs text-gray-500 truncate">Administrator</p>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<!-- Mobile Overlay -->
+<div id="sidebarOverlay" class="sidebar-overlay"></div>
   <!-- Main Content -->
   <main id="mainContent" class="main-content">
     <!-- Header -->
@@ -3141,19 +3399,14 @@
   let maxdirectorMembers = 20;
   let mindirectorMembers = 2;
 
+  // IVR Call Variables
+  let isCallMuted = false;
+  let isCallOnHold = false;
+  let isRecording = false;
+
   // Initialize Application
   document.addEventListener('DOMContentLoaded', function() {
     initializeApp();
-    setupEventListeners();
-    loadSampleData();
-    startTaskReminderChecker();
-    
-    // Setup additional handlers
-    setupEntityTypeHandler();
-    setupBusinessNatureHandler();
-    setupIndustryHandler();
-    setupFileUploadHandlers();
-    updateTaskNotificationBadge();
   });
 
   function initializeApp() {
@@ -3165,6 +3418,25 @@
     } else {
       showLoginPage();
     }
+    
+    setupEventListeners();
+    loadSampleData();
+    startTaskReminderChecker();
+    
+    // Initialize handlers with null checks
+    if (document.getElementById('entityType')) {
+      setupEntityTypeHandler();
+    }
+    if (document.querySelector('input[name="businessNature"]')) {
+      setupBusinessNatureHandler();
+    }
+    if (document.querySelector('input[name="industry"]')) {
+      setupIndustryHandler();
+    }
+    
+    setupFileUploadHandlers();
+    updateTaskNotificationBadge();
+    initializeCallSystem();
   }
 
   function setupEventListeners() {
@@ -3187,20 +3459,8 @@
       }
     });
 
-    // Sidebar navigation
-    document.querySelectorAll('.sidebar-link').forEach(link => {
-      link.addEventListener('click', function(e) {
-        e.preventDefault();
-        const page = this.dataset.page;
-        navigateToPage(page);
-      });
-    });
-
-    // Mobile menu toggle
-    document.getElementById('menuToggle').addEventListener('click', function() {
-      document.getElementById('sidebar').classList.toggle('open');
-      document.getElementById('mainContent').classList.toggle('sidebar-open');
-    });
+    // Setup sidebar
+    setupSidebar();
 
     // Logout
     document.getElementById('logoutBtn').addEventListener('click', handleLogout);
@@ -3221,14 +3481,26 @@
     document.getElementById('passwordForm').addEventListener('submit', handlePasswordChange);
 
     // Search leads
-    document.getElementById('searchLeads').addEventListener('input', function() {
-      filterLeads(this.value);
-    });
+    const searchLeads = document.getElementById('searchLeads');
+    if (searchLeads) {
+      searchLeads.addEventListener('input', function() {
+        filterLeads(this.value);
+      });
+    }
 
     // File upload area click
-    document.getElementById('fileUploadArea').addEventListener('click', function() {
-      document.getElementById('fileInput').click();
-    });
+    const fileUploadArea = document.getElementById('fileUploadArea');
+    if (fileUploadArea) {
+      fileUploadArea.addEventListener('click', function() {
+        document.getElementById('fileInput').click();
+      });
+    }
+
+    // Callback form submission
+    const callbackForm = document.getElementById('callbackForm');
+    if (callbackForm) {
+      callbackForm.addEventListener('submit', scheduleCallbackFromForm);
+    }
   }
 
   // Entity Type Handler
@@ -3488,7 +3760,8 @@
           status: 'active',
           joinDate: '2023-01-15',
           leadsAssigned: 24,
-          leadsConverted: 18
+          leadsConverted: 18,
+          password: 'agent123'
         },
         {
           id: 2,
@@ -3500,7 +3773,8 @@
           status: 'active',
           joinDate: '2023-02-20',
           leadsAssigned: 32,
-          leadsConverted: 22
+          leadsConverted: 22,
+          password: 'agent123'
         }
       ];
       localStorage.setItem('crm_agents', JSON.stringify(agents));
@@ -3594,12 +3868,11 @@
 
     // Simulate API call
     setTimeout(() => {
-      // Check against stored agents
-      const foundAgent = agents.find(a => a.username === username && password === 'agent123');
+      let authenticatedUser = null;
 
-      // Mock admin login
+      // Check admin login
       if (username === 'admin' && password === 'admin123') {
-        currentUser = {
+        authenticatedUser = {
           id: 0,
           username: 'admin',
           name: 'Admin User',
@@ -3607,13 +3880,22 @@
           email: 'admin@loanleads.com',
           phone: '+919876543210'
         };
+      } else {
+        // Check agent login
+        const foundAgent = agents.find(a => 
+          a.username === username && 
+          (a.password === password || (password === 'agent123' && !a.password))
+        );
+        
+        if (foundAgent && foundAgent.status === 'active') {
+          authenticatedUser = foundAgent;
+        }
+      }
+
+      if (authenticatedUser) {
+        currentUser = authenticatedUser;
         localStorage.setItem('crm_user', JSON.stringify(currentUser));
-        showToast('Login successful! Welcome back, Admin', 'success');
-        showMainApp();
-      } else if (foundAgent) {
-        currentUser = foundAgent;
-        localStorage.setItem('crm_user', JSON.stringify(currentUser));
-        showToast('Login successful! Welcome back, ' + foundAgent.name, 'success');
+        showToast('Login successful! Welcome back, ' + authenticatedUser.name, 'success');
         showMainApp();
       } else {
         showToast('Invalid username or password', 'error');
@@ -3646,17 +3928,67 @@
     document.getElementById('userRole').textContent = currentUser.role;
     document.getElementById('userRole').className = `status-badge ${currentUser.role === 'admin' ? 'status-approved' : 'status-new'}`;
 
-    // Show admin menu if user is admin
-    if (currentUser.role === 'admin') {
-      document.getElementById('adminMenu').classList.remove('hidden');
-      document.getElementById('reportsMenu').classList.remove('hidden');
-    }
-
-    // Update profile page
-    updateProfilePage();
+    // Update sidebar
+    updateSidebarUserInfo();
+    toggleAdminSection();
 
     // Load dashboard
     navigateToPage('dashboard');
+  }
+
+  // Enhanced sidebar functionality
+  function setupSidebar() {
+    // Mobile menu toggle
+    const menuToggle = document.getElementById('menuToggle');
+    const closeSidebar = document.getElementById('closeSidebar');
+    const sidebarOverlay = document.getElementById('sidebarOverlay');
+    
+    if (menuToggle) {
+      menuToggle.addEventListener('click', openMobileSidebar);
+    }
+    
+    if (closeSidebar) {
+      closeSidebar.addEventListener('click', closeMobileSidebar);
+    }
+    
+    if (sidebarOverlay) {
+      sidebarOverlay.addEventListener('click', closeMobileSidebar);
+    }
+    
+    // Sidebar navigation
+    document.querySelectorAll('.sidebar-link').forEach(link => {
+      link.addEventListener('click', function(e) {
+        e.preventDefault();
+        const page = this.dataset.page;
+        navigateToPage(page);
+      });
+    });
+  }
+
+  function openMobileSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    const sidebarOverlay = document.getElementById('sidebarOverlay');
+    
+    if (sidebar) {
+      sidebar.classList.add('open');
+    }
+    if (sidebarOverlay) {
+      sidebarOverlay.classList.add('active');
+    }
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeMobileSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    const sidebarOverlay = document.getElementById('sidebarOverlay');
+    
+    if (sidebar) {
+      sidebar.classList.remove('open');
+    }
+    if (sidebarOverlay) {
+      sidebarOverlay.classList.remove('active');
+    }
+    document.body.style.overflow = '';
   }
 
   function navigateToPage(page) {
@@ -3681,33 +4013,66 @@
 
     // Update active sidebar link
     document.querySelectorAll('.sidebar-link').forEach(link => {
-      link.classList.remove('bg-blue-50', 'text-blue-600');
+      link.classList.remove('active');
       if (link.dataset.page === page) {
-        link.classList.add('bg-blue-50', 'text-blue-600');
+        link.classList.add('active');
       }
     });
 
-    // Load page-specific data
-    if (page === 'dashboard') {
-      loadDashboardData();
-    } else if (page === 'leads') {
-      loadAllLeads();
-    } else if (page === 'tasks') {
-      loadTasks();
-    } else if (page === 'callHistory') {
-      loadCallHistory();
-    } else if (page === 'files') {
-      loadFiles();
-    } else if (page === 'admin') {
-      loadAdminData();
-    } else if (page === 'reports') {
-      loadReportsData();
-    }
+    // Update user info in sidebar
+    updateSidebarUserInfo();
 
     // Close mobile menu
-    if (window.innerWidth < 768) {
-      document.getElementById('sidebar').classList.remove('open');
-      document.getElementById('mainContent').classList.remove('sidebar-open');
+    closeMobileSidebar();
+
+    // Load page-specific data
+    loadPageData(page);
+  }
+
+  function loadPageData(page) {
+    switch(page) {
+      case 'dashboard':
+        loadDashboardData();
+        break;
+      case 'leads':
+        loadAllLeads();
+        break;
+      case 'tasks':
+        loadTasks();
+        break;
+      case 'callHistory':
+        loadCallHistory();
+        break;
+      case 'files':
+        loadFiles();
+        break;
+      case 'admin':
+        loadAdminData();
+        break;
+      case 'reports':
+        loadReportsData();
+        break;
+      case 'profile':
+        // Profile page doesn't need additional loading
+        break;
+    }
+  }
+
+  function updateSidebarUserInfo() {
+    if (!currentUser) return;
+    
+    const initials = currentUser.name.split(' ').map(n => n[0]).join('').toUpperCase();
+    document.getElementById('sidebarUserInitials').textContent = initials;
+    document.getElementById('sidebarUserName').textContent = currentUser.name;
+    document.getElementById('sidebarUserRole').textContent = currentUser.role === 'admin' ? 'Administrator' : 'Agent';
+  }
+
+  function toggleAdminSection() {
+    const adminSection = document.getElementById('adminSection');
+    if (currentUser && currentUser.role === 'admin') {
+      adminSection.classList.remove('hidden');
+    } else {
+      adminSection.classList.add('hidden');
     }
   }
 
@@ -3855,6 +4220,8 @@
 
   function populateTaskAgentSelect() {
     const select = document.getElementById('taskAssignedTo');
+    if (!select) return;
+    
     select.innerHTML = '<option value="">Select Agent</option>';
 
     if (currentUser.role === 'admin') {
@@ -4066,7 +4433,7 @@
         call.status,
         call.user
       ])
-    ].map(row => row.join(',')).join('\n');
+    ].map(row => row.join(',')).join('\\n');
 
     // Download CSV
     const blob = new Blob([csv], { type: 'text/csv' });
@@ -4227,16 +4594,21 @@
   function loadReportsData() {
     // Populate agent select for reports
     const reportAgentSelect = document.getElementById('reportAgent');
-    reportAgentSelect.innerHTML = '<option value="">All Agents</option>';
-    agents.filter(a => a.status === 'active').forEach(agent => {
-      const option = document.createElement('option');
-      option.value = agent.username;
-      option.textContent = agent.name;
-      reportAgentSelect.appendChild(option);
-    });
+    if (reportAgentSelect) {
+      reportAgentSelect.innerHTML = '<option value="">All Agents</option>';
+      agents.filter(a => a.status === 'active').forEach(agent => {
+        const option = document.createElement('option');
+        option.value = agent.username;
+        option.textContent = agent.name;
+        reportAgentSelect.appendChild(option);
+      });
+    }
 
     // Set today's date as default
-    document.getElementById('reportDate').value = new Date().toISOString().split('T')[0];
+    const reportDate = document.getElementById('reportDate');
+    if (reportDate) {
+      reportDate.value = new Date().toISOString().split('T')[0];
+    }
 
     // Load commitments
     loadCommitments();
@@ -4517,7 +4889,30 @@
     handleFiles(files);
   }
 
+  function setupFileUploadHandlers() {
+    // Handle file upload area
+    const fileUploadArea = document.getElementById('fileUploadArea');
+    const fileInput = document.getElementById('fileInput');
+    
+    if (fileUploadArea && fileInput) {
+      fileUploadArea.addEventListener('click', function() {
+        fileInput.click();
+      });
+      
+      fileInput.addEventListener('change', handleFileSelect);
+    }
+    
+    // Handle drag and drop
+    if (fileUploadArea) {
+      fileUploadArea.addEventListener('dragover', handleDragOver);
+      fileUploadArea.addEventListener('dragleave', handleDragLeave);
+      fileUploadArea.addEventListener('drop', handleDrop);
+    }
+  }
+
   function handleFiles(files) {
+    if (!files || files.length === 0) return;
+    
     Array.from(files).forEach(file => {
       // Check file size (5MB limit)
       if (file.size > 5 * 1024 * 1024) {
@@ -4526,13 +4921,20 @@
       }
 
       // Check file type
-      const allowedTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'];
+      const allowedTypes = [
+        'application/pdf', 
+        'application/msword', 
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 
+        'application/vnd.ms-excel', 
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+      ];
+      
       if (!allowedTypes.includes(file.type)) {
         showToast(`File ${file.name} is not a supported format`, 'error');
         return;
       }
 
-      // Store file info (in a real app, you'd upload to server)
+      // Store file info
       const fileInfo = {
         id: Date.now() + Math.random(),
         name: file.name,
@@ -4804,93 +5206,6 @@
     currentClientLead = null;
   }
 
-  // File Upload Handlers
-  function setupFileUploadHandlers() {
-    const uploadHandlers = {
-      'propAadhaarUpload': 'aadhaar',
-      'propPanUpload': 'pan',
-      'propPhotoUpload': 'photo',
-      'propCoApplicantKycUpload': 'coapplicantKyc',
-      'propBankStatementUpload': 'bankStatement',
-      'propHouseProofUpload': 'houseProof',
-      'propItrUpload': 'itr',
-      'propGstUpload': 'gst',
-      'propUdyamUpload': 'udyam',
-      'propLabourUpload': 'labour',
-      'propGst3bUpload': 'gst3b',
-      'aadhaarUpload': 'aadhaar',
-      'panUpload': 'pan',
-      'photoUpload': 'photo',
-      'bankStatementUpload': 'bankStatement',
-      'itrUpload': 'itr',
-      'gstUpload': 'gst',
-      'houseTaxUpload': 'houseTax',
-      'utilityBillUpload': 'utilityBill',
-      'labourLicenseUpload': 'labourLicense',
-      'companyPanUpload': 'companyPan',
-      'partnershipDeedUpload': 'partnershipDeed',
-      'moaAoaUpload': 'moaAoa',
-      'coapplicantAadhaarUpload': 'coapplicantAadhaar',
-      'coapplicantPanUpload': 'coapplicantPan',
-      'coapplicantPhotoUpload': 'coapplicantPhoto',
-      'partAadhaarUpload': 'partAadhaar',
-      'partPanUpload': 'partPan',
-      'partPhotoUpload': 'partPhoto',
-      'partBankStatementUpload': 'partBankStatement',
-      'partHouseProofUpload': 'partHouseProof',
-      'partItrUpload': 'partItr',
-      'partGstUpload': 'partGst',
-      'partUdyamUpload': 'partUdyam',
-      'partLabourUpload': 'partLabour',
-      'partCompanyPanUpload': 'partCompanyPan',
-      'partPartnershipDeedUpload': 'partPartnershipDeed',
-      'partGst3bUpload': 'partGst3b',
-      'partCoapplicantAadhaarUpload': 'partCoapplicantAadhaar',
-      'partCoapplicantPanUpload': 'partCoapplicantPan',
-      'partCoapplicantPhotoUpload': 'partCoapplicantPhoto',
-      'privateAadhaarUpload': 'privateAadhaar',
-      'privatePanUpload': 'privatePan',
-      'privatePhotoUpload': 'privatePhoto',
-      'privateBankStatementUpload': 'privateBankStatement',
-      'privateItrUpload': 'privateItr',
-      'privateGstUpload': 'privateGst',
-      'privateHouseProofUpload': 'privateHouseProof',
-      'privateLabourUpload': 'privateLabour',
-      'privateCompanyPanUpload': 'privateCompanyPan',
-      'privateIncorporationUpload': 'privateIncorporation',
-      'privateMoaUpload': 'privateMoa',
-      'privateAoaUpload': 'privateAoa',
-      'privateCoapplicantAadhaarUpload': 'privateCoapplicantAadhaar',
-      'privateCoapplicantPanUpload': 'privateCoapplicantPan',
-      'privateCoapplicantPhotoUpload': 'privateCoapplicantPhoto',
-      'privateGst3bUpload': 'privateGst3b'
-    };
-
-    Object.entries(uploadHandlers).forEach(([inputId, docType]) => {
-      const input = document.getElementById(inputId);
-      if (input) {
-        input.addEventListener('change', function(e) {
-          const file = e.target.files[0];
-          if (file) {
-            const passwordInput = this.closest('.document-item')?.querySelector('.password-input');
-            const password = passwordInput ? passwordInput.value : '';
-            handleDocumentUpload(docType, file, password);
-          }
-        });
-      }
-    });
-
-    // Additional document upload handler
-    const customDocUpload = document.getElementById('customDocUpload');
-    if (customDocUpload) {
-      customDocUpload.addEventListener('change', function(e) {
-        if (e.target.files[0]) {
-          showToast('File selected. Click "Add" to upload.', 'success');
-        }
-      });
-    }
-  }
-
   function getFileIcon(type) {
     if (type.includes('pdf')) return 'pdf';
     if (type.includes('word')) return 'word';
@@ -5038,6 +5353,8 @@
 
   function populateAgentSelect() {
     const select = document.getElementById('leadAgent');
+    if (!select) return;
+    
     select.innerHTML = '<option value="">Select Agent</option>';
 
     agents.filter(a => a.status === 'active').forEach(agent => {
@@ -5145,6 +5462,8 @@
     editingAgent = null;
     document.getElementById('agentModalTitle').textContent = 'Add New Agent';
     document.getElementById('agentForm').reset();
+    document.getElementById('agentPassword').placeholder = 'Enter password';
+    document.getElementById('agentPassword').required = true;
     document.getElementById('agentModal').classList.add('active');
   }
 
@@ -5157,7 +5476,8 @@
       document.getElementById('agentEmail').value = editingAgent.email;
       document.getElementById('agentPhone').value = editingAgent.phone;
       document.getElementById('agentStatus').value = editingAgent.status;
-      document.getElementById('agentPassword').value = '';
+      document.getElementById('agentPassword').value = ''; // Clear password field for security
+      document.getElementById('agentPassword').placeholder = 'Leave blank to keep current password';
       document.getElementById('agentModal').classList.add('active');
     }
   }
@@ -5182,18 +5502,30 @@
       leadsConverted: editingAgent ? editingAgent.leadsConverted : 0
     };
 
-    if (editingAgent) {
-      // Update existing agent
-      const index = agents.findIndex(a => a.id === editingAgent.id);
-      agents[index] = { ...agentData, id: editingAgent.id };
-      showToast('Agent updated successfully', 'success');
-    } else {
-      // Add new agent
+    // Handle password for new agents
+    if (!editingAgent) {
       const password = document.getElementById('agentPassword').value;
       if (!password) {
         showToast('Password is required for new agents', 'error');
         return;
       }
+      // Store password (in real app, this would be hashed)
+      agentData.password = password;
+    } else if (document.getElementById('agentPassword').value) {
+      // Update password if provided for existing agent
+      agentData.password = document.getElementById('agentPassword').value;
+    }
+
+    if (editingAgent) {
+      // Update existing agent - preserve password if not changed
+      const index = agents.findIndex(a => a.id === editingAgent.id);
+      if (!document.getElementById('agentPassword').value && editingAgent.password) {
+        agentData.password = editingAgent.password;
+      }
+      agents[index] = { ...agentData, id: editingAgent.id };
+      showToast('Agent updated successfully', 'success');
+    } else {
+      // Add new agent
       agentData.id = Date.now();
       agents.push(agentData);
       showToast('Agent added successfully', 'success');
@@ -5223,45 +5555,212 @@
     window.open(`https://wa.me/${phone.replace(/[^0-9]/g, '')}?text=${message}`, '_blank');
   }
 
+  // Initialize Call System
+  function initializeCallSystem() {
+    console.log('Call system initialized');
+  }
+
+  // Make IVR Call
   function makeIVRCall(phone, name) {
+    console.log('Making IVR call to:', phone, name);
+    
+    // Validate phone number
+    const cleanedNumber = phone.replace(/[^0-9+]/g, '');
+    if (!cleanedNumber) {
+      showToast('Please enter a valid phone number', 'error');
+      return;
+    }
+
     // Create call record
     currentCall = {
       id: Date.now(),
-      contact: `${name} (${phone})`,
-      phone: phone,
+      contact: `${name} (${cleanedNumber})`,
+      phone: cleanedNumber,
       name: name,
       timestamp: new Date().toISOString(),
       type: 'outgoing',
-      status: 'connected',
+      status: 'connecting',
       user: currentUser.username,
-      duration: 0
+      duration: 0,
+      notes: '',
+      disposition: '',
+      recording: false,
+      muted: false,
+      onHold: false
     };
 
     // Show call modal
     document.getElementById('callingNumber').textContent = currentCall.contact;
     document.getElementById('callModal').classList.add('active');
-
-    // Start call timer
-    callStartTime = Date.now();
-    callTimer = setInterval(updateCallDuration, 1000);
+    document.getElementById('callStatus').innerHTML = '<span class="status-badge status-new">Connecting...</span>';
+    
+    // Reset call controls
+    resetCallControls();
+    
+    // Set call animation to connecting
+    const callAnimation = document.getElementById('callAnimation');
+    callAnimation.className = 'call-animation connecting mx-auto mb-3 flex items-center justify-center';
 
     showToast(`Initiating IVR call to ${name}...`, 'success');
+
+    // Simulate call connection after 2 seconds
+    setTimeout(() => {
+      if (currentCall) {
+        currentCall.status = 'connected';
+        document.getElementById('callStatus').innerHTML = '<span class="status-badge status-approved">Connected</span>';
+        callAnimation.className = 'call-animation connected mx-auto mb-3 flex items-center justify-center';
+        
+        // Start call timer
+        callStartTime = Date.now();
+        callTimer = setInterval(updateCallDuration, 1000);
+        
+        showToast('Call connected successfully', 'success');
+      }
+    }, 2000);
   }
 
+  // Update Call Duration
   function updateCallDuration() {
-    const elapsed = Math.floor((Date.now() - callStartTime) / 1000);
-    currentCall.duration = elapsed;
-    document.getElementById('callDuration').textContent = formatCallDuration(elapsed);
+    if (currentCall && callStartTime) {
+      const elapsed = Math.floor((Date.now() - callStartTime) / 1000);
+      currentCall.duration = elapsed;
+      document.getElementById('callDuration').textContent = formatCallDuration(elapsed);
+    }
   }
 
+  // Toggle Mute Call
+  function toggleMuteCall() {
+    if (!currentCall) return;
+    
+    isCallMuted = !isCallMuted;
+    currentCall.muted = isCallMuted;
+    
+    const muteBtn = document.getElementById('muteBtn');
+    if (isCallMuted) {
+      muteBtn.innerHTML = '<i class="fas fa-microphone-slash mr-2"></i>Unmute';
+      muteBtn.classList.add('btn-muted');
+      showToast('Call muted', 'warning');
+    } else {
+      muteBtn.innerHTML = '<i class="fas fa-microphone mr-2"></i>Mute';
+      muteBtn.classList.remove('btn-muted');
+      showToast('Call unmuted', 'success');
+    }
+  }
+
+  // Toggle Hold Call
+  function toggleHoldCall() {
+    if (!currentCall) return;
+    
+    isCallOnHold = !isCallOnHold;
+    currentCall.onHold = isCallOnHold;
+    
+    const holdBtn = document.getElementById('holdBtn');
+    const callAnimation = document.getElementById('callAnimation');
+    
+    if (isCallOnHold) {
+      holdBtn.innerHTML = '<i class="fas fa-play mr-2"></i>Resume';
+      holdBtn.classList.add('btn-hold');
+      callAnimation.className = 'call-animation hold mx-auto mb-3 flex items-center justify-center';
+      document.getElementById('callStatus').innerHTML = '<span class="status-badge status-pending">On Hold</span>';
+      showToast('Call put on hold', 'warning');
+    } else {
+      holdBtn.innerHTML = '<i class="fas fa-pause mr-2"></i>Hold';
+      holdBtn.classList.remove('btn-hold');
+      callAnimation.className = 'call-animation connected mx-auto mb-3 flex items-center justify-center';
+      document.getElementById('callStatus').innerHTML = '<span class="status-badge status-approved">Connected</span>';
+      showToast('Call resumed', 'success');
+    }
+  }
+
+  // Toggle Record Call
+  function toggleRecordCall() {
+    if (!currentCall) return;
+    
+    isRecording = !isRecording;
+    currentCall.recording = isRecording;
+    
+    const recordBtn = document.getElementById('recordBtn');
+    const recordText = document.getElementById('recordText');
+    const callAnimation = document.getElementById('callAnimation');
+    
+    if (isRecording) {
+      recordText.textContent = 'Stop Recording';
+      recordBtn.classList.add('btn-recording');
+      callAnimation.className = 'call-animation recording mx-auto mb-3 flex items-center justify-center';
+      showToast('Call recording started', 'success');
+    } else {
+      recordText.textContent = 'Record Call';
+      recordBtn.classList.remove('btn-recording');
+      callAnimation.className = 'call-animation connected mx-auto mb-3 flex items-center justify-center';
+      showToast('Call recording stopped', 'success');
+    }
+  }
+
+  // Transfer Call
+  function transferCall() {
+    if (!currentCall) return;
+    
+    // Simulate transfer to available agents
+    const availableAgents = agents.filter(agent => 
+      agent.status === 'active' && agent.username !== currentUser.username
+    );
+    
+    if (availableAgents.length > 0) {
+      const randomAgent = availableAgents[Math.floor(Math.random() * availableAgents.length)];
+      showToast(`Call transferred to ${randomAgent.name}`, 'success');
+      currentCall.transferredTo = randomAgent.username;
+    } else {
+      showToast('No available agents for transfer', 'warning');
+    }
+  }
+
+  // Schedule Callback
+  function scheduleCallback() {
+    if (!currentCall) {
+      showToast('No active call to schedule callback', 'warning');
+      return;
+    }
+    
+    // Set default callback time to 1 hour from now
+    const now = new Date();
+    now.setHours(now.getHours() + 1);
+    document.getElementById('callbackDateTime').value = now.toISOString().slice(0, 16);
+    
+    document.getElementById('callbackModal').classList.add('active');
+  }
+
+  // Close Callback Modal
+  function closeCallbackModal() {
+    document.getElementById('callbackModal').classList.remove('active');
+  }
+
+  // Send SMS
+  function sendSMS() {
+    if (!currentCall) {
+      showToast('No active call to send SMS', 'warning');
+      return;
+    }
+    
+    const message = `Hi ${currentCall.name}, thank you for speaking with us regarding your loan application. We'll get back to you shortly. - Loan Leads CRM`;
+    
+    // Simulate SMS sending
+    showToast(`SMS prepared for ${currentCall.phone}`, 'success');
+    console.log('SMS to send:', message);
+    
+    // In real implementation, integrate with SMS API here
+  }
+
+  // End Call
   function endCall() {
     if (callTimer) {
       clearInterval(callTimer);
       callTimer = null;
     }
 
-    // Update call record
+    // Save call notes and disposition
     if (currentCall) {
+      currentCall.notes = document.getElementById('callNotes').value;
+      currentCall.disposition = document.getElementById('callDisposition').value;
       currentCall.status = 'completed';
       currentCall.endTime = new Date().toISOString();
 
@@ -5269,25 +5768,97 @@
       callHistory.push(currentCall);
       localStorage.setItem('crm_callHistory', JSON.stringify(callHistory));
 
+      showToast(`Call ended. Duration: ${formatCallDuration(currentCall.duration)}`, 'success');
+      
+      // Reset current call
       currentCall = null;
     }
 
-    document.getElementById('callModal').classList.remove('active');
-    document.getElementById('callDuration').textContent = '00:00';
-    showToast('Call ended', 'success');
+    // Close call modal
+    closeCallModal();
   }
 
-  function transferCall() {
-    if (currentCall) {
-      currentCall.status = 'transferred';
-      showToast('Call transferred to senior agent', 'success');
+  // Close Call Modal
+  function closeCallModal() {
+    document.getElementById('callModal').classList.remove('active');
+    document.getElementById('callDuration').textContent = '00:00';
+    document.getElementById('callNotes').value = '';
+    document.getElementById('callDisposition').value = '';
+    
+    // Reset call state
+    resetCallState();
+  }
+
+  // Reset Call Controls
+  function resetCallControls() {
+    const muteBtn = document.getElementById('muteBtn');
+    const holdBtn = document.getElementById('holdBtn');
+    const recordBtn = document.getElementById('recordBtn');
+    const recordText = document.getElementById('recordText');
+    
+    muteBtn.innerHTML = '<i class="fas fa-microphone mr-2"></i>Mute';
+    muteBtn.classList.remove('btn-muted');
+    
+    holdBtn.innerHTML = '<i class="fas fa-pause mr-2"></i>Hold';
+    holdBtn.classList.remove('btn-hold');
+    
+    recordText.textContent = 'Record Call';
+    recordBtn.classList.remove('btn-recording');
+  }
+
+  // Reset Call State
+  function resetCallState() {
+    isCallMuted = false;
+    isCallOnHold = false;
+    isRecording = false;
+    callStartTime = null;
+    
+    if (callTimer) {
+      clearInterval(callTimer);
+      callTimer = null;
     }
   }
 
-  function recordCall() {
+  // Schedule Callback from Form
+  function scheduleCallbackFromForm(e) {
+    if (e) e.preventDefault();
+    
+    const callbackDateTime = document.getElementById('callbackDateTime').value;
+    const priority = document.getElementById('callbackPriority').value;
+    const notes = document.getElementById('callbackNotes').value;
+
+    if (!callbackDateTime) {
+      showToast('Please select callback date and time', 'error');
+      return;
+    }
+
     if (currentCall) {
-      currentCall.recorded = true;
-      showToast('Call recording started', 'success');
+      const callbackTask = {
+        id: Date.now(),
+        title: `Callback: ${currentCall.name}`,
+        description: `Scheduled callback for ${currentCall.contact}. Notes: ${notes}`,
+        dueDate: new Date(callbackDateTime).toISOString(),
+        priority: priority,
+        assignedTo: currentUser.username,
+        status: 'pending',
+        reminder: 30,
+        createdBy: currentUser.username,
+        type: 'callback',
+        phone: currentCall.phone
+      };
+
+      tasks.push(callbackTask);
+      localStorage.setItem('crm_tasks', JSON.stringify(tasks));
+      
+      showToast('Callback scheduled successfully', 'success');
+      closeCallbackModal();
+      
+      // Refresh tasks if on tasks page
+      if (!document.getElementById('tasksPage').classList.contains('hidden')) {
+        loadTasks();
+      }
+    } else {
+      showToast('No call information available', 'error');
     }
   }
 
@@ -5410,144 +5981,144 @@
   }
 
  // Fixed partnership member functions
-function addPartnershipMember() {
-  if (partnershipMemberCount < maxPartnershipMembers) {
-    partnershipMemberCount++;
-    const select = document.getElementById('partnershipMemberCount');
-    if (select) {
-      select.value = partnershipMemberCount;
+  function addPartnershipMember() {
+    if (partnershipMemberCount < maxPartnershipMembers) {
+      partnershipMemberCount++;
+      const select = document.getElementById('partnershipMemberCount');
+      if (select) {
+        select.value = partnershipMemberCount;
+      }
+      renderPartnershipMembers();
+      showToast(`Added partner ${partnershipMemberCount}`, 'success');
+    } else {
+      showToast(`Maximum ${maxPartnershipMembers} partners allowed`, 'warning');
     }
-    renderPartnershipMembers();
-    showToast(`Added partner ${partnershipMemberCount}`, 'success');
-  } else {
-    showToast(`Maximum ${maxPartnershipMembers} partners allowed`, 'warning');
   }
-}
 
-function removePartnershipMember() {
-  if (partnershipMemberCount > minPartnershipMembers) {
-    partnershipMemberCount--;
-    const select = document.getElementById('partnershipMemberCount');
-    if (select) {
-      select.value = partnershipMemberCount;
+  function removePartnershipMember() {
+    if (partnershipMemberCount > minPartnershipMembers) {
+      partnershipMemberCount--;
+      const select = document.getElementById('partnershipMemberCount');
+      if (select) {
+        select.value = partnershipMemberCount;
+      }
+      renderPartnershipMembers();
+      showToast(`Removed partner`, 'success');
+    } else {
+      showToast(`Minimum ${minPartnershipMembers} partners required`, 'warning');
     }
-    renderPartnershipMembers();
-    showToast(`Removed partner`, 'success');
-  } else {
-    showToast(`Minimum ${minPartnershipMembers} partners required`, 'warning');
   }
-}
 
-function removeSpecificPartner(partnerNumber) {
-  if (partnershipMemberCount > minPartnershipMembers) {
-    partnershipMemberCount--;
-    const select = document.getElementById('partnershipMemberCount');
-    if (select) {
-      select.value = partnershipMemberCount;
+  function removeSpecificPartner(partnerNumber) {
+    if (partnershipMemberCount > minPartnershipMembers) {
+      partnershipMemberCount--;
+      const select = document.getElementById('partnershipMemberCount');
+      if (select) {
+        select.value = partnershipMemberCount;
+      }
+      renderPartnershipMembers();
+      showToast(`Partner ${partnerNumber} removed`, 'success');
+    } else {
+      showToast(`Minimum ${minPartnershipMembers} partners required`, 'warning');
     }
-    renderPartnershipMembers();
-    showToast(`Partner ${partnerNumber} removed`, 'success');
-  } else {
-    showToast(`Minimum ${minPartnershipMembers} partners required`, 'warning');
-  }
-}
-
-function renderPartnershipMembers() {
-  const container = document.getElementById('partnershipMembersContainer');
-  if (!container) {
-    console.error('Partnership members container not found');
-    return;
   }
 
-  console.log(`Rendering ${partnershipMemberCount} partnership members`);
-  container.innerHTML = '';
+  function renderPartnershipMembers() {
+    const container = document.getElementById('partnershipMembersContainer');
+    if (!container) {
+      console.error('Partnership members container not found');
+      return;
+    }
 
-  for (let i = 1; i <= partnershipMemberCount; i++) {
-    const memberSection = document.createElement('div');
-    memberSection.className = 'partnership-member-section';
-    memberSection.innerHTML = `
-      <div class="partnership-member-header">
-        <span class="member-number">Partner ${i} ${i === 1 ? '(Managing Partner)' : ''}</span>
-        ${i > minPartnershipMembers ? `
-          <button type="button" onclick="removeSpecificPartner(${i})" class="remove-member-btn">
-            <i class="fas fa-times mr-1"></i>Remove
-          </button>
-        ` : ''}
-      </div>
-      
-      <div class="member-grid">
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Full Name *</label>
-          <input type="text" class="form-input" placeholder="Enter partner's full name" required>
-        </div>
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Contact Number</label>
-          <input type="tel" class="form-input" placeholder="+91XXXXXXXXXX">
-        </div>
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
-          <input type="email" class="form-input" placeholder="partner${i}@email.com">
-        </div>
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Ownership Percentage</label>
-          <input type="number" class="form-input" placeholder="%" min="0" max="100">
-        </div>
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Designation</label>
-          <input type="text" class="form-input" placeholder="Partner/Director" value="${i === 1 ? 'Managing Partner' : 'Partner'}">
-        </div>
-      </div>
+    console.log(`Rendering ${partnershipMemberCount} partnership members`);
+    container.innerHTML = '';
 
-      <div class="member-document-section">
-        <h6 class="font-medium text-gray-900 mb-3">KYC Documents - Partner ${i}</h6>
-        <div class="space-y-3">
-          <div class="document-item">
-            <div class="document-info">
-              <div class="document-name">Aadhaar Card</div>
-              <div class="document-status">Required for identity verification</div>
-            </div>
-            <div class="document-actions">
-              <span class="status-badge status-pending">Pending</span>
-              <input type="file" class="hidden" id="partner${i}AadhaarUpload" accept=".pdf,.jpg,.jpeg,.png">
-              <button onclick="document.getElementById('partner${i}AadhaarUpload').click()" class="upload-btn">
-                <i class="fas fa-upload mr-1"></i>Upload
-              </button>
-            </div>
+    for (let i = 1; i <= partnershipMemberCount; i++) {
+      const memberSection = document.createElement('div');
+      memberSection.className = 'partnership-member-section';
+      memberSection.innerHTML = `
+        <div class="partnership-member-header">
+          <span class="member-number">Partner ${i} ${i === 1 ? '(Managing Partner)' : ''}</span>
+          ${i > minPartnershipMembers ? `
+            <button type="button" onclick="removeSpecificPartner(${i})" class="remove-member-btn">
+              <i class="fas fa-times mr-1"></i>Remove
+            </button>
+          ` : ''}
+        </div>
+        
+        <div class="member-grid">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Full Name *</label>
+            <input type="text" class="form-input" placeholder="Enter partner's full name" required>
           </div>
-          
-          <div class="document-item">
-            <div class="document-info">
-              <div class="document-name">PAN Card</div>
-              <div class="document-status">Required for tax identification</div>
-            </div>
-            <div class="document-actions">
-              <span class="status-badge status-pending">Pending</span>
-              <input type="file" class="hidden" id="partner${i}PanUpload" accept=".pdf,.jpg,.jpeg,.png">
-              <button onclick="document.getElementById('partner${i}PanUpload').click()" class="upload-btn">
-                <i class="fas fa-upload mr-1"></i>Upload
-              </button>
-            </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Contact Number</label>
+            <input type="tel" class="form-input" placeholder="+91XXXXXXXXXX">
           </div>
-          
-          <div class="document-item">
-            <div class="document-info">
-              <div class="document-name">Passport-size Photo</div>
-              <div class="document-status">Recent photograph</div>
-            </div>
-            <div class="document-actions">
-              <span class="status-badge status-pending">Pending</span>
-              <input type="file" class="hidden" id="partner${i}PhotoUpload" accept=".jpg,.jpeg,.png">
-              <button onclick="document.getElementById('partner${i}PhotoUpload').click()" class="upload-btn">
-                <i class="fas fa-upload mr-1"></i>Upload
-              </button>
-            </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+            <input type="email" class="form-input" placeholder="partner${i}@email.com">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Ownership Percentage</label>
+            <input type="number" class="form-input" placeholder="%" min="0" max="100">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Designation</label>
+            <input type="text" class="form-input" placeholder="Partner/Director" value="${i === 1 ? 'Managing Partner' : 'Partner'}">
           </div>
         </div>
-      </div>
-    `;
-    container.appendChild(memberSection);
+
+        <div class="member-document-section">
+          <h6 class="font-medium text-gray-900 mb-3">KYC Documents - Partner ${i}</h6>
+          <div class="space-y-3">
+            <div class="document-item">
+              <div class="document-info">
+                <div class="document-name">Aadhaar Card</div>
+                <div class="document-status">Required for identity verification</div>
+              </div>
+              <div class="document-actions">
+                <span class="status-badge status-pending">Pending</span>
+                <input type="file" class="hidden" id="partner${i}AadhaarUpload" accept=".pdf,.jpg,.jpeg,.png">
+                <button onclick="document.getElementById('partner${i}AadhaarUpload').click()" class="upload-btn">
+                  <i class="fas fa-upload mr-1"></i>Upload
+                </button>
+              </div>
+            </div>
+            
+            <div class="document-item">
+              <div class="document-info">
+                <div class="document-name">PAN Card</div>
+                <div class="document-status">Required for tax identification</div>
+              </div>
+              <div class="document-actions">
+                <span class="status-badge status-pending">Pending</span>
+                <input type="file" class="hidden" id="partner${i}PanUpload" accept=".pdf,.jpg,.jpeg,.png">
+                <button onclick="document.getElementById('partner${i}PanUpload').click()" class="upload-btn">
+                  <i class="fas fa-upload mr-1"></i>Upload
+                </button>
+              </div>
+            </div>
+            
+            <div class="document-item">
+              <div class="document-info">
+                <div class="document-name">Passport-size Photo</div>
+                <div class="document-status">Recent photograph</div>
+              </div>
+              <div class="document-actions">
+                <span class="status-badge status-pending">Pending</span>
+                <input type="file" class="hidden" id="partner${i}PhotoUpload" accept=".jpg,.jpeg,.png">
+                <button onclick="document.getElementById('partner${i}PhotoUpload').click()" class="upload-btn">
+                  <i class="fas fa-upload mr-1"></i>Upload
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+      container.appendChild(memberSection);
+    }
   }
-}
 
   // Fixed director member functions
   function addDirectorMember() {
@@ -5688,7 +6259,6 @@ function renderPartnershipMembers() {
       container.appendChild(memberSection);
     }
   }
-
 </script>
 </body>
 </html>
