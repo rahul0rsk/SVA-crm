@@ -1093,6 +1093,7 @@
     <option value="follow-up">Follow up</option>
     <option value="ask-executive">Ask Executive</option>
     <option value="no-requirement">No Requirement</option>
+    <option value="not-interested">Not Interested</option>
     <option value="number-invalid">Number Invalid</option>
   </select>
 </div>
@@ -7083,7 +7084,451 @@ function loadPageData(page) {
       break;
   }
 }
+// Update the tasks page to be called "Call Backs"
+function navigateToPage(page) {
+  // Hide all pages
+  document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
 
+  // Show selected page
+  document.getElementById(page + 'Page').classList.remove('hidden');
+
+  // Update page title - Change "Task Management" to "Call Backs"
+  const titles = {
+    dashboard: 'Dashboard',
+    leads: 'Leads Management',
+    tasks: 'Call Backs', // Changed from 'Task Management'
+    callHistory: 'Call History',
+    files: 'File Management',
+    admin: 'Admin Panel',
+    reports: 'Reports',
+    profile: 'My Profile'
+  };
+  document.getElementById('pageTitle').textContent = titles[page];
+
+  // Update active sidebar link
+  document.querySelectorAll('.sidebar-link').forEach(link => {
+    link.classList.remove('active');
+    if (link.dataset.page === page) {
+      link.classList.add('active');
+    }
+  });
+
+  // Update user info in sidebar
+  updateSidebarUserInfo();
+
+  // Close mobile menu
+  closeMobileSidebar();
+
+  // Load page-specific data
+  loadPageData(page);
+}
+
+// Update sidebar text for tasks
+function updateSidebarText() {
+  const tasksLink = document.querySelector('[data-page="tasks"]');
+  if (tasksLink) {
+    tasksLink.innerHTML = `
+      <i class="fas fa-phone-alt w-5 mr-3"></i>
+      Call Backs
+      <span id="taskNotificationBadge" class="notification-badge hidden">0</span>
+    `;
+  }
+}
+
+// Call this function after login
+function showMainApp() {
+  document.getElementById('loginPage').classList.add('hidden');
+  document.getElementById('mainApp').classList.remove('hidden');
+
+  // Update user info
+  document.getElementById('userName').textContent = currentUser.name;
+  document.getElementById('userRole').textContent = currentUser.role;
+  document.getElementById('userRole').className = `status-badge ${currentUser.role === 'admin' ? 'status-approved' : 'status-new'}`;
+
+  // Update sidebar
+  updateSidebarUserInfo();
+  updateSidebarText(); // Update sidebar text
+  toggleAdminSection();
+
+  // Load dashboard
+  navigateToPage('dashboard');
+}
+
+// Update the loadTasksPage function with new filters
+function loadTasksPage() {
+  const tasksPage = document.getElementById('tasksPage');
+  if (tasksPage) {
+    // Update page header
+    const pageHeader = tasksPage.querySelector('h3');
+    if (pageHeader) {
+      pageHeader.textContent = 'Call Backs Management';
+    }
+
+    // Update filter buttons
+    const filterContainer = tasksPage.querySelector('.mb-6');
+    if (filterContainer) {
+      filterContainer.innerHTML = `
+        <div class="mb-6 flex flex-wrap gap-3">
+          <button onclick="filterCallBacks('all')" class="btn-secondary">All Call Backs</button>
+          <button onclick="filterCallBacks('today')" class="btn-secondary">Today's Follow-ups</button>
+          <button onclick="filterCallBacks('tomorrow')" class="btn-secondary">Tomorrow's Follow-ups</button>
+          <button onclick="filterCallBacks('completed')" class="btn-secondary">Completed</button>
+          <button onclick="filterCallBacks('overdue')" class="btn-secondary">Overdue</button>
+        </div>
+      `;
+    }
+    loadCallBacks();
+  }
+}
+
+// Replace loadTasks with loadCallBacks
+function loadCallBacks() {
+  const tasksList = document.getElementById('tasksList');
+  const userTasks = currentUser.role === 'admin'
+    ? tasks
+    : tasks.filter(t => t.assignedTo === currentUser.username || t.assignedTo === 'all');
+
+  if (userTasks.length === 0) {
+    tasksList.innerHTML = '<p class="text-gray-500 text-center py-8">No call backs found</p>';
+    return;
+  }
+
+  tasksList.innerHTML = userTasks.map(task => {
+    const isOverdue = new Date(task.dueDate) < new Date() && task.status === 'pending';
+    const statusClass = task.status === 'completed' ? 'status-completed' :
+      isOverdue ? 'status-rejected' : 'status-pending';
+
+    // Calculate if it's today or tomorrow
+    const taskDate = new Date(task.dueDate);
+    const today = new Date();
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    
+    let dateBadge = '';
+    if (task.status !== 'completed') {
+      if (isSameDay(taskDate, today)) {
+        dateBadge = '<span class="status-badge status-new ml-2">Today</span>';
+      } else if (isSameDay(taskDate, tomorrow)) {
+        dateBadge = '<span class="status-badge status-pending ml-2">Tomorrow</span>';
+      }
+    }
+
+    // Add call-related info if available
+    const callInfo = task.relatedCall ? `<div class="text-xs text-blue-600 mt-1"><i class="fas fa-phone mr-1"></i>Call Related</div>` : '';
+    const customerInfo = task.customerPhone ? `<div class="text-xs text-gray-500">📞 ${task.customerPhone}</div>` : '';
+
+    return `
+      <div class="border rounded-lg p-4 hover:bg-gray-50">
+        <div class="flex justify-between items-start">
+          <div class="flex-1">
+            <div class="flex items-center gap-3 mb-2">
+              <h4 class="font-medium text-gray-900">${task.title}</h4>
+              <span class="status-badge ${statusClass}">${task.status}</span>
+              ${dateBadge}
+              ${task.type ? `<span class="task-priority priority-${task.priority}">${task.type}</span>` : ''}
+              ${isOverdue ? '<span class="status-badge status-rejected">Overdue</span>' : ''}
+            </div>
+            <p class="text-sm text-gray-600 mb-3">${task.description}</p>
+            ${customerInfo}
+            ${callInfo}
+            <div class="flex items-center gap-4 text-sm text-gray-500 mt-2">
+              <span class="task-priority priority-${task.priority}">${task.priority}</span>
+              <span><i class="fas fa-clock mr-1"></i>${formatTaskDateTime(task.dueDate)}</span>
+              <span><i class="fas fa-user mr-1"></i>${task.assignedTo}</span>
+            </div>
+          </div>
+          <div class="flex gap-2">
+            ${task.status !== 'completed' ? `
+              <button onclick="completeTask(${task.id})" class="action-btn btn-secondary" title="Complete">
+                <i class="fas fa-check"></i>
+              </button>
+            ` : ''}
+            ${task.customerPhone ? `
+              <button onclick="makeIVRCall('${task.customerPhone}', '${task.customerName || 'Customer'}')" class="action-btn btn-call text-white" title="Call">
+                <i class="fas fa-phone"></i>
+              </button>
+            ` : ''}
+            <button onclick="editTask(${task.id})" class="action-btn btn-secondary" title="Edit">
+              <i class="fas fa-edit"></i>
+            </button>
+            <button onclick="deleteTask(${task.id})" class="action-btn btn-secondary text-red-600" title="Delete">
+              <i class="fas fa-trash"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+// Helper function to check if two dates are the same day
+function isSameDay(date1, date2) {
+  return date1.getDate() === date2.getDate() &&
+         date1.getMonth() === date2.getMonth() &&
+         date1.getFullYear() === date2.getFullYear();
+}
+
+// Helper function to format task date and time
+function formatTaskDateTime(dateTimeString) {
+  const date = new Date(dateTimeString);
+  const now = new Date();
+  const tomorrow = new Date(now);
+  tomorrow.setDate(tomorrow.getDate() + 1);
+
+  let datePart = '';
+  if (isSameDay(date, now)) {
+    datePart = 'Today';
+  } else if (isSameDay(date, tomorrow)) {
+    datePart = 'Tomorrow';
+  } else {
+    datePart = date.toLocaleDateString();
+  }
+
+  const timePart = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  
+  return `${datePart} at ${timePart}`;
+}
+
+// Replace filterTasks with filterCallBacks
+function filterCallBacks(filter) {
+  const allTasks = document.querySelectorAll('#tasksList > div');
+  const today = new Date();
+  const tomorrow = new Date(today);
+  tomorrow.setDate(tomorrow.getDate() + 1);
+
+  allTasks.forEach(taskEl => {
+    if (filter === 'all') {
+      taskEl.style.display = 'block';
+    } else if (filter === 'today') {
+      const hasTodayBadge = taskEl.querySelector('.status-badge.status-new');
+      taskEl.style.display = hasTodayBadge ? 'block' : 'none';
+    } else if (filter === 'tomorrow') {
+      const hasTomorrowBadge = taskEl.querySelector('.status-badge.status-pending');
+      taskEl.style.display = hasTomorrowBadge ? 'block' : 'none';
+    } else if (filter === 'completed') {
+      const statusText = taskEl.querySelector('.status-badge').textContent.toLowerCase();
+      taskEl.style.display = statusText.includes('completed') ? 'block' : 'none';
+    } else if (filter === 'overdue') {
+      const hasOverdueBadge = taskEl.querySelector('.status-badge.status-rejected');
+      taskEl.style.display = hasOverdueBadge ? 'block' : 'none';
+    }
+  });
+}
+
+// Update the createFollowUpTask function to ensure proper date formatting
+function createFollowUpTask(callData) {
+  const disposition = callData.disposition;
+  const customerName = callData.name;
+  const phone = callData.phone;
+  const remarks = callData.dispositionData?.remarks || '';
+  
+  let taskData = null;
+
+  switch(disposition) {
+    case 'interested':
+      taskData = {
+        title: `Follow up - Interested Customer: ${customerName}`,
+        description: `Customer expressed interest in loan services. Phone: ${phone}. Remarks: ${remarks}`,
+        dueDate: calculateDueDate(1, 10, 0), // Tomorrow at 10:00 AM
+        priority: 'high',
+        type: 'follow-up',
+        category: 'interested'
+      };
+      break;
+
+    case 'callback':
+      const callbackDate = callData.dispositionData?.date || new Date().toISOString().split('T')[0];
+      const callbackTime = callData.dispositionData?.time || '10:00';
+      const [hours, minutes] = callbackTime.split(':');
+      taskData = {
+        title: `Scheduled Callback: ${customerName}`,
+        description: `Callback scheduled. Phone: ${phone}. Remarks: ${remarks}`,
+        dueDate: calculateSpecificDueDate(callbackDate, parseInt(hours), parseInt(minutes)),
+        priority: 'medium',
+        type: 'callback',
+        category: 'callback'
+      };
+      break;
+
+    case 'follow-up':
+      const followupDate = callData.dispositionData?.date || new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+      taskData = {
+        title: `Follow up Required: ${customerName}`,
+        description: `Customer requires follow-up. Phone: ${phone}. Remarks: ${remarks}`,
+        dueDate: calculateSpecificDueDate(followupDate, 10, 0), // 10:00 AM on specified date
+        priority: 'medium',
+        type: 'follow-up',
+        category: 'general'
+      };
+      break;
+
+    case 'ask-executive':
+      taskData = {
+        title: `Executive Attention Required: ${customerName}`,
+        description: `Customer needs executive attention. Phone: ${phone}. Remarks: ${remarks}`,
+        dueDate: calculateDueDate(0, 14, 0), // Today at 2:00 PM
+        priority: 'high',
+        type: 'escalation',
+        category: 'executive'
+      };
+      break;
+
+    case 'not-interested':
+      taskData = {
+        title: `Not Interested - Follow up: ${customerName}`,
+        description: `Customer not interested currently. Consider follow-up in future. Phone: ${phone}. Remarks: ${remarks}`,
+        dueDate: calculateDueDate(30, 10, 0), // 30 days at 10:00 AM
+        priority: 'low',
+        type: 'follow-up',
+        category: 'not-interested'
+      };
+      break;
+
+    case 'number-invalid':
+      taskData = {
+        title: `Invalid Number - Verification Needed: ${customerName}`,
+        description: `Phone number marked as invalid. Requires verification. Original number: ${phone}. Remarks: ${remarks}`,
+        dueDate: calculateDueDate(1, 10, 0),
+        priority: 'medium',
+        type: 'verification',
+        category: 'data-quality'
+      };
+      break;
+
+    case 'no-requirement':
+      // No task created for no requirement
+      showToast('Call completed - No follow-up required', 'success');
+      return;
+  }
+
+  if (taskData) {
+    // Create the task
+    const task = {
+      id: Date.now(),
+      ...taskData,
+      assignedTo: currentUser.username,
+      status: 'pending',
+      reminder: 60, // 1 hour reminder
+      createdBy: currentUser.username,
+      createdDate: new Date().toISOString(),
+      relatedCall: callData.id,
+      customerPhone: phone,
+      customerName: customerName
+    };
+
+    tasks.push(task);
+    localStorage.setItem('crm_tasks', JSON.stringify(tasks));
+
+    // Show appropriate message
+    showToast(`Call back scheduled: ${taskData.title}`, 'success');
+    
+    // Refresh call backs if on call backs page
+    if (!document.getElementById('tasksPage').classList.contains('hidden')) {
+      loadCallBacks();
+    }
+    
+    // Update task notification badge
+    updateTaskNotificationBadge();
+  }
+}
+
+// Helper function to calculate due date with specific time
+function calculateDueDate(daysFromNow, hours = 10, minutes = 0) {
+  const dueDate = new Date();
+  dueDate.setDate(dueDate.getDate() + daysFromNow);
+  dueDate.setHours(hours, minutes, 0, 0);
+  return dueDate.toISOString();
+}
+
+// Helper function to calculate due date for specific date
+function calculateSpecificDueDate(dateString, hours = 10, minutes = 0) {
+  const dueDate = new Date(dateString);
+  dueDate.setHours(hours, minutes, 0, 0);
+  return dueDate.toISOString();
+}
+
+// Update the dashboard to show "Upcoming Call Backs" instead of "Upcoming Tasks"
+function loadDashboardData() {
+  // Calculate metrics
+  const totalLeads = leads.length;
+  const activeLoans = leads.filter(l => l.status === 'approved').length;
+  const pendingCallBacks = tasks.filter(t => t.status === 'pending').length;
+  const totalAmount = leads.reduce((sum, l) => sum + l.loanAmount, 0);
+
+  // Update metrics
+  document.getElementById('totalLeads').textContent = totalLeads;
+  document.getElementById('activeLoans').textContent = activeLoans;
+  document.getElementById('pendingTasks').textContent = pendingCallBacks; // This now shows pending call backs
+  document.getElementById('totalAmount').textContent = '₹' + totalAmount.toLocaleString('en-IN');
+
+  // Load recent leads (last 5)
+  const recentLeads = [...leads].sort((a, b) => new Date(b.createdDate) - new Date(a.createdDate)).slice(0, 5);
+  renderLeadsTable('recentLeadsTable', recentLeads, false);
+
+  // Load upcoming call backs
+  loadUpcomingCallBacks();
+}
+
+// Update loadUpcomingTasks to loadUpcomingCallBacks
+function loadUpcomingCallBacks() {
+  const upcomingTasksList = document.getElementById('upcomingTasksList');
+  const userTasks = currentUser.role === 'admin'
+    ? tasks
+    : tasks.filter(t => t.assignedTo === currentUser.username || t.assignedTo === 'all');
+
+  // Get today's and tomorrow's call backs
+  const today = new Date();
+  const tomorrow = new Date(today);
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  
+  const upcomingCallBacks = userTasks
+    .filter(t => t.status === 'pending' && 
+          (isSameDay(new Date(t.dueDate), today) || isSameDay(new Date(t.dueDate), tomorrow)))
+    .sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate))
+    .slice(0, 5);
+
+  // Update the section title
+  const sectionTitle = document.querySelector('#upcomingTasksList').closest('.bg-white').querySelector('h3');
+  if (sectionTitle) {
+    sectionTitle.textContent = 'Upcoming Call Backs';
+  }
+
+  if (upcomingCallBacks.length === 0) {
+    upcomingTasksList.innerHTML = '<p class="text-gray-500 text-center py-4">No upcoming call backs</p>';
+    return;
+  }
+
+  upcomingTasksList.innerHTML = upcomingCallBacks.map(task => {
+    const taskDate = new Date(task.dueDate);
+    const dateBadge = isSameDay(taskDate, new Date()) ? 
+      '<span class="status-badge status-new ml-2">Today</span>' : 
+      '<span class="status-badge status-pending ml-2">Tomorrow</span>';
+
+    return `
+      <div class="border rounded-lg p-4 hover:bg-gray-50">
+        <div class="flex justify-between items-start">
+          <div class="flex-1">
+            <div class="flex items-center gap-3 mb-2">
+              <h4 class="font-medium text-gray-900">${task.title}</h4>
+              ${dateBadge}
+            </div>
+            <p class="text-sm text-gray-600 mt-1">${task.description}</p>
+            <div class="flex items-center gap-3 mt-2">
+              <span class="task-priority priority-${task.priority}">${task.priority}</span>
+              <span class="text-xs text-gray-500">
+                <i class="fas fa-clock mr-1"></i>
+                ${formatTaskDateTime(task.dueDate)}
+              </span>
+            </div>
+          </div>
+          <button onclick="completeTask(${task.id})" class="btn-secondary text-sm">
+            <i class="fas fa-check mr-1"></i>Complete
+          </button>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
 </script>
 </body>
 </html>
