@@ -120,7 +120,7 @@
       }
 
       .main-content.sidebar-open {
-          margin-left: 0;
+          margin-left: 280px;
       }
 
       .sidebar-link.active {
@@ -557,17 +557,52 @@
           justify-content: center;
       }
 
-      .task-priority {
+     /* Task manager styles */
+      .task-item {
+          border: 1px solid #e5e7eb;
+          border-radius: 0.5rem;
+          padding: 1rem;
+          margin-bottom: 1rem;
+          background: white;
+      }
+      
+      .task-item.completed {
+          opacity: 0.7;
+          background: #f8fafc;
+      }
+      
+      .task-item.completed .task-title {
+          text-decoration: line-through;
+      }
+      
+      .task-item-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 0.5rem;
+      }
+      
+      .task-title {
+          font-weight: 600;
+          color: #1f2937;
+      }
+      
+      .task-actions {
+          display: flex;
+          gap: 0.5rem;
+      }
+      
+      .task-priority-badge {
           padding: 0.25rem 0.5rem;
           border-radius: 0.25rem;
           font-size: 0.75rem;
           font-weight: 600;
       }
-
+      
       .priority-high { background-color: #fee2e2; color: #991b1b; }
       .priority-medium { background-color: #fef3c7; color: #92400e; }
       .priority-low { background-color: #dbeafe; color: #1e40af; }
-
+      
       .file-upload-area {
           border: 2px dashed #d1d5db;
           border-radius: 0.5rem;
@@ -688,11 +723,11 @@
       .btn-email {
           background: #3b82f6;
           color: white;
+          border: none;
           padding: 0.5rem 1rem;
           border-radius: 0.5rem;
           font-weight: 500;
           transition: all 0.2s;
-          border: none;
           cursor: pointer;
       }
 
@@ -1035,17 +1070,15 @@
       .loan-type-section {
           display: none;
       }
-      .loan-type-section {
-    display: none;
-}
-/* Add to existing CSS */
-.hidden {
-  display: none !important;
-}
 
-.space-y-3 > * + * {
-  margin-top: 0.75rem;
-}
+      /* Add to existing CSS */
+      .hidden {
+        display: none !important;
+      }
+
+      .space-y-3 > * + * {
+        margin-top: 0.75rem;
+      }
   </style>
 </head>
 <body class="bg-gray-50">
@@ -1083,7 +1116,7 @@
     <textarea id="callNotes" class="form-input text-sm" rows="2" placeholder="Add notes about the call..."></textarea>
   </div>
 
-  <!-- Call Disposition -->
+<!-- Call Disposition -->
 <div class="mb-4">
   <label class="block text-sm font-medium text-gray-700 mb-2">Call Disposition</label>
   <select id="callDisposition" class="form-input text-sm" onchange="handleDispositionChange()">
@@ -1093,7 +1126,6 @@
     <option value="follow-up">Follow up</option>
     <option value="ask-executive">Ask Executive</option>
     <option value="no-requirement">No Requirement</option>
-    <option value="not-interested">Not Interested</option>
     <option value="number-invalid">Number Invalid</option>
   </select>
 </div>
@@ -1276,68 +1308,82 @@
   </div>
 </div>
 
-<!-- Task Modal -->
-<div id="taskModal" class="modal">
-  <div class="modal-content">
-    <div class="flex justify-between items-center mb-6">
-      <h3 id="taskModalTitle" class="text-xl font-semibold text-gray-900">Add New Task</h3>
-      <button onclick="closeTaskModal()" class="text-gray-400 hover:text-gray-600">
-        <i class="fas fa-times text-xl"></i>
-      </button>
-    </div>
-
-    <form id="taskForm" class="space-y-4">
-      <div>
-        <label class="block text-sm font-medium text-gray-700 mb-1">Call backs</label>
-        <input type="text" id="taskTitle" class="form-input" required>
-      </div>
-
-      <div>
-        <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
-        <textarea id="taskDescription" class="form-input" rows="3"></textarea>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Due Date *</label>
-          <input type="datetime-local" id="taskDueDate" class="form-input" required>
-        </div>
-
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Priority</label>
-          <select id="taskPriority" class="form-input">
-            <option value="low">Low</option>
-            <option value="medium">Medium</option>
-            <option value="high">High</option>
-          </select>
-        </div>
-      </div>
-
-      <div>
-        <label class="block text-sm font-medium text-gray-700 mb-1">Assigned To</label>
-        <select id="taskAssignedTo" class="form-input">
-          <option value="">Select Agent</option>
-        </select>
-      </div>
-
-      <div>
-        <label class="block text-sm font-medium text-gray-700 mb-1">Reminder</label>
-        <select id="taskReminder" class="form-input">
-          <option value="none">No Reminder</option>
-          <option value="15">15 minutes before</option>
-          <option value="30">30 minutes before</option>
-          <option value="60">1 hour before</option>
-          <option value="1440">1 day before</option>
-        </select>
-      </div>
-
-      <div class="flex justify-end space-x-3 pt-4">
-        <button type="button" onclick="closeTaskModal()" class="btn-secondary">Cancel</button>
-        <button type="submit" class="btn-primary">
-          <i class="fas fa-save mr-2"></i>Save Task
+<!-- Task Manager Modal -->
+  <div id="taskModal" class="modal">
+    <div class="modal-content">
+      <div class="flex justify-between items-center mb-6">
+        <h3 id="taskModalTitle" class="text-xl font-semibold text-gray-900">Add New Call Back</h3>
+        <button onclick="closeTaskModal()" class="text-gray-400 hover:text-gray-600">
+          <i class="fas fa-times text-xl"></i>
         </button>
       </div>
-    </form>
+
+      <form id="taskForm" class="space-y-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Call Back Title *</label>
+          <input type="text" id="taskTitle" class="form-input" placeholder="e.g., Follow up on loan application" required>
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+          <textarea id="taskDescription" class="form-input" rows="3" placeholder="Add details about the call back..."></textarea>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Due Date & Time *</label>
+            <input type="datetime-local" id="taskDueDate" class="form-input" required>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Priority</label>
+            <select id="taskPriority" class="form-input">
+              <option value="low">Low</option>
+              <option value="medium" selected>Medium</option>
+              <option value="high">High</option>
+              <option value="urgent">Urgent</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Call Back Type</label>
+            <select id="taskType" class="form-input">
+              <option value="follow-up">Follow-up</option>
+              <option value="callback">Scheduled Callback</option>
+              <option value="reminder">Reminder</option>
+              <option value="application-review">Application Review</option>
+              <option value="document-followup">Document Follow-up</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Reminder</label>
+            <select id="taskReminder" class="form-input">
+              <option value="none">No Reminder</option>
+              <option value="15">15 minutes before</option>
+              <option value="30" selected>30 minutes before</option>
+              <option value="60">1 hour before</option>
+              <option value="1440">1 day before</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Notes Section -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Call Back Notes</label>
+          <textarea id="taskNotes" class="form-input" rows="2" placeholder="Any specific points to discuss..."></textarea>
+        </div>
+
+        <div class="flex justify-end space-x-3 pt-4">
+          <button type="button" onclick="closeTaskModal()" class="btn-secondary">Cancel</button>
+          <button type="submit" class="btn-primary">
+            <i class="fas fa-calendar-plus mr-2"></i>Schedule Call Back
+          </button>
+        </div>
+      </form>
+    </div>
   </div>
 </div>
 
@@ -1351,9 +1397,36 @@
       </button>
     </div>
 
-    <div class="mb-4">
-      <p class="text-sm text-gray-600 mb-2">Client Name: <span id="clientName" class="font-semibold"></span></p>
-      <p class="text-sm text-gray-600">Loan Type: <span id="clientLoanType" class="font-semibold"></span></p>
+    <!-- Client Information Header -->
+    <div class="bg-blue-50 rounded-lg p-4 mb-6">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div>
+          <p class="text-sm text-gray-600">Client Name</p>
+          <p id="clientName" class="font-semibold text-gray-900">-</p>
+        </div>
+        <div>
+          <p class="text-sm text-gray-600">Loan Type</p>
+          <p id="clientLoanType" class="font-semibold text-gray-900">-</p>
+        </div>
+        <div>
+          <p class="text-sm text-gray-600">Application Status</p>
+          <select id="applicationStatus" class="form-input text-sm mt-1" onchange="updateApplicationStatus()">
+            <option value="documents-pending">Documents Pending</option>
+            <option value="under-review">Under Review</option>
+            <option value="approved">Approved</option>
+            <option value="rejected">Rejected</option>
+            <option value="login-complete">Login Complete</option>
+            <option value="not-interested">Not Interested</option>
+            <option value="others">Others</option>
+          </select>
+        </div>
+      </div>
+      
+      <!-- Other Status Details -->
+      <div id="otherStatusDetails" class="mt-3 hidden">
+        <label class="block text-sm font-medium text-gray-700 mb-1">Specify Details</label>
+        <input type="text" id="otherStatusInput" class="form-input text-sm" placeholder="Enter specific details...">
+      </div>
     </div>
 
     <!-- General Information Category -->
@@ -1649,7 +1722,7 @@
             <div class="space-y-4">
               <div class="form-group">
                 <label class="block text-sm font-medium text-gray-700 mb-2">Number of Partners</label>
-                <select id="partnershipMemberCount" class="form-input">
+                <select id="partnershipMemberCount" class="form-input" onchange="updatePartnershipMembers()">
                   <option value="2">2 Partners</option>
                   <option value="3">3 Partners</option>
                   <option value="4">4 Partners</option>
@@ -1885,7 +1958,7 @@
             <div class="space-y-4">
               <div class="form-group">
                 <label class="block text-sm font-medium text-gray-700 mb-2">Number of Directors</label>
-                <select id="directorMemberCount" class="form-input">
+                <select id="directorMemberCount" class="form-input" onchange="updateDirectorMembers()">
                   <option value="2">2 Directors</option>
                   <option value="3">3 Directors</option>
                   <option value="4">4 Directors</option>
@@ -2263,7 +2336,7 @@
         </div>
 
         <div class="document-section">
-          <h5>KYC DOCUMENTS</h5>
+          <h5>Applicant KYC </h5>
           <div class="space-y-3">
             <div class="document-item">
               <div class="document-info">
@@ -2308,6 +2381,67 @@
             </div>
           </div>
         </div>
+         <!-- Co-applicant Documents -->
+          <div class="document-category">
+            <div class="category-header" data-category="private-coapplicant-kyc">
+              <h4>Co-applicant Documents</h4>
+              <i class="fas fa-chevron-down collapse-icon"></i>
+            </div>
+            <div id="private-coapplicant-kyc" class="category-content">
+              <div class="space-y-3">
+                <!-- Aadhaar Card -->
+                <div class="document-item">
+                  <div class="document-info">
+                    <div class="document-name">Aadhaar Card</div>
+                    <div class="document-status">Required for identity verification</div>
+                    <div class="password-field">
+                      <input type="text" id="privateCoapplicantAadhaarPassword" class="password-input" placeholder="Password (if any)">
+                    </div>
+                  </div>
+                  <div class="document-actions">
+                    <span class="status-badge status-pending">Pending</span>
+                    <input type="file" class="hidden file-upload" id="privateCoapplicantAadhaarUpload" accept=".pdf,.jpg,.jpeg,.png">
+                    <button class="upload-btn" data-target="privateCoapplicantAadhaarUpload">
+                      <i class="fas fa-upload mr-1"></i>Upload
+                    </button>
+                  </div>
+                </div>
+
+                <!-- PAN Card -->
+                <div class="document-item">
+                  <div class="document-info">
+                    <div class="document-name">PAN Card</div>
+                    <div class="document-status">Required for tax identification</div>
+                    <div class="password-field">
+                      <input type="text" id="privateCoapplicantPanPassword" class="password-input" placeholder="Password (if any)">
+                    </div>
+                  </div>
+                  <div class="document-actions">
+                    <span class="status-badge status-pending">Pending</span>
+                    <input type="file" class="hidden file-upload" id="privateCoapplicantPanUpload" accept=".pdf,.jpg,.jpeg,.png">
+                    <button class="upload-btn" data-target="privateCoapplicantPanUpload">
+                      <i class="fas fa-upload mr-1"></i>Upload
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Passport-size Photo -->
+                <div class="document-item">
+                  <div class="document-info">
+                    <div class="document-name">Passport-size Photo</div>
+                    <div class="document-status">Recent photograph</div>
+                  </div>
+                  <div class="document-actions">
+                    <span class="status-badge status-pending">Pending</span>
+                    <input type="file" class="hidden file-upload" id="privateCoapplicantPhotoUpload" accept=".jpg,.jpeg,.png">
+                    <button class="upload-btn" data-target="privateCoapplicantPhotoUpload">
+                      <i class="fas fa-upload mr-1"></i>Upload
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
 
         <div class="document-section">
           <h5>INCOME DOCUMENTS</h5>
@@ -2397,6 +2531,7 @@
             <h4>Personal Information</h4>
             <i class="fas fa-chevron-down collapse-icon"></i>
           </div>
+
           <div id="personal-general" class="category-content">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
@@ -2423,9 +2558,20 @@
                 <label class="block text-sm font-medium text-gray-700 mb-1">Loan Duration (months)</label>
                 <input type="number" class="form-input" placeholder="Enter duration">
               </div>
+              <div class="mt-4">
+            <label class="block text-sm font-medium text-gray-700 mb-1">perment address Address</label>
+            <textarea id="generalOfficeAddress" class="form-input" rows="2" placeholder="Permentaddress"></textarea>
+          </div>
+               <div>  
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Loan Type</label>
+                        <select id="personalLoanType" class="form-input" onchange="toggleLoanTypeDocuments()">
+                            <option value="fresh">Fresh Personal Loan</option>
+                            <option value="balance-transfer">Balance Transfer</option>
+                        </select>
+                    </div>
+                </div>
             </div>
           </div>
-        </div>
 
         <div class="document-section">
           <h5>KYC DOCUMENTS</h5>
@@ -2495,25 +2641,6 @@
               <div class="document-info">
                 <div class="document-name">Bank Statement (6 months)</div>
                 <div class="document-status">Last 6 months bank statements</div>
-              </div>
-              <div class="document-actions">
-                <span class="status-badge status-pending">Pending</span>
-                <input type="file" class="hidden" accept=".pdf,.jpg,.jpeg,.png">
-                <button class="upload-btn">
-                  <i class="fas fa-upload mr-1"></i>Upload
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="document-section">
-          <h5>EMPLOYMENT DOCUMENTS</h5>
-          <div class="space-y-3">
-            <div class="document-item">
-              <div class="document-info">
-                <div class="document-name">Employment Certificate</div>
-                <div class="document-status">Proof of employment</div>
               </div>
               <div class="document-actions">
                 <span class="status-badge status-pending">Pending</span>
@@ -2841,37 +2968,121 @@
           </div>
         </div>
       </div>
+      <!-- File Upload Section with Processing Status -->
+    <div class="document-category mb-6">
+      <div class="category-header" onclick="toggleCategory('fileUpload')">
+        <h4>Document Upload & Processing</h4>
+        <i class="fas fa-chevron-down collapse-icon"></i>
+      </div>
+      <div id="fileUpload" class="category-content">
+        <!-- File Upload Area -->
+        <div class="file-upload-area mb-4" id="documentUploadArea" 
+             ondrop="handleDocumentDrop(event)" 
+             ondragover="handleDragOver(event)" 
+             ondragleave="handleDragLeave(event)">
+          <i class="fas fa-cloud-upload-alt text-4xl text-gray-400 mb-3"></i>
+          <p class="text-gray-600 mb-2">Drag and drop documents here or click to browse</p>
+          <p class="text-sm text-gray-500">Supported formats: PDF, JPG, JPEG, PNG (Max 10MB each)</p>
+          <input type="file" id="documentFileInput" class="hidden" multiple 
+                 accept=".pdf,.jpg,.jpeg,.png" onchange="handleDocumentFileSelect(event)">
+        </div>
 
-      <!-- Progress Summary -->
-      <div class="mt-6 p-4 bg-blue-50 rounded-lg">
-        <h4 class="font-medium text-gray-900 mb-2">Document Progress</h4>
-        <div class="flex items-center gap-4">
-          <div class="flex-1">
-            <div class="flex justify-between text-sm text-gray-600 mb-1">
-              <span>Overall Completion</span>
-              <span id="completionPercentage">0%</span>
-            </div>
-            <div class="w-full bg-gray-200 rounded-full h-2">
-              <div id="completionBar" class="bg-blue-600 h-2 rounded-full" style="width: 0%"></div>
-            </div>
+        <!-- Upload Progress -->
+        <div id="uploadProgress" class="hidden mb-4">
+          <div class="flex justify-between text-sm text-gray-600 mb-1">
+            <span>Uploading...</span>
+            <span id="uploadPercentage">0%</span>
           </div>
-          <div class="text-sm text-gray-600">
-            <span id="uploadedCount">0</span> of <span id="totalDocuments">35</span> documents uploaded
+          <div class="w-full bg-gray-200 rounded-full h-2">
+            <div id="uploadProgressBar" class="bg-blue-600 h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
+          </div>
+        </div>
+
+        <!-- Processing Status -->
+        <div id="processingStatus" class="hidden bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-4">
+          <div class="flex items-center">
+            <i class="fas fa-sync-alt animate-spin text-yellow-600 mr-3"></i>
+            <div>
+              <p class="text-sm font-medium text-yellow-800">Processing Documents</p>
+              <p class="text-xs text-yellow-600">Please wait while we process your uploaded documents...</p>
+            </div>
           </div>
         </div>
       </div>
+    </div>
 
-      <div class="flex justify-end space-x-3 pt-6">
+    <!-- Remarks & Notes Section -->
+    <div class="document-category mb-6">
+      <div class="category-header" onclick="toggleCategory('remarks')">
+        <h4>Remarks & Notes</h4>
+        <i class="fas fa-chevron-down collapse-icon"></i>
+      </div>
+      <div id="remarks" class="category-content">
+        <div class="space-y-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Internal Remarks</label>
+            <textarea id="internalRemarks" class="form-input" rows="3" 
+                      placeholder="Add internal remarks for team members..."></textarea>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Customer Communication Notes</label>
+            <textarea id="customerNotes" class="form-input" rows="3" 
+                      placeholder="Record important points from customer communication..."></textarea>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Next Follow-up Action</label>
+            <textarea id="nextAction" class="form-input" rows="2" 
+                      placeholder="What needs to be done next?"></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Application Progress Tracker -->
+    <div class="mb-6">
+      <h4 class="font-medium text-gray-900 mb-3">Application Progress</h4>
+      <div class="flex items-center justify-between mb-2">
+        <div class="flex space-x-4">
+          <div class="flex items-center">
+            <div class="w-3 h-3 bg-blue-500 rounded-full mr-2"></div>
+            <span class="text-sm text-gray-600">Documents Collection</span>
+          </div>
+          <div class="flex items-center">
+            <div class="w-3 h-3 bg-gray-300 rounded-full mr-2"></div>
+            <span class="text-sm text-gray-600">Under Review</span>
+          </div>
+          <div class="flex items-center">
+            <div class="w-3 h-3 bg-gray-300 rounded-full mr-2"></div>
+            <span class="text-sm text-gray-600">Decision</span>
+          </div>
+        </div>
+        <div id="progressStatus" class="text-sm font-medium text-blue-600">Documents Pending</div>
+      </div>
+      <div class="w-full bg-gray-200 rounded-full h-2">
+        <div id="applicationProgressBar" class="bg-blue-600 h-2 rounded-full transition-all duration-500" style="width: 25%"></div>
+      </div>
+    </div>
+
+    <div class="flex justify-between items-center pt-6 border-t">
+      <div class="flex gap-3">
+        <button onclick="generateDocumentReport()" class="btn-secondary">
+          <i class="fas fa-file-pdf mr-2"></i>Generate Report
+        </button>
+        <button onclick="sendDocumentReminder()" class="btn-secondary">
+          <i class="fas fa-bell mr-2"></i>Send Reminder
+        </button>
+      </div>
+      <div class="flex gap-3">
         <button onclick="closeClientDocumentsModal()" class="btn-secondary">Close</button>
-        <button onclick="saveAllDocuments()" class="btn-primary">
-          <i class="fas fa-save mr-2"></i>Save All Documents
+        <button onclick="saveAllClientData()" class="btn-primary">
+          <i class="fas fa-save mr-2"></i>Save All Data
         </button>
       </div>
     </div>
   </div>
 </div>
 
-<!-- Login Page -->
+      <!-- Login Page -->
 <div id="loginPage" class="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
   <div class="w-full max-w-md">
     <div class="text-center mb-8">
@@ -2923,7 +3134,7 @@
 <!-- Main Application -->
 <div id="mainApp" class="hidden">
   <!-- Sidebar -->
-<aside id="sidebar" class="sidebar">
+  <aside id="sidebar" class="sidebar">
   <div class="p-6 border-b border-gray-200">
     <div class="flex items-center justify-between">
       <div class="flex items-center">
@@ -3028,7 +3239,8 @@
 </aside>
 
 <!-- Mobile Overlay -->
-<div id="sidebarOverlay" class="sidebar-overlay"></div>
+  <div id="sidebarOverlay" class="sidebar-overlay"></div>
+  
   <!-- Main Content -->
   <main id="mainContent" class="main-content">
     <!-- Header -->
@@ -3130,7 +3342,6 @@
                 <th>Loan Type</th>
                 <th>Amount</th>
                 <th>Status</th>
-                <th>Date</th>
                 <th>Actions</th>
               </tr>
               </thead>
@@ -3141,41 +3352,87 @@
           </div>
         </div>
 
-        <!-- Upcoming Tasks -->
+        <!-- Upcoming Call Backs -->
         <div class="bg-white rounded-xl shadow-lg p-6">
           <div class="flex justify-between items-center mb-6">
-            <h3 class="text-lg font-semibold text-gray-900">Upcoming Tasks</h3>
+            <h3 class="text-lg font-semibold text-gray-900">Upcoming Call Backs</h3>
             <button onclick="showTaskModal()" class="btn-primary">
-              <i class="fas fa-plus mr-2"></i>Add Task
+              <i class="fas fa-plus mr-2"></i>Add Call Back
             </button>
           </div>
 
           <div id="upcomingTasksList" class="space-y-3">
-            <!-- Tasks will be populated here -->
+            <!-- Call backs will be populated here -->
           </div>
         </div>
       </div>
 
-      <!-- Tasks Page -->
+      <!-- Call Backs Page -->
       <div id="tasksPage" class="page hidden">
         <div class="bg-white rounded-xl shadow-lg p-6">
           <div class="flex justify-between items-center mb-6">
-            <h3 class="text-lg font-semibold text-gray-900">Task Management</h3>
+            <h3 class="text-lg font-semibold text-gray-900">Call Backs Management</h3>
             <button onclick="showTaskModal()" class="btn-primary">
-              <i class="fas fa-plus mr-2"></i>Add Task
+              <i class="fas fa-plus mr-2"></i>Add Call Back
             </button>
           </div>
 
-          <div class="mb-6 flex flex-wrap gap-3">
-            <button onclick="filterTasks('all')" class="btn-secondary">All Tasks</button>
-            <button onclick="filterTasks('pending')" class="btn-secondary">Pending</button>
-            <button onclick="filterTasks('completed')" class="btn-secondary">Call realeted</button>
-            <button onclick="filterTasks('completed')" class="btn-secondary">Completed</button>
-            <button onclick="filterTasks('overdue')" class="btn-secondary">Overdue</button>
+          <!-- Quick Stats -->
+          <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+            <div class="metric-card text-center">
+              <div class="text-2xl font-bold text-blue-600" id="todayCallBacks">0</div>
+              <div class="text-sm text-gray-600 mt-1">Today's Call Backs</div>
+            </div>
+            <div class="metric-card text-center">
+              <div class="text-2xl font-bold text-orange-600" id="tomorrowCallBacks">0</div>
+              <div class="text-sm text-gray-600 mt-1">Tomorrow's Call Backs</div>
+            </div>
+            <div class="metric-card text-center">
+              <div class="text-2xl font-bold text-red-600" id="overdueCallBacks">0</div>
+              <div class="text-sm text-gray-600 mt-1">Overdue</div>
+            </div>
+            <div class="metric-card text-center">
+              <div class="text-2xl font-bold text-green-600" id="completedCallBacks">0</div>
+              <div class="text-sm text-gray-600 mt-1">Completed</div>
+            </div>
           </div>
 
-          <div id="tasksList" class="space-y-3">
-            <!-- Tasks will be populated here -->
+          <!-- Enhanced Filters -->
+          <div class="mb-6 bg-gray-50 p-4 rounded-lg">
+            <div class="flex flex-col md:flex-row gap-4">
+              <div class="flex-1">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Quick Filters</label>
+                <div class="flex flex-wrap gap-2">
+                  <button onclick="filterCallBacks('all')" class="btn-secondary active" id="filterAll">All Call Backs</button>
+                  <button onclick="filterCallBacks('today')" class="btn-secondary" id="filterToday">Today's Follow-ups</button>
+                  <button onclick="filterCallBacks('tomorrow')" class="btn-secondary" id="filterTomorrow">Tomorrow's Follow-ups</button>
+                  <button onclick="filterCallBacks('completed')" class="btn-secondary" id="filterCompleted">Completed</button>
+                  <button onclick="filterCallBacks('overdue')" class="btn-secondary" id="filterOverdue">Overdue</button>
+                </div>
+              </div>
+              <div class="md:w-64">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Search</label>
+                <div class="relative">
+                  <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+                  <input type="text" id="searchCallBacks" class="form-input pl-10" placeholder="Search call backs...">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Call Backs List -->
+          <div id="callBacksList" class="space-y-3">
+            <!-- Call backs will be populated here -->
+          </div>
+
+          <!-- Empty State -->
+          <div id="emptyCallBacksState" class="text-center py-12 hidden">
+            <i class="fas fa-phone-slash text-4xl text-gray-300 mb-4"></i>
+            <h4 class="text-lg font-medium text-gray-900 mb-2">No Call Backs Found</h4>
+            <p class="text-gray-600 mb-4">You don't have any call backs scheduled yet.</p>
+            <button onclick="showTaskModal()" class="btn-primary">
+              <i class="fas fa-plus mr-2"></i>Schedule Your First Call Back
+            </button>
           </div>
         </div>
       </div>
@@ -3392,6 +3649,91 @@
           </div>
         </div>
       </div>
+      <!-- Bulk Lead Assignment Modal (Admin Only) -->
+<div id="bulkAssignModal" class="modal">
+  <div class="modal-content">
+    <div class="flex justify-between items-center mb-6">
+      <h3 class="text-xl font-semibold text-gray-900">Bulk Assign Leads</h3>
+      <button onclick="closeBulkAssignModal()" class="text-gray-400 hover:text-gray-600">
+        <i class="fas fa-times text-xl"></i>
+      </button>
+    </div>
+
+    <div class="space-y-4">
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">Select Agent</label>
+        <select id="bulkAssignAgent" class="form-input">
+          <option value="">Select Agent</option>
+        </select>
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">Selected Leads</label>
+        <div id="selectedLeadsCount" class="text-sm text-gray-600 mb-2">0 leads selected</div>
+        <div id="selectedLeadsList" class="max-h-40 overflow-y-auto border rounded-lg p-3 bg-gray-50">
+          <!-- Selected leads will be listed here -->
+        </div>
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">Assignment Notes</label>
+        <textarea id="bulkAssignNotes" class="form-input" rows="3" placeholder="Add notes about this assignment..."></textarea>
+      </div>
+
+      <div class="flex justify-end space-x-3 pt-4">
+        <button onclick="closeBulkAssignModal()" class="btn-secondary">Cancel</button>
+        <button onclick="processBulkAssignment()" class="btn-primary">
+          <i class="fas fa-user-plus mr-2"></i>Assign Leads
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Add Bulk Assign Section to Admin Leads Table -->
+<div id="adminPage" class="page hidden">
+  <!-- ... existing admin content ... -->
+
+  <!-- All Leads Management for Admin -->
+  <div class="bg-white rounded-xl shadow-lg p-6">
+    <div class="flex justify-between items-center mb-6">
+      <h3 class="text-lg font-semibold text-gray-900">All Leads Management</h3>
+      <div class="flex gap-3">
+        <button onclick="showBulkAssignModal()" class="btn-primary" id="bulkAssignBtn">
+          <i class="fas fa-user-plus mr-2"></i>Bulk Assign
+        </button>
+        <button onclick="exportLeads()" class="btn-secondary">
+          <i class="fas fa-download mr-2"></i>Export Leads
+        </button>
+        <button onclick="bulkDeleteLeads()" class="btn-secondary text-red-600">
+          <i class="fas fa-trash mr-2"></i>Bulk Delete
+        </button>
+      </div>
+    </div>
+
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>
+              <input type="checkbox" id="selectAllLeads" onchange="toggleSelectAllLeads()">
+            </th>
+            <th>Customer</th>
+            <th>Contact</th>
+            <th>Loan Type</th>
+            <th>Amount</th>
+            <th>Status</th>
+            <th>Assigned To</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="adminLeadsTable">
+          <!-- Leads will be populated here -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
 
       <!-- Reports Page -->
       <div id="reportsPage" class="page hidden">
@@ -3666,6 +4008,7 @@
     </div>
   </div>
 
+
   <!-- Add/Edit Agent Modal -->
   <div id="agentModal" class="modal">
     <div class="modal-content">
@@ -3762,7 +4105,7 @@
     initializeApp();
   });
 
-  function initializeApp() {
+    function initializeApp() {
     // Check if user is logged in
     const storedUser = localStorage.getItem('crm_user');
     if (storedUser) {
@@ -3776,21 +4119,15 @@
     loadSampleData();
     startTaskReminderChecker();
     
-    // Initialize handlers with null checks
-    if (document.getElementById('entityType')) {
-      setupEntityTypeHandler();
-    }
-    if (document.querySelector('input[name="businessNature"]')) {
-      setupBusinessNatureHandler();
-    }
-    if (document.querySelector('input[name="industry"]')) {
-      setupIndustryHandler();
-    }
-    
+    // Initialize handlers
+    setupEntityTypeHandler();
+    setupBusinessNatureHandler();
+    setupIndustryHandler();
+    setupLoanTypeHandler();
     setupFileUploadHandlers();
+    
     updateTaskNotificationBadge();
     initializeCallSystem();
-    setupLoanTypeHandler();
   }
 
   function setupEventListeners() {
@@ -3842,14 +4179,6 @@
       });
     }
 
-    // File upload area click
-    const fileUploadArea = document.getElementById('fileUploadArea');
-    if (fileUploadArea) {
-      fileUploadArea.addEventListener('click', function() {
-        document.getElementById('fileInput').click();
-      });
-    }
-
     // Callback form submission
     const callbackForm = document.getElementById('callbackForm');
     if (callbackForm) {
@@ -3868,19 +4197,30 @@
         });
         
         // Show entity requirements section
-        document.getElementById('entityRequirements').classList.remove('hidden');
+        const entityRequirements = document.getElementById('entityRequirements');
+        if (entityRequirements) {
+          entityRequirements.classList.remove('hidden');
+        }
 
         // Show relevant entity based on selection
         const selectedValue = this.value;
         if (selectedValue === 'private') {
-          document.getElementById('privateRequirements').classList.remove('hidden');
+          const privateReq = document.getElementById('privateRequirements');
+          if (privateReq) privateReq.classList.remove('hidden');
+          renderDirectorMembers();
         } else if (selectedValue === 'proprietorship') {
-          document.getElementById('proprietorshipRequirements').classList.remove('hidden');
+          const propReq = document.getElementById('proprietorshipRequirements');
+          if (propReq) propReq.classList.remove('hidden');
         } else if (selectedValue === 'partnership') {
-          document.getElementById('partnershipRequirements').classList.remove('hidden');
+          const partReq = document.getElementById('partnershipRequirements');
+          if (partReq) partReq.classList.remove('hidden');
+          renderPartnershipMembers();
         } else {
           // Hide entity requirements if no valid selection
-          document.getElementById('entityRequirements').classList.add('hidden');
+          const entityRequirements = document.getElementById('entityRequirements');
+          if (entityRequirements) {
+            entityRequirements.classList.add('hidden');
+          }
         }
       });
     }
@@ -3920,12 +4260,14 @@
     businessNatureRadios.forEach(radio => {
       radio.addEventListener('change', function() {
         if (this.value === 'others') {
-          otherBusinessNature.style.display = 'block';
+          if (otherBusinessNature) otherBusinessNature.style.display = 'block';
           // Make the other field required
-          document.getElementById('otherNature').required = true;
+          const otherNature = document.getElementById('otherNature');
+          if (otherNature) otherNature.required = true;
         } else {
-          otherBusinessNature.style.display = 'none';
-          document.getElementById('otherNature').required = false;
+          if (otherBusinessNature) otherBusinessNature.style.display = 'none';
+          const otherNature = document.getElementById('otherNature');
+          if (otherNature) otherNature.required = false;
         }
       });
     });
@@ -3939,12 +4281,14 @@
     industryRadios.forEach(radio => {
       radio.addEventListener('change', function() {
         if (this.value === 'other-industry') {
-          otherIndustry.style.display = 'block';
+          if (otherIndustry) otherIndustry.style.display = 'block';
           // Make the other field required
-          document.getElementById('otherIndustryName').required = true;
+          const otherIndustryName = document.getElementById('otherIndustryName');
+          if (otherIndustryName) otherIndustryName.required = true;
         } else {
-          otherIndustry.style.display = 'none';
-          document.getElementById('otherIndustryName').required = false;
+          if (otherIndustry) otherIndustry.style.display = 'none';
+          const otherIndustryName = document.getElementById('otherIndustryName');
+          if (otherIndustryName) otherIndustryName.required = false;
         }
       });
     });
@@ -3995,22 +4339,29 @@
       return false;
     }
 
-    const businessNature = document.querySelector('input[name="businessNature"]:checked').value;
-    const industry = document.querySelector('input[name="industry"]:checked').value;
+    const businessNature = document.querySelector('input[name="businessNature"]:checked');
+    const industry = document.querySelector('input[name="industry"]:checked');
+    
+    if (!businessNature || !industry) {
+      showToast('Please complete all required fields', 'error');
+      return false;
+    }
     
     let businessData = {
-      businessNature: businessNature,
-      industry: industry,
+      businessNature: businessNature.value,
+      industry: industry.value,
       timestamp: new Date().toISOString()
     };
 
     // Add other details if specified
-    if (businessNature === 'others') {
-      businessData.otherNature = document.getElementById('otherNature').value.trim();
+    if (businessNature.value === 'others') {
+      const otherNature = document.getElementById('otherNature');
+      if (otherNature) businessData.otherNature = otherNature.value.trim();
     }
 
-    if (industry === 'other-industry') {
-      businessData.otherIndustry = document.getElementById('otherIndustryName').value.trim();
+    if (industry.value === 'other-industry') {
+      const otherIndustry = document.getElementById('otherIndustryName');
+      if (otherIndustry) businessData.otherIndustry = otherIndustry.value.trim();
     }
 
     // Save to client documents
@@ -4039,7 +4390,8 @@
       businessNatureRadio.dispatchEvent(new Event('change'));
       
       if (businessData.businessNature === 'others' && businessData.otherNature) {
-        document.getElementById('otherNature').value = businessData.otherNature;
+        const otherNature = document.getElementById('otherNature');
+        if (otherNature) otherNature.value = businessData.otherNature;
       }
     }
 
@@ -4050,7 +4402,8 @@
       industryRadio.dispatchEvent(new Event('change'));
       
       if (businessData.industry === 'other-industry' && businessData.otherIndustry) {
-        document.getElementById('otherIndustryName').value = businessData.otherIndustry;
+        const otherIndustry = document.getElementById('otherIndustryName');
+        if (otherIndustry) otherIndustry.value = businessData.otherIndustry;
       }
     }
   }
@@ -4396,7 +4749,7 @@
         loadAllLeads();
         break;
       case 'tasks':
-        loadTasks();
+        loadTasksPage();
         break;
       case 'callHistory':
         loadCallHistory();
@@ -4454,232 +4807,228 @@
     // Load upcoming tasks
     loadUpcomingTasks();
   }
-
+  
   function loadUpcomingTasks() {
     const upcomingTasksList = document.getElementById('upcomingTasksList');
+    if (!upcomingTasksList) return;
+    
     const userTasks = currentUser.role === 'admin'
-      ? tasks
-      : tasks.filter(t => t.assignedTo === currentUser.username || t.assignedTo === 'all');
-
+        ? tasks
+        : tasks.filter(t => t.assignedTo === currentUser.username || t.assignedTo === 'all');
+    
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    
     const upcomingTasks = userTasks
-      .filter(t => t.status === 'pending')
-      .sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate))
-      .slice(0, 5);
-
+        .filter(task => new Date(task.dueDate) >= today && task.status === 'pending')
+        .sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate))
+        .slice(0, 5);
+    
     if (upcomingTasks.length === 0) {
-      upcomingTasksList.innerHTML = '<p class="text-gray-500 text-center py-4">No upcoming tasks</p>';
-      return;
+        upcomingTasksList.innerHTML = '<p class="text-gray-500 text-center py-4">No upcoming tasks</p>';
+        return;
     }
-
-    upcomingTasksList.innerHTML = upcomingTasks.map(task => `
-                <div class="border rounded-lg p-4 hover:bg-gray-50">
-                    <div class="flex justify-between items-start">
-                        <div class="flex-1">
-                            <h4 class="font-medium text-gray-900">${task.title}</h4>
-                            <p class="text-sm text-gray-600 mt-1">${task.description}</p>
-                            <div class="flex items-center gap-3 mt-2">
-                                <span class="task-priority priority-${task.priority}">${task.priority}</span>
-                                <span class="text-xs text-gray-500">
-                                    <i class="fas fa-clock mr-1"></i>
-                                    ${new Date(task.dueDate).toLocaleString()}
-                                </span>
-                            </div>
-                        </div>
-                        <button onclick="completeTask(${task.id})" class="btn-secondary text-sm">
-                            <i class="fas fa-check mr-1"></i>Complete
-                        </button>
+    
+    upcomingTasksList.innerHTML = upcomingTasks.map(task => {
+        const taskDate = new Date(task.dueDate);
+        const formattedDate = taskDate.toLocaleDateString();
+        const formattedTime = taskDate.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+        
+        return `
+            <div class="task-item">
+                <div class="task-item-header">
+                    <div class="task-title">${task.title}</div>
+                    <div class="task-actions">
+                        <span class="task-priority-badge priority-${task.priority}">${task.priority}</span>
                     </div>
                 </div>
-            `).join('');
-  }
-
-  function loadTasks() {
-    const tasksList = document.getElementById('tasksList');
-    const userTasks = currentUser.role === 'admin'
-      ? tasks
-      : tasks.filter(t => t.assignedTo === currentUser.username || t.assignedTo === 'all');
-
-    if (userTasks.length === 0) {
-      tasksList.innerHTML = '<p class="text-gray-500 text-center py-8">No tasks found</p>';
-      return;
-    }
-
-    tasksList.innerHTML = userTasks.map(task => {
-      const isOverdue = new Date(task.dueDate) < new Date() && task.status === 'pending';
-      const statusClass = task.status === 'completed' ? 'status-completed' :
-        isOverdue ? 'status-rejected' : 'status-pending';
-
-      return `
-                    <div class="border rounded-lg p-4 hover:bg-gray-50">
-                        <div class="flex justify-between items-start">
-                            <div class="flex-1">
-                                <div class="flex items-center gap-3 mb-2">
-                                    <h4 class="font-medium text-gray-900">${task.title}</h4>
-                                    <span class="status-badge ${statusClass}">${task.status}</span>
-                                    ${isOverdue ? '<span class="status-badge status-rejected">Overdue</span>' : ''}
-                                </div>
-                                <p class="text-sm text-gray-600 mb-3">${task.description}</p>
-                                <div class="flex items-center gap-4 text-sm text-gray-500">
-                                    <span class="task-priority priority-${task.priority}">${task.priority}</span>
-                                    <span><i class="fas fa-clock mr-1"></i>${new Date(task.dueDate).toLocaleString()}</span>
-                                    <span><i class="fas fa-user mr-1"></i>${task.assignedTo}</span>
-                                </div>
-                            </div>
-                            <div class="flex gap-2">
-                                ${task.status !== 'completed' ? `
-                                    <button onclick="completeTask(${task.id})" class="action-btn btn-secondary" title="Complete">
-                                        <i class="fas fa-check"></i>
-                                    </button>
-                                ` : ''}
-                                <button onclick="editTask(${task.id})" class="action-btn btn-secondary" title="Edit">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                                <button onclick="deleteTask(${task.id})" class="action-btn btn-secondary text-red-600" title="Delete">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                `;
+                <p class="text-sm text-gray-600 mb-2">${task.description}</p>
+                <div class="flex justify-between items-center text-sm text-gray-500">
+                    <span>${formattedDate} at ${formattedTime}</span>
+                    <button onclick="makeIVRCall('${task.customerPhone || 'N/A'}', '${task.customerName || 'Customer'}')" class="btn-call text-xs">
+                        <i class="fas fa-phone"></i> Call
+                    </button>
+                </div>
+            </div>
+        `;
     }).join('');
   }
 
-  function filterTasks(filter) {
-    const allTasks = document.querySelectorAll('#tasksList > div');
-    allTasks.forEach(taskEl => {
-      if (filter === 'all') {
-        taskEl.style.display = 'block';
-      } else {
-        const statusText = taskEl.querySelector('.status-badge').textContent.toLowerCase();
-        if (statusText.includes(filter)) {
-          taskEl.style.display = 'block';
-        } else {
-          taskEl.style.display = 'none';
-        }
-      }
-    });
-  }
+  // Add these functions to handle task management properly
+function loadTasksPage() {
+    const callBacksList = document.getElementById('callBacksList');
+    const emptyCallBacksState = document.getElementById('emptyCallBacksState');
+    
+    // Filter for call back tasks (tasks with phone numbers or call-related)
+    const userTasks = currentUser.role === 'admin'
+      ? tasks
+      : tasks.filter(t => t.assignedTo === currentUser.username || t.assignedTo === 'all');
+    
+    if (userTasks.length === 0) {
+      callBacksList.innerHTML = '';
+      emptyCallBacksState.classList.remove('hidden');
+      return;
+    }
 
-  function showTaskModal() {
+    emptyCallBacksState.classList.add('hidden');
+
+    // Calculate statistics
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+
+    const todayCallBacks = userTasks.filter(task => {
+        const taskDate = new Date(task.dueDate);
+        return taskDate.toDateString() === today.toDateString() && task.status === 'pending';
+    }).length;
+
+    const tomorrowCallBacks = userTasks.filter(task => {
+        const taskDate = new Date(task.dueDate);
+        return taskDate.toDateString() === tomorrow.toDateString() && task.status === 'pending';
+    }).length;
+
+    const overdueCallBacks = userTasks.filter(task => 
+        new Date(task.dueDate) < now && task.status === 'pending'
+    ).length;
+
+    const completedCallBacks = userTasks.filter(task => 
+        task.status === 'completed'
+    ).length;
+
+    // Update statistics
+    document.getElementById('todayCallBacks').textContent = todayCallBacks;
+    document.getElementById('tomorrowCallBacks').textContent = tomorrowCallBacks;
+    document.getElementById('overdueCallBacks').textContent = overdueCallBacks;
+    document.getElementById('completedCallBacks').textContent = completedCallBacks;
+
+    // Render call backs
+    callBacksList.innerHTML = userTasks.map(task => {
+        const isOverdue = new Date(task.dueDate) < now && task.status === 'pending';
+        const isToday = new Date(task.dueDate).toDateString() === today.toDateString();
+        const isTomorrow = new Date(task.dueDate).toDateString() === tomorrow.toDateString();
+        
+        let dateBadge = '';
+        if (isToday) dateBadge = '<span class="status-badge status-new">Today</span>';
+        else if (isTomorrow) dateBadge = '<span class="status-badge status-pending">Tomorrow</span>';
+        else if (isOverdue) dateBadge = '<span class="status-badge status-rejected">Overdue</span>';
+
+        const statusClass = task.status === 'completed' ? 'status-completed' : 
+                           isOverdue ? 'status-rejected' : 'status-pending';
+
+        return `
+            <div class="border rounded-lg p-4 hover:bg-gray-50">
+                <div class="flex justify-between items-start">
+                    <div class="flex-1">
+                        <div class="flex items-center gap-3 mb-2">
+                            <h4 class="font-medium text-gray-900">${task.title}</h4>
+                            <span class="status-badge ${statusClass}">${task.status}</span>
+                            ${dateBadge}
+                        </div>
+                        <p class="text-sm text-gray-600 mb-3">${task.description}</p>
+                        <div class="flex items-center gap-4 text-sm text-gray-500">
+                            <span class="task-priority priority-${task.priority}">${task.priority}</span>
+                            <span><i class="fas fa-clock mr-1"></i>${new Date(task.dueDate).toLocaleString()}</span>
+                            ${task.customerPhone ? `<span><i class="fas fa-phone mr-1"></i>${task.customerPhone}</span>` : ''}
+                        </div>
+                    </div>
+                    <div class="flex gap-2">
+                        ${task.status !== 'completed' && task.customerPhone ? `
+                            <button onclick="makeIVRCall('${task.customerPhone}', '${task.customerName || 'Customer'}')" 
+                                    class="action-btn btn-call text-white" title="Call">
+                                <i class="fas fa-phone"></i>
+                            </button>
+                        ` : ''}
+                        ${task.status !== 'completed' ? `
+                            <button onclick="completeTask(${task.id})" class="action-btn btn-secondary" title="Complete">
+                                <i class="fas fa-check"></i>
+                            </button>
+                        ` : ''}
+                        <button onclick="editTask(${task.id})" class="action-btn btn-secondary" title="Edit">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+function showTaskModal() {
     editingTask = null;
-    document.getElementById('taskModalTitle').textContent = 'Add New Task';
+    document.getElementById('taskModalTitle').textContent = 'Add New Call Back';
     document.getElementById('taskForm').reset();
 
-    // Set default due date to tomorrow
+    // Set default due date to tomorrow at 10 AM
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
+    tomorrow.setHours(10, 0, 0, 0);
     document.getElementById('taskDueDate').value = tomorrow.toISOString().slice(0, 16);
 
-    // Populate agent select
-    populateTaskAgentSelect();
+    // Set default reminder
+    document.getElementById('taskReminder').value = '30';
 
     document.getElementById('taskModal').classList.add('active');
-  }
+}
 
-  function populateTaskAgentSelect() {
-    const select = document.getElementById('taskAssignedTo');
-    if (!select) return;
-    
-    select.innerHTML = '<option value="">Select Agent</option>';
-
-    if (currentUser.role === 'admin') {
-      select.innerHTML += '<option value="all">All Agents</option>';
-      agents.filter(a => a.status === 'active').forEach(agent => {
-        const option = document.createElement('option');
-        option.value = agent.username;
-        option.textContent = agent.name;
-        select.appendChild(option);
-      });
-    } else {
-      const option = document.createElement('option');
-      option.value = currentUser.username;
-      option.textContent = currentUser.name;
-      select.appendChild(option);
-    }
-  }
-
-  function editTask(id) {
-    editingTask = tasks.find(t => t.id === id);
-    if (editingTask) {
-      document.getElementById('taskModalTitle').textContent = 'Edit Task';
-      document.getElementById('taskTitle').value = editingTask.title;
-      document.getElementById('taskDescription').value = editingTask.description;
-      document.getElementById('taskDueDate').value = new Date(editingTask.dueDate).toISOString().slice(0, 16);
-      document.getElementById('taskPriority').value = editingTask.priority;
-      document.getElementById('taskReminder').value = editingTask.reminder || 'none';
-
-      populateTaskAgentSelect();
-      document.getElementById('taskAssignedTo').value = editingTask.assignedTo;
-
-      document.getElementById('taskModal').classList.add('active');
-    }
-  }
-
-  function closeTaskModal() {
-    document.getElementById('taskModal').classList.remove('active');
-    editingTask = null;
-  }
-
-  function handleTaskSubmit(e) {
+function handleTaskSubmit(e) {
     e.preventDefault();
 
     const taskData = {
-      title: document.getElementById('taskTitle').value,
-      description: document.getElementById('taskDescription').value,
-      dueDate: new Date(document.getElementById('taskDueDate').value).toISOString(),
-      priority: document.getElementById('taskPriority').value,
-      assignedTo: document.getElementById('taskAssignedTo').value || currentUser.username,
-      reminder: document.getElementById('taskReminder').value,
-      status: 'pending',
-      createdBy: currentUser.username
+        title: document.getElementById('taskTitle').value,
+        description: document.getElementById('taskDescription').value,
+        dueDate: new Date(document.getElementById('taskDueDate').value).toISOString(),
+        priority: document.getElementById('taskPriority').value,
+        type: document.getElementById('taskType').value,
+        reminder: document.getElementById('taskReminder').value,
+        notes: document.getElementById('taskNotes').value,
+        assignedTo: currentUser.username, // Default to current user
+        status: 'pending',
+        createdBy: currentUser.username
     };
 
     if (editingTask) {
-      // Update existing task
-      const index = tasks.findIndex(t => t.id === editingTask.id);
-      tasks[index] = { ...taskData, id: editingTask.id };
-      showToast('Task updated successfully', 'success');
+        // Update existing task
+        const index = tasks.findIndex(t => t.id === editingTask.id);
+        tasks[index] = { ...editingTask, ...taskData };
+        showToast('Call back updated successfully', 'success');
     } else {
-      // Add new task
-      taskData.id = Date.now();
-      tasks.push(taskData);
-      showToast('Task added successfully', 'success');
+        // Add new task
+        taskData.id = Date.now();
+        tasks.push(taskData);
+        showToast('Call back added successfully', 'success');
     }
 
-    // Save to localStorage
     localStorage.setItem('crm_tasks', JSON.stringify(tasks));
-
-    // Refresh task lists
-    loadTasks();
+    loadTasksPage();
     loadUpcomingTasks();
     updateTaskNotificationBadge();
-
-    // Close modal
     closeTaskModal();
-  }
+}
 
-  function completeTask(id) {
+function completeTask(id) {
     const task = tasks.find(t => t.id === id);
     if (task) {
-      task.status = 'completed';
-      localStorage.setItem('crm_tasks', JSON.stringify(tasks));
-      showToast('Task completed successfully', 'success');
-      loadTasks();
-      loadUpcomingTasks();
-      updateTaskNotificationBadge();
+        task.status = 'completed';
+        localStorage.setItem('crm_tasks', JSON.stringify(tasks));
+        showToast('Task completed successfully', 'success');
+        loadTasksPage();
+        loadUpcomingTasks();
+        updateTaskNotificationBadge();
     }
-  }
+}
 
-  function deleteTask(id) {
+function deleteTask(id) {
     if (confirm('Are you sure you want to delete this task?')) {
-      tasks = tasks.filter(t => t.id !== id);
-      localStorage.setItem('crm_tasks', JSON.stringify(tasks));
-      showToast('Task deleted successfully', 'success');
-      loadTasks();
-      loadUpcomingTasks();
-      updateTaskNotificationBadge();
+        tasks = tasks.filter(t => t.id !== id);
+        localStorage.setItem('crm_tasks', JSON.stringify(tasks));
+        showToast('Task deleted successfully', 'success');
+        loadTasksPage();
+        loadUpcomingTasks();
+        updateTaskNotificationBadge();
     }
-  }
+}
+
 
   function updateTaskNotificationBadge() {
     const pendingTasks = tasks.filter(t =>
@@ -4791,7 +5140,7 @@
         call.status,
         call.user
       ])
-    ].map(row => row.join(',')).join('\\n');
+    ].map(row => row.join(',')).join('\n');
 
     // Download CSV
     const blob = new Blob([csv], { type: 'text/csv' });
@@ -5079,7 +5428,7 @@
       return taskDate === date && (!agent || task.assignedTo === agent || task.assignedTo === 'all');
     });
 
-    // Generate report content
+   // Generate report content
     const reportContent = `
                 <div class="bg-gray-50 rounded-lg p-6">
                     <h4 class="text-lg font-semibold mb-4">Daily Worksheet Report</h4>
@@ -5195,8 +5544,8 @@
     let csvContent = '';
 
     if (type === 'daily') {
-      csvContent = `Daily Worksheet Report\\nDate: ${date}\\nAgent: ${agent || 'All Agents'}\\n\\n`;
-      csvContent += 'Customer,Loan Amount,Status\\n';
+      csvContent = `Daily Worksheet Report\nDate: ${date}\nAgent: ${agent || 'All Agents'}\n\n`;
+      csvContent += 'Customer,Loan Amount,Status\n';
 
       const filteredLeads = leads.filter(lead => {
         const leadDate = new Date(lead.createdDate).toISOString().split('T')[0];
@@ -5204,7 +5553,7 @@
       });
 
       filteredLeads.forEach(lead => {
-        csvContent += `"${lead.customerName}",${lead.loanAmount},${lead.status}\\n`;
+        csvContent += `"${lead.customerName}",${lead.loanAmount},${lead.status}\n`;
       });
     }
 
@@ -5253,20 +5602,31 @@
     const fileInput = document.getElementById('fileInput');
     
     if (fileUploadArea && fileInput) {
-      fileUploadArea.addEventListener('click', function() {
-        fileInput.click();
-      });
-      
-      fileInput.addEventListener('change', handleFileSelect);
+        fileUploadArea.addEventListener('click', function() {
+            fileInput.click();
+        });
+        
+        fileInput.addEventListener('change', handleFileSelect);
     }
     
     // Handle drag and drop
     if (fileUploadArea) {
-      fileUploadArea.addEventListener('dragover', handleDragOver);
-      fileUploadArea.addEventListener('dragleave', handleDragLeave);
-      fileUploadArea.addEventListener('drop', handleDrop);
+        fileUploadArea.addEventListener('dragover', handleDragOver);
+        fileUploadArea.addEventListener('dragleave', handleDragLeave);
+        fileUploadArea.addEventListener('drop', handleDrop);
     }
-  }
+    
+    // Handle document uploads (fix the IDs)
+    document.querySelectorAll('.upload-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            const targetId = this.getAttribute('data-target') || this.previousElementSibling.id;
+            if (targetId) {
+                document.getElementById(targetId).click();
+            }
+        });
+    });
+}
+
 
   function handleFiles(files) {
     if (!files || files.length === 0) return;
@@ -5416,7 +5776,8 @@
   function updateProgress() {
     if (!currentClientLead) return;
 
-    const leadDocs = clientDocuments[currentClientLead.id] || {};
+    const leadId = currentClientLead.id;
+    const leadDocs = clientDocuments[leadId] || {};
     const totalDocuments = 13; // Base documents count
     let uploadedCount = 0;
 
@@ -5443,21 +5804,22 @@
     document.getElementById('totalDocuments').textContent = totalDocuments;
   }
 
-  function handleDocumentUpload(docType, file, password = '') {
+// Add these to handle document uploads properly
+function handleDocumentUpload(docType, file, password = '') {
     if (!currentClientLead || !file) return;
 
     const leadId = currentClientLead.id;
     if (!clientDocuments[leadId]) {
-      clientDocuments[leadId] = {};
+        clientDocuments[leadId] = {};
     }
 
     // Store document info
     clientDocuments[leadId][docType] = {
-      name: file.name,
-      size: file.size,
-      type: file.type,
-      uploadDate: new Date().toISOString(),
-      password: password
+        name: file.name,
+        size: file.size,
+        type: file.type,
+        uploadDate: new Date().toISOString(),
+        password: password
     };
 
     // Save to localStorage
@@ -5468,7 +5830,7 @@
     updateProgress();
 
     showToast(`Document ${file.name} uploaded successfully`, 'success');
-  }
+}
 
   function addAdditionalDocument() {
     const nameInput = document.getElementById('customDocName');
@@ -5932,6 +6294,17 @@
       return;
     }
 
+    // Reset disposition fields
+    document.getElementById('dispositionFields').classList.add('hidden');
+    document.getElementById('dateTimeField').classList.add('hidden');
+    document.getElementById('calendarField').classList.add('hidden');
+    document.getElementById('timeField').classList.add('hidden');
+    document.getElementById('remarksField').classList.add('hidden');
+    document.getElementById('dispositionDateTime').value = '';
+    document.getElementById('dispositionDate').value = '';
+    document.getElementById('dispositionTime').value = '';
+    document.getElementById('dispositionRemarks').value = '';
+
     // Create call record
     currentCall = {
       id: Date.now(),
@@ -6120,14 +6493,31 @@
 
     // Save call notes and disposition
     if (currentCall) {
+      const disposition = document.getElementById('callDisposition').value;
+      const remarks = document.getElementById('dispositionRemarks').value;
+      
       currentCall.notes = document.getElementById('callNotes').value;
-      currentCall.disposition = document.getElementById('callDisposition').value;
+      currentCall.disposition = disposition;
+      
+      // Save disposition-specific data
+      if (disposition && ['interested', 'callback', 'follow-up', 'ask-executive', 'no-requirement', 'not-interested', 'number-invalid'].includes(disposition)) {
+        currentCall.dispositionData = {
+          remarks: remarks || '',
+          dateTime: document.getElementById('dispositionDateTime').value || '',
+          date: document.getElementById('dispositionDate').value || '',
+          time: document.getElementById('dispositionTime').value || ''
+        };
+      }
+
       currentCall.status = 'completed';
       currentCall.endTime = new Date().toISOString();
 
       // Add to call history
       callHistory.push(currentCall);
       localStorage.setItem('crm_callHistory', JSON.stringify(callHistory));
+
+      // Create task or callback based on disposition
+      createFollowUpTask(currentCall);
 
       showToast(`Call ended. Duration: ${formatCallDuration(currentCall.duration)}`, 'success');
       
@@ -6145,6 +6535,17 @@
     document.getElementById('callDuration').textContent = '00:00';
     document.getElementById('callNotes').value = '';
     document.getElementById('callDisposition').value = '';
+    
+    // Reset disposition fields
+    document.getElementById('dispositionFields').classList.add('hidden');
+    document.getElementById('dateTimeField').classList.add('hidden');
+    document.getElementById('calendarField').classList.add('hidden');
+    document.getElementById('timeField').classList.add('hidden');
+    document.getElementById('remarksField').classList.add('hidden');
+    document.getElementById('dispositionDateTime').value = '';
+    document.getElementById('dispositionDate').value = '';
+    document.getElementById('dispositionTime').value = '';
+    document.getElementById('dispositionRemarks').value = '';
     
     // Reset call state
     resetCallState();
@@ -6216,7 +6617,7 @@
       
       // Refresh tasks if on tasks page
       if (!document.getElementById('tasksPage').classList.contains('hidden')) {
-        loadTasks();
+        loadTasksPage();
       }
     } else {
       showToast('No call information available', 'error');
@@ -6256,7 +6657,7 @@
         lead.status,
         new Date(lead.createdDate).toLocaleDateString()
       ])
-    ].map(row => row.join(',')).join('\\n');
+    ].map(row => row.join(',')).join('\n');
 
     // Download CSV
     const blob = new Blob([csv], { type: 'text/csv' });
@@ -6335,102 +6736,112 @@
 
   function sendEmail(email, name) {
     const subject = encodeURIComponent('Regarding Your Loan Application - Loan Leads CRM');
-    const body = encodeURIComponent(`Dear ${name},\\n\\nThank you for your interest in our loan services. We would like to discuss your loan application further.\\n\\nPlease let us know a convenient time for a discussion.\\n\\nBest regards,\\nLoan Leads CRM Team`);
+    const body = encodeURIComponent(`Dear ${name},\n\nThank you for your interest in our loan services. We would like to discuss your loan application further.\n\nPlease let us know a convenient time for a discussion.\n\nBest regards,\nLoan Leads CRM Team`);
 
     window.open(`mailto:${email}?subject=${subject}&body=${body}`, '_blank');
     showToast(`Email composer opened for ${name}`, 'success');
   }
+
   // Partnership Member Functions
-  function renderPartnershipMembers() {
+  // Fix the partnership member section
+function renderPartnershipMembers() {
     const container = document.getElementById('partnershipMembersContainer');
     if (!container) return;
     
     container.innerHTML = '';
     
     for (let i = 1; i <= partnershipMemberCount; i++) {
-      const memberSection = document.createElement('div');
-      memberSection.className = 'partnership-member-section';
-      memberSection.innerHTML = `
-        <div class="partnership-member-header">
-          <div class="member-number">Partner ${i}</div>
-          ${i > minPartnershipMembers ? `<button type="button" onclick="removePartnershipMember(${i})" class="remove-member-btn">
-            <i class="fas fa-times mr-1"></i>Remove
-          </button>` : ''}
-        </div>
-        <div class="member-grid">
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Full Name *</label>
-            <input type="text" class="form-input partner-name" placeholder="Enter full name" required>
-          </div>
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">PAN Number *</label>
-            <input type="text" class="form-input partner-pan" placeholder="Enter PAN number" required>
-          </div>
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Aadhaar Number *</label>
-            <input type="text" class="form-input partner-aadhaar" placeholder="Enter Aadhaar number" required>
-          </div>
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
-            <input type="email" class="form-input partner-email" placeholder="Enter email">
-          </div>
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Phone</label>
-            <input type="tel" class="form-input partner-phone" placeholder="Enter phone number">
-          </div>
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Ownership %</label>
-            <input type="number" class="form-input partner-ownership" placeholder="Percentage" min="0" max="100">
-          </div>
-        </div>
-        <div class="member-document-section">
-          <h5 class="font-medium text-gray-700 mb-3">Director Documents</h5>
-          <div class="space-y-3">
-            <div class="document-item">
-              <div class="document-info">
-                <div class="document-name">Aadhaar Card</div>
-                <div class="document-status">Required for identity verification</div>
-              </div>
-              <div class="document-actions">
-                <span class="status-badge status-pending">Pending</span>
-                <input type="file" class="hidden director-aadhaar-file" accept=".pdf,.jpg,.jpeg,.png">
-                <button onclick="this.previousElementSibling.click()" class="upload-btn">
-                  <i class="fas fa-upload mr-1"></i>Upload
-                </button>
-              </div>
+        const memberSection = document.createElement('div');
+        memberSection.className = 'partnership-member-section';
+        memberSection.innerHTML = `
+            <div class="partnership-member-header">
+                <div class="member-number">Partner ${i}</div>
+                ${i > minPartnershipMembers ? `<button type="button" onclick="removePartnershipMember(${i})" class="remove-member-btn">
+                    <i class="fas fa-times mr-1"></i>Remove
+                </button>` : ''}
             </div>
-            <div class="document-item">
-              <div class="document-info">
-                <div class="document-name">PAN Card</div>
-                <div class="document-status">Required for tax identification</div>
-              </div>
-              <div class="document-actions">
-                <span class="status-badge status-pending">Pending</span>
-                <input type="file" class="hidden director-pan-file" accept=".pdf,.jpg,.jpeg,.png">
-                <button onclick="this.previousElementSibling.click()" class="upload-btn">
-                  <i class="fas fa-upload mr-1"></i>Upload
-                </button>
-              </div>
+            <div class="member-grid">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Full Name *</label>
+                    <input type="text" class="form-input partner-name" placeholder="Enter full name" required>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">PAN Number *</label>
+                    <input type="text" class="form-input partner-pan" placeholder="Enter PAN number" required>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Aadhaar Number *</label>
+                    <input type="text" class="form-input partner-aadhaar" placeholder="Enter Aadhaar number" required>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                    <input type="email" class="form-input partner-email" placeholder="Enter email">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Phone</label>
+                    <input type="tel" class="form-input partner-phone" placeholder="Enter phone number">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Ownership %</label>
+                    <input type="number" class="form-input partner-ownership" placeholder="Percentage" min="0" max="100">
+                </div>
             </div>
-            <div class="document-item">
-              <div class="document-info">
-                <div class="document-name">Passport size photo </div>
-                <div class="document-status">Required for tax identification</div>
-              </div>
-              <div class="document-actions">
-                <span class="status-badge status-pending">Pending</span>
-                <input type="file" class="hidden director-pan-file" accept=".pdf,.jpg,.jpeg,.png">
-                <button onclick="this.previousElementSibling.click()" class="upload-btn">
-                  <i class="fas fa-upload mr-1"></i>Upload
-                </button>
-              </div>
+            <div class="member-document-section">
+                <h5 class="font-medium text-gray-700 mb-3">Director Documents</h5>
+                <div class="space-y-3">
+                    <div class="document-item">
+                        <div class="document-info">
+                            <div class="document-name">Aadhaar Card</div>
+                            <div class="document-status">Required for identity verification</div>
+                        </div>
+                        <div class="document-actions">
+                            <span class="status-badge status-pending">Pending</span>
+                            <input type="file" class="hidden director-aadhaar-file" accept=".pdf,.jpg,.jpeg,.png">
+                            <button onclick="this.previousElementSibling.click()" class="upload-btn">
+                                <i class="fas fa-upload mr-1"></i>Upload
+                            </button>
+                        </div>
+                    </div>
+                    <div class="document-item">
+                        <div class="document-info">
+                            <div class="document-name">PAN Card</div>
+                            <div class="document-status">Required for tax identification</div>
+                        </div>
+                        <div class="document-actions">
+                            <span class="status-badge status-pending">Pending</span>
+                            <input type="file" class="hidden director-pan-file" accept=".pdf,.jpg,.jpeg,.png">
+                            <button onclick="this.previousElementSibling.click()" class="upload-btn">
+                                <i class="fas fa-upload mr-1"></i>Upload
+                            </button>
+                        </div>
+                    </div>
+                    <div class="document-item">
+                        <div class="document-info">
+                            <div class="document-name">Passport size photo </div>
+                            <div class="document-status">Required for tax identification</div>
+                        </div>
+                        <div class="document-actions">
+                            <span class="status-badge status-pending">Pending</span>
+                            <input type="file" class="hidden director-photo-file" accept=".pdf,.jpg,.jpeg,.png">
+                            <button onclick="this.previousElementSibling.click()" class="upload-btn">
+                                <i class="fas fa-upload mr-1"></i>Upload
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
-          </div>
-        </div>
-      `;
-      container.appendChild(memberSection);
+        `;
+        container.appendChild(memberSection);
     }
-  }
+}
+
+function updatePartnershipMembers() {
+    const count = parseInt(document.getElementById('partnershipMemberCount').value);
+    if (count >= minPartnershipMembers && count <= maxPartnershipMembers) {
+        partnershipMemberCount = count;
+        renderPartnershipMembers();
+    }
+}
 
   function addPartnershipMember() {
     if (partnershipMemberCount < maxPartnershipMembers) {
@@ -6544,6 +6955,14 @@
     }
   }
 
+  function updateDirectorMembers() {
+    const count = parseInt(document.getElementById('directorMemberCount').value);
+    if (count >= mindirectorMembers && count <= maxdirectorMembers) {
+        directorMemberCount = count;
+        renderDirectorMembers();
+    }
+  }
+
   function addDirectorMember() {
     if (directorMemberCount < maxdirectorMembers) {
       directorMemberCount++;
@@ -6563,972 +6982,449 @@
       showToast(`Minimum ${mindirectorMembers} directors required`, 'warning');
     }
   }
+
   // Handle Call Disposition Changes
-function handleDispositionChange() {
-  const disposition = document.getElementById('callDisposition').value;
-  const fieldsContainer = document.getElementById('dispositionFields');
-  const dateTimeField = document.getElementById('dateTimeField');
-  const calendarField = document.getElementById('calendarField');
-  const timeField = document.getElementById('timeField');
-  const remarksField = document.getElementById('remarksField');
-
-  // Hide all fields first
-  dateTimeField.classList.add('hidden');
-  calendarField.classList.add('hidden');
-  timeField.classList.add('hidden');
-  remarksField.classList.add('hidden');
-  fieldsContainer.classList.add('hidden');
-
-  // Show fields based on disposition
-  switch(disposition) {
-    case 'interested':
-    case 'callback':
-    case 'follow-up':
-      fieldsContainer.classList.remove('hidden');
-      dateTimeField.classList.remove('hidden');
-      calendarField.classList.remove('hidden');
-      timeField.classList.remove('hidden');
-      remarksField.classList.remove('hidden');
-      
-      // Set default values
-      const now = new Date();
-      document.getElementById('dispositionDateTime').value = now.toISOString().slice(0, 16);
-      document.getElementById('dispositionDate').value = now.toISOString().split('T')[0];
-      document.getElementById('dispositionTime').value = now.toTimeString().slice(0, 5);
-      break;
-
-    case 'ask-executive':
-    case 'no-requirement':
-    case 'not-interested':
-    case 'number-invalid':
-      fieldsContainer.classList.remove('hidden');
-      remarksField.classList.remove('hidden');
-      break;
-
-    default:
-      // No fields for empty selection
-      break;
-  }
-}
-
-// Update the endCall function to save disposition data
-function endCall() {
-  if (callTimer) {
-    clearInterval(callTimer);
-    callTimer = null;
-  }
-
-  // Save call notes and disposition
-  if (currentCall) {
-    currentCall.notes = document.getElementById('callNotes').value;
-    currentCall.disposition = document.getElementById('callDisposition').value;
-    
-    // Save disposition-specific data
-    const disposition = currentCall.disposition;
-    if (disposition && ['interested', 'callback', 'follow-up', 'ask-executive', 'no-requirement', 'not-interested', 'number-invalid'].includes(disposition)) {
-      currentCall.dispositionData = {
-        remarks: document.getElementById('dispositionRemarks').value || '',
-        dateTime: document.getElementById('dispositionDateTime').value || '',
-        date: document.getElementById('dispositionDate').value || '',
-        time: document.getElementById('dispositionTime').value || ''
-      };
-    }
-
-    currentCall.status = 'completed';
-    currentCall.endTime = new Date().toISOString();
-
-    // Add to call history
-    callHistory.push(currentCall);
-    localStorage.setItem('crm_callHistory', JSON.stringify(callHistory));
-
-    showToast(`Call ended. Duration: ${formatCallDuration(currentCall.duration)}`, 'success');
-    
-    // Reset current call
-    currentCall = null;
-  }
-
-  // Close call modal
-  closeCallModal();
-}
-
-// Update closeCallModal to reset disposition fields
-function closeCallModal() {
-  document.getElementById('callModal').classList.remove('active');
-  document.getElementById('callDuration').textContent = '00:00';
-  document.getElementById('callNotes').value = '';
-  document.getElementById('callDisposition').value = '';
-  
-  // Reset disposition fields
-  document.getElementById('dispositionFields').classList.add('hidden');
-  document.getElementById('dateTimeField').classList.add('hidden');
-  document.getElementById('calendarField').classList.add('hidden');
-  document.getElementById('timeField').classList.add('hidden');
-  document.getElementById('remarksField').classList.add('hidden');
-  document.getElementById('dispositionDateTime').value = '';
-  document.getElementById('dispositionDate').value = '';
-  document.getElementById('dispositionTime').value = '';
-  document.getElementById('dispositionRemarks').value = '';
-  
-  // Reset call state
-  resetCallState();
-}
-
-// Update the makeIVRCall function to reset disposition fields when starting a new call
-function makeIVRCall(phone, name) {
-  console.log('Making IVR call to:', phone, name);
-  
-  // Validate phone number
-  const cleanedNumber = phone.replace(/[^0-9+]/g, '');
-  if (!cleanedNumber) {
-    showToast('Please enter a valid phone number', 'error');
-    return;
-  }
-
-  // Reset disposition fields
-  document.getElementById('dispositionFields').classList.add('hidden');
-  document.getElementById('dateTimeField').classList.add('hidden');
-  document.getElementById('calendarField').classList.add('hidden');
-  document.getElementById('timeField').classList.add('hidden');
-  document.getElementById('remarksField').classList.add('hidden');
-  document.getElementById('dispositionDateTime').value = '';
-  document.getElementById('dispositionDate').value = '';
-  document.getElementById('dispositionTime').value = '';
-  document.getElementById('dispositionRemarks').value = '';
-
-  // Create call record
-  currentCall = {
-    id: Date.now(),
-    contact: `${name} (${cleanedNumber})`,
-    phone: cleanedNumber,
-    name: name,
-    timestamp: new Date().toISOString(),
-    type: 'outgoing',
-    status: 'connecting',
-    user: currentUser.username,
-    duration: 0,
-    notes: '',
-    disposition: '',
-    recording: false,
-    muted: false,
-    onHold: false
-  };
-
-  // Show call modal
-  document.getElementById('callingNumber').textContent = currentCall.contact;
-  document.getElementById('callModal').classList.add('active');
-  document.getElementById('callStatus').innerHTML = '<span class="status-badge status-new">Connecting...</span>';
-  
-  // Reset call controls
-  resetCallControls();
-  
-  // Set call animation to connecting
-  const callAnimation = document.getElementById('callAnimation');
-  callAnimation.className = 'call-animation connecting mx-auto mb-3 flex items-center justify-center';
-
-  showToast(`Initiating IVR call to ${name}...`, 'success');
-
-  // Simulate call connection after 2 seconds
-  setTimeout(() => {
-    if (currentCall) {
-      currentCall.status = 'connected';
-      document.getElementById('callStatus').innerHTML = '<span class="status-badge status-approved">Connected</span>';
-      callAnimation.className = 'call-animation connected mx-auto mb-3 flex items-center justify-center';
-      
-      // Start call timer
-      callStartTime = Date.now();
-      callTimer = setInterval(updateCallDuration, 1000);
-      
-      showToast('Call connected successfully', 'success');
-    }
-  }, 2000);
-}
-// Update the endCall function to create tasks/callbacks based on disposition
-function endCall() {
-  if (callTimer) {
-    clearInterval(callTimer);
-    callTimer = null;
-  }
-
-  // Save call notes and disposition
-  if (currentCall) {
+  function handleDispositionChange() {
     const disposition = document.getElementById('callDisposition').value;
-    const remarks = document.getElementById('dispositionRemarks').value;
+    const fieldsContainer = document.getElementById('dispositionFields');
+    const dateTimeField = document.getElementById('dateTimeField');
+    const calendarField = document.getElementById('calendarField');
+    const timeField = document.getElementById('timeField');
+    const remarksField = document.getElementById('remarksField');
+
+    // Hide all fields first
+    dateTimeField.classList.add('hidden');
+    calendarField.classList.add('hidden');
+    timeField.classList.add('hidden');
+    remarksField.classList.add('hidden');
+    fieldsContainer.classList.add('hidden');
+
+    // Show fields based on disposition
+    switch(disposition) {
+      case 'interested':
+      case 'callback':
+      case 'follow-up':
+        fieldsContainer.classList.remove('hidden');
+        dateTimeField.classList.remove('hidden');
+        calendarField.classList.remove('hidden');
+        timeField.classList.remove('hidden');
+        remarksField.classList.remove('hidden');
+        
+        // Set default values
+        const now = new Date();
+        document.getElementById('dispositionDateTime').value = now.toISOString().slice(0, 16);
+        document.getElementById('dispositionDate').value = now.toISOString().split('T')[0];
+        document.getElementById('dispositionTime').value = now.toTimeString().slice(0, 5);
+        break;
+
+      case 'ask-executive':
+      case 'no-requirement':
+      case 'not-interested':
+      case 'number-invalid':
+        fieldsContainer.classList.remove('hidden');
+        remarksField.classList.remove('hidden');
+        break;
+
+      default:
+        // No fields for empty selection
+        break;
+    }
+  }
+
+  // Function to create follow-up tasks based on call disposition
+  function createFollowUpTask(callData) {
+    const disposition = callData.disposition;
+    const customerName = callData.name;
+    const phone = callData.phone;
+    const remarks = callData.dispositionData?.remarks || '';
     
-    currentCall.notes = document.getElementById('callNotes').value;
-    currentCall.disposition = disposition;
-    
-    // Save disposition-specific data
-    if (disposition && ['interested', 'callback', 'follow-up', 'ask-executive', 'no-requirement', 'not-interested', 'number-invalid'].includes(disposition)) {
-      currentCall.dispositionData = {
-        remarks: remarks || '',
-        dateTime: document.getElementById('dispositionDateTime').value || '',
-        date: document.getElementById('dispositionDate').value || '',
-        time: document.getElementById('dispositionTime').value || ''
-      };
+    let taskData = null;
+
+    switch(disposition) {
+      case 'interested':
+        taskData = {
+          title: `Follow up - Interested Customer: ${customerName}`,
+          description: `Customer expressed interest in loan services. Phone: ${phone}. Remarks: ${remarks}`,
+          dueDate: calculateDueDate(1), // 1 day from now
+          priority: 'high',
+          type: 'follow-up',
+          category: 'interested'
+        };
+        break;
+
+      case 'callback':
+        const callbackDate = callData.dispositionData?.date || new Date().toISOString().split('T')[0];
+        const callbackTime = callData.dispositionData?.time || '10:00';
+        taskData = {
+          title: `Scheduled Callback: ${customerName}`,
+          description: `Callback scheduled for ${callbackDate} at ${callbackTime}. Phone: ${phone}. Remarks: ${remarks}`,
+          dueDate: new Date(`${callbackDate}T${callbackTime}`).toISOString(),
+          priority: 'medium',
+          type: 'callback',
+          category: 'callback'
+        };
+        break;
+
+      case 'follow-up':
+        const followupDate = callData.dispositionData?.date || new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+        taskData = {
+          title: `Follow up Required: ${customerName}`,
+          description: `Customer requires follow-up. Phone: ${phone}. Remarks: ${remarks}`,
+          dueDate: new Date(followupDate).toISOString(),
+          priority: 'medium',
+          type: 'follow-up',
+          category: 'general'
+        };
+        break;
+
+      case 'ask-executive':
+        taskData = {
+          title: `Executive Attention Required: ${customerName}`,
+          description: `Customer needs executive attention. Phone: ${phone}. Remarks: ${remarks}`,
+          dueDate: calculateDueDate(0.5), // 12 hours from now
+          priority: 'high',
+          type: 'escalation',
+          category: 'executive'
+        };
+        break;
+
+      case 'not-interested':
+        taskData = {
+          title: `Not Interested - Follow up: ${customerName}`,
+          description: `Customer not interested currently. Consider follow-up in future. Phone: ${phone}. Remarks: ${remarks}`,
+          dueDate: calculateDueDate(30), // 30 days from now
+          priority: 'low',
+          type: 'follow-up',
+          category: 'not-interested'
+        };
+        break;
+
+      case 'number-invalid':
+        taskData = {
+          title: `Invalid Number - Verification Needed: ${customerName}`,
+          description: `Phone number marked as invalid. Requires verification. Original number: ${phone}. Remarks: ${remarks}`,
+          dueDate: calculateDueDate(1),
+          priority: 'medium',
+          type: 'verification',
+          category: 'data-quality'
+        };
+        break;
+
+      case 'no-requirement':
+        // No task created for no requirement
+        showToast('Call completed - No follow-up required', 'success');
+        return;
     }
 
-    currentCall.status = 'completed';
-    currentCall.endTime = new Date().toISOString();
-
-    // Add to call history
-    callHistory.push(currentCall);
-    localStorage.setItem('crm_callHistory', JSON.stringify(callHistory));
-
-    // Create task or callback based on disposition
-    createFollowUpTask(currentCall);
-
-    showToast(`Call ended. Duration: ${formatCallDuration(currentCall.duration)}`, 'success');
-    
-    // Reset current call
-    currentCall = null;
-  }
-
-  // Close call modal
-  closeCallModal();
-}
-
-// Function to create follow-up tasks based on call disposition
-function createFollowUpTask(callData) {
-  const disposition = callData.disposition;
-  const customerName = callData.name;
-  const phone = callData.phone;
-  const remarks = callData.dispositionData?.remarks || '';
-  
-  let taskData = null;
-
-  switch(disposition) {
-    case 'interested':
-      taskData = {
-        title: `Follow up - Interested Customer: ${customerName}`,
-        description: `Customer expressed interest in loan services. Phone: ${phone}. Remarks: ${remarks}`,
-        dueDate: calculateDueDate(1), // 1 day from now
-        priority: 'high',
-        type: 'follow-up',
-        category: 'interested'
+    if (taskData) {
+      // Create the task
+      const task = {
+        id: Date.now(),
+        ...taskData,
+        assignedTo: currentUser.username,
+        status: 'pending',
+        reminder: 60, // 1 hour reminder
+        createdBy: currentUser.username,
+        createdDate: new Date().toISOString(),
+        relatedCall: callData.id,
+        customerPhone: phone,
+        customerName: customerName
       };
-      break;
 
-    case 'callback':
-      const callbackDate = callData.dispositionData?.date || new Date().toISOString().split('T')[0];
-      const callbackTime = callData.dispositionData?.time || '10:00';
-      taskData = {
-        title: `Scheduled Callback: ${customerName}`,
-        description: `Callback scheduled for ${callbackDate} at ${callbackTime}. Phone: ${phone}. Remarks: ${remarks}`,
-        dueDate: new Date(`${callbackDate}T${callbackTime}`).toISOString(),
-        priority: 'medium',
-        type: 'callback',
-        category: 'callback'
-      };
-      break;
+      tasks.push(task);
+      localStorage.setItem('crm_tasks', JSON.stringify(tasks));
 
-    case 'follow-up':
-      const followupDate = callData.dispositionData?.date || new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
-      taskData = {
-        title: `Follow up Required: ${customerName}`,
-        description: `Customer requires follow-up. Phone: ${phone}. Remarks: ${remarks}`,
-        dueDate: new Date(followupDate).toISOString(),
-        priority: 'medium',
-        type: 'follow-up',
-        category: 'general'
-      };
-      break;
-
-    case 'ask-executive':
-      taskData = {
-        title: `Executive Attention Required: ${customerName}`,
-        description: `Customer needs executive attention. Phone: ${phone}. Remarks: ${remarks}`,
-        dueDate: calculateDueDate(0.5), // 12 hours from now
-        priority: 'high',
-        type: 'escalation',
-        category: 'executive'
-      };
-      break;
-
-    case 'not-interested':
-      taskData = {
-        title: `Not Interested - Follow up: ${customerName}`,
-        description: `Customer not interested currently. Consider follow-up in future. Phone: ${phone}. Remarks: ${remarks}`,
-        dueDate: calculateDueDate(30), // 30 days from now
-        priority: 'low',
-        type: 'follow-up',
-        category: 'not-interested'
-      };
-      break;
-
-    case 'number-invalid':
-      taskData = {
-        title: `Invalid Number - Verification Needed: ${customerName}`,
-        description: `Phone number marked as invalid. Requires verification. Original number: ${phone}. Remarks: ${remarks}`,
-        dueDate: calculateDueDate(1),
-        priority: 'medium',
-        type: 'verification',
-        category: 'data-quality'
-      };
-      break;
-
-    case 'no-requirement':
-      // No task created for no requirement
-      showToast('Call completed - No follow-up required', 'success');
-      return;
-  }
-
-  if (taskData) {
-    // Create the task
-    const task = {
-      id: Date.now(),
-      ...taskData,
-      assignedTo: currentUser.username,
-      status: 'pending',
-      reminder: 60, // 1 hour reminder
-      createdBy: currentUser.username,
-      createdDate: new Date().toISOString(),
-      relatedCall: callData.id,
-      customerPhone: phone,
-      customerName: customerName
-    };
-
-    tasks.push(task);
-    localStorage.setItem('crm_tasks', JSON.stringify(tasks));
-
-    // Show appropriate message
-    showToast(`Task created: ${taskData.title}`, 'success');
-    
-    // Refresh tasks if on tasks page
-    if (!document.getElementById('tasksPage').classList.contains('hidden')) {
-      loadTasks();
+      // Show appropriate message
+      showToast(`Task created: ${taskData.title}`, 'success');
+      
+      // Refresh tasks if on tasks page
+      if (!document.getElementById('tasksPage').classList.contains('hidden')) {
+        loadTasksPage();
+      }
+      
+      // Update task notification badge
+      updateTaskNotificationBadge();
     }
+  }
+
+  // Helper function to calculate due date
+  function calculateDueDate(daysFromNow) {
+    const dueDate = new Date();
+    dueDate.setDate(dueDate.getDate() + daysFromNow);
+    dueDate.setHours(10, 0, 0, 0); // Set to 10:00 AM
+    return dueDate.toISOString();
+  }
+
+  // Application Status Update
+  function updateApplicationStatus() {
+    const statusSelect = document.getElementById('applicationStatus');
+    const otherStatusDetails = document.getElementById('otherStatusDetails');
     
-    // Update task notification badge
-    updateTaskNotificationBadge();
-  }
-}
-
-// Helper function to calculate due date
-function calculateDueDate(daysFromNow) {
-  const dueDate = new Date();
-  dueDate.setDate(dueDate.getDate() + daysFromNow);
-  dueDate.setHours(10, 0, 0, 0); // Set to 10:00 AM
-  return dueDate.toISOString();
-}
-
-// Update the loadTasks function to show call-related tasks with better filtering
-function loadTasks() {
-  const tasksList = document.getElementById('tasksList');
-  const userTasks = currentUser.role === 'admin'
-    ? tasks
-    : tasks.filter(t => t.assignedTo === currentUser.username || t.assignedTo === 'all');
-
-  if (userTasks.length === 0) {
-    tasksList.innerHTML = '<p class="text-gray-500 text-center py-8">No tasks found</p>';
-    return;
-  }
-
-  tasksList.innerHTML = userTasks.map(task => {
-    const isOverdue = new Date(task.dueDate) < new Date() && task.status === 'pending';
-    const statusClass = task.status === 'completed' ? 'status-completed' :
-      isOverdue ? 'status-rejected' : 'status-pending';
-
-    // Add call-related info if available
-    const callInfo = task.relatedCall ? `<div class="text-xs text-blue-600 mt-1"><i class="fas fa-phone mr-1"></i>Call Related</div>` : '';
-    const customerInfo = task.customerPhone ? `<div class="text-xs text-gray-500">📞 ${task.customerPhone}</div>` : '';
-
-    return `
-      <div class="border rounded-lg p-4 hover:bg-gray-50">
-        <div class="flex justify-between items-start">
-          <div class="flex-1">
-            <div class="flex items-center gap-3 mb-2">
-              <h4 class="font-medium text-gray-900">${task.title}</h4>
-              <span class="status-badge ${statusClass}">${task.status}</span>
-              ${task.type ? `<span class="task-priority priority-${task.priority}">${task.type}</span>` : ''}
-              ${isOverdue ? '<span class="status-badge status-rejected">Overdue</span>' : ''}
-            </div>
-            <p class="text-sm text-gray-600 mb-3">${task.description}</p>
-            ${customerInfo}
-            ${callInfo}
-            <div class="flex items-center gap-4 text-sm text-gray-500 mt-2">
-              <span class="task-priority priority-${task.priority}">${task.priority}</span>
-              <span><i class="fas fa-clock mr-1"></i>${new Date(task.dueDate).toLocaleString()}</span>
-              <span><i class="fas fa-user mr-1"></i>${task.assignedTo}</span>
-            </div>
-          </div>
-          <div class="flex gap-2">
-            ${task.status !== 'completed' ? `
-              <button onclick="completeTask(${task.id})" class="action-btn btn-secondary" title="Complete">
-                <i class="fas fa-check"></i>
-              </button>
-            ` : ''}
-            ${task.customerPhone ? `
-              <button onclick="makeIVRCall('${task.customerPhone}', '${task.customerName || 'Customer'}')" class="action-btn btn-call text-white" title="Call">
-                <i class="fas fa-phone"></i>
-              </button>
-            ` : ''}
-            <button onclick="editTask(${task.id})" class="action-btn btn-secondary" title="Edit">
-              <i class="fas fa-edit"></i>
-            </button>
-            <button onclick="deleteTask(${task.id})" class="action-btn btn-secondary text-red-600" title="Delete">
-              <i class="fas fa-trash"></i>
-            </button>
-          </div>
-        </div>
-      </div>
-    `;
-  }).join('');
-}
-
-// Add task filtering by type/category
-function filterTasks(filter) {
-  const allTasks = document.querySelectorAll('#tasksList > div');
-  allTasks.forEach(taskEl => {
-    if (filter === 'all') {
-      taskEl.style.display = 'block';
-    } else if (filter === 'call-related') {
-      const hasCallIcon = taskEl.querySelector('.fa-phone');
-      taskEl.style.display = hasCallIcon ? 'block' : 'none';
+    if (statusSelect.value === 'others') {
+      otherStatusDetails.classList.remove('hidden');
     } else {
-      const statusText = taskEl.querySelector('.status-badge').textContent.toLowerCase();
-      if (statusText.includes(filter)) {
-        taskEl.style.display = 'block';
-      } else {
-        taskEl.style.display = 'none';
-      }
+      otherStatusDetails.classList.add('hidden');
     }
-  });
-}
-
-// Update the tasks page filter buttons to include call-related filter
-function loadTasksPage() {
-  const tasksPage = document.getElementById('tasksPage');
-  if (tasksPage) {
-    // Update filter buttons if they exist
-    const filterContainer = tasksPage.querySelector('.mb-6');
-    if (filterContainer) {
-      filterContainer.innerHTML = `
-        <div class="mb-6 flex flex-wrap gap-3">
-          <button onclick="filterTasks('all')" class="btn-secondary">All Tasks</button>
-          <button onclick="filterTasks('call-related')" class="btn-secondary">Call Related</button>
-          <button onclick="filterTasks('pending')" class="btn-secondary">Pending</button>
-          <button onclick="filterTasks('completed')" class="btn-secondary">Completed</button>
-          <button onclick="filterTasks('overdue')" class="btn-secondary">Overdue</button>
-        </div>
-      `;
-    }
-    loadTasks();
-  }
-}
-
-// Update the navigateToPage function to handle tasks page specifically
-function navigateToPage(page) {
-  // Hide all pages
-  document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
-
-  // Show selected page
-  document.getElementById(page + 'Page').classList.remove('hidden');
-
-  // Update page title
-  const titles = {
-    dashboard: 'Dashboard',
-    leads: 'Leads Management',
-    tasks: 'Task Management',
-    callHistory: 'Call History',
-    files: 'File Management',
-    admin: 'Admin Panel',
-    reports: 'Reports',
-    profile: 'My Profile'
-  };
-  document.getElementById('pageTitle').textContent = titles[page];
-
-  // Update active sidebar link
-  document.querySelectorAll('.sidebar-link').forEach(link => {
-    link.classList.remove('active');
-    if (link.dataset.page === page) {
-      link.classList.add('active');
-    }
-  });
-
-  // Update user info in sidebar
-  updateSidebarUserInfo();
-
-  // Close mobile menu
-  closeMobileSidebar();
-
-  // Load page-specific data
-  loadPageData(page);
-}
-
-// Update loadPageData to handle tasks page
-function loadPageData(page) {
-  switch(page) {
-    case 'dashboard':
-      loadDashboardData();
-      break;
-    case 'leads':
-      loadAllLeads();
-      break;
-    case 'tasks':
-      loadTasksPage(); // Use the updated function
-      break;
-    case 'callHistory':
-      loadCallHistory();
-      break;
-    case 'files':
-      loadFiles();
-      break;
-    case 'admin':
-      loadAdminData();
-      break;
-    case 'reports':
-      loadReportsData();
-      break;
-    case 'profile':
-      // Profile page doesn't need additional loading
-      break;
-  }
-}
-// Update the tasks page to be called "Call Backs"
-function navigateToPage(page) {
-  // Hide all pages
-  document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
-
-  // Show selected page
-  document.getElementById(page + 'Page').classList.remove('hidden');
-
-  // Update page title - Change "Task Management" to "Call Backs"
-  const titles = {
-    dashboard: 'Dashboard',
-    leads: 'Leads Management',
-    tasks: 'Call Backs', // Changed from 'Task Management'
-    callHistory: 'Call History',
-    files: 'File Management',
-    admin: 'Admin Panel',
-    reports: 'Reports',
-    profile: 'My Profile'
-  };
-  document.getElementById('pageTitle').textContent = titles[page];
-
-  // Update active sidebar link
-  document.querySelectorAll('.sidebar-link').forEach(link => {
-    link.classList.remove('active');
-    if (link.dataset.page === page) {
-      link.classList.add('active');
-    }
-  });
-
-  // Update user info in sidebar
-  updateSidebarUserInfo();
-
-  // Close mobile menu
-  closeMobileSidebar();
-
-  // Load page-specific data
-  loadPageData(page);
-}
-
-// Update sidebar text for tasks
-function updateSidebarText() {
-  const tasksLink = document.querySelector('[data-page="tasks"]');
-  if (tasksLink) {
-    tasksLink.innerHTML = `
-      <i class="fas fa-phone-alt w-5 mr-3"></i>
-      Call Backs
-      <span id="taskNotificationBadge" class="notification-badge hidden">0</span>
-    `;
-  }
-}
-
-// Call this function after login
-function showMainApp() {
-  document.getElementById('loginPage').classList.add('hidden');
-  document.getElementById('mainApp').classList.remove('hidden');
-
-  // Update user info
-  document.getElementById('userName').textContent = currentUser.name;
-  document.getElementById('userRole').textContent = currentUser.role;
-  document.getElementById('userRole').className = `status-badge ${currentUser.role === 'admin' ? 'status-approved' : 'status-new'}`;
-
-  // Update sidebar
-  updateSidebarUserInfo();
-  updateSidebarText(); // Update sidebar text
-  toggleAdminSection();
-
-  // Load dashboard
-  navigateToPage('dashboard');
-}
-
-// Update the loadTasksPage function with new filters
-function loadTasksPage() {
-  const tasksPage = document.getElementById('tasksPage');
-  if (tasksPage) {
-    // Update page header
-    const pageHeader = tasksPage.querySelector('h3');
-    if (pageHeader) {
-      pageHeader.textContent = 'Call Backs Management';
-    }
-
-    // Update filter buttons
-    const filterContainer = tasksPage.querySelector('.mb-6');
-    if (filterContainer) {
-      filterContainer.innerHTML = `
-        <div class="mb-6 flex flex-wrap gap-3">
-          <button onclick="filterCallBacks('all')" class="btn-secondary">All Call Backs</button>
-          <button onclick="filterCallBacks('today')" class="btn-secondary">Today's Follow-ups</button>
-          <button onclick="filterCallBacks('tomorrow')" class="btn-secondary">Tomorrow's Follow-ups</button>
-          <button onclick="filterCallBacks('completed')" class="btn-secondary">Completed</button>
-          <button onclick="filterCallBacks('overdue')" class="btn-secondary">Overdue</button>
-        </div>
-      `;
-    }
-    loadCallBacks();
-  }
-}
-
-// Replace loadTasks with loadCallBacks
-function loadCallBacks() {
-  const tasksList = document.getElementById('tasksList');
-  const userTasks = currentUser.role === 'admin'
-    ? tasks
-    : tasks.filter(t => t.assignedTo === currentUser.username || t.assignedTo === 'all');
-
-  if (userTasks.length === 0) {
-    tasksList.innerHTML = '<p class="text-gray-500 text-center py-8">No call backs found</p>';
-    return;
-  }
-
-  tasksList.innerHTML = userTasks.map(task => {
-    const isOverdue = new Date(task.dueDate) < new Date() && task.status === 'pending';
-    const statusClass = task.status === 'completed' ? 'status-completed' :
-      isOverdue ? 'status-rejected' : 'status-pending';
-
-    // Calculate if it's today or tomorrow
-    const taskDate = new Date(task.dueDate);
-    const today = new Date();
-    const tomorrow = new Date(today);
-    tomorrow.setDate(tomorrow.getDate() + 1);
     
-    let dateBadge = '';
-    if (task.status !== 'completed') {
-      if (isSameDay(taskDate, today)) {
-        dateBadge = '<span class="status-badge status-new ml-2">Today</span>';
-      } else if (isSameDay(taskDate, tomorrow)) {
-        dateBadge = '<span class="status-badge status-pending ml-2">Tomorrow</span>';
-      }
-    }
-
-    // Add call-related info if available
-    const callInfo = task.relatedCall ? `<div class="text-xs text-blue-600 mt-1"><i class="fas fa-phone mr-1"></i>Call Related</div>` : '';
-    const customerInfo = task.customerPhone ? `<div class="text-xs text-gray-500">📞 ${task.customerPhone}</div>` : '';
-
-    return `
-      <div class="border rounded-lg p-4 hover:bg-gray-50">
-        <div class="flex justify-between items-start">
-          <div class="flex-1">
-            <div class="flex items-center gap-3 mb-2">
-              <h4 class="font-medium text-gray-900">${task.title}</h4>
-              <span class="status-badge ${statusClass}">${task.status}</span>
-              ${dateBadge}
-              ${task.type ? `<span class="task-priority priority-${task.priority}">${task.type}</span>` : ''}
-              ${isOverdue ? '<span class="status-badge status-rejected">Overdue</span>' : ''}
-            </div>
-            <p class="text-sm text-gray-600 mb-3">${task.description}</p>
-            ${customerInfo}
-            ${callInfo}
-            <div class="flex items-center gap-4 text-sm text-gray-500 mt-2">
-              <span class="task-priority priority-${task.priority}">${task.priority}</span>
-              <span><i class="fas fa-clock mr-1"></i>${formatTaskDateTime(task.dueDate)}</span>
-              <span><i class="fas fa-user mr-1"></i>${task.assignedTo}</span>
-            </div>
-          </div>
-          <div class="flex gap-2">
-            ${task.status !== 'completed' ? `
-              <button onclick="completeTask(${task.id})" class="action-btn btn-secondary" title="Complete">
-                <i class="fas fa-check"></i>
-              </button>
-            ` : ''}
-            ${task.customerPhone ? `
-              <button onclick="makeIVRCall('${task.customerPhone}', '${task.customerName || 'Customer'}')" class="action-btn btn-call text-white" title="Call">
-                <i class="fas fa-phone"></i>
-              </button>
-            ` : ''}
-            <button onclick="editTask(${task.id})" class="action-btn btn-secondary" title="Edit">
-              <i class="fas fa-edit"></i>
-            </button>
-            <button onclick="deleteTask(${task.id})" class="action-btn btn-secondary text-red-600" title="Delete">
-              <i class="fas fa-trash"></i>
-            </button>
-          </div>
-        </div>
-      </div>
-    `;
-  }).join('');
-}
-
-// Helper function to check if two dates are the same day
-function isSameDay(date1, date2) {
-  return date1.getDate() === date2.getDate() &&
-         date1.getMonth() === date2.getMonth() &&
-         date1.getFullYear() === date2.getFullYear();
-}
-
-// Helper function to format task date and time
-function formatTaskDateTime(dateTimeString) {
-  const date = new Date(dateTimeString);
-  const now = new Date();
-  const tomorrow = new Date(now);
-  tomorrow.setDate(tomorrow.getDate() + 1);
-
-  let datePart = '';
-  if (isSameDay(date, now)) {
-    datePart = 'Today';
-  } else if (isSameDay(date, tomorrow)) {
-    datePart = 'Tomorrow';
-  } else {
-    datePart = date.toLocaleDateString();
+    // Update progress based on status
+    updateProgress();
   }
 
-  const timePart = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-  
-  return `${datePart} at ${timePart}`;
-}
-
-// Replace filterTasks with filterCallBacks
-function filterCallBacks(filter) {
-  const allTasks = document.querySelectorAll('#tasksList > div');
-  const today = new Date();
-  const tomorrow = new Date(today);
-  tomorrow.setDate(tomorrow.getDate() + 1);
-
-  allTasks.forEach(taskEl => {
-    if (filter === 'all') {
-      taskEl.style.display = 'block';
-    } else if (filter === 'today') {
-      const hasTodayBadge = taskEl.querySelector('.status-badge.status-new');
-      taskEl.style.display = hasTodayBadge ? 'block' : 'none';
-    } else if (filter === 'tomorrow') {
-      const hasTomorrowBadge = taskEl.querySelector('.status-badge.status-pending');
-      taskEl.style.display = hasTomorrowBadge ? 'block' : 'none';
-    } else if (filter === 'completed') {
-      const statusText = taskEl.querySelector('.status-badge').textContent.toLowerCase();
-      taskEl.style.display = statusText.includes('completed') ? 'block' : 'none';
-    } else if (filter === 'overdue') {
-      const hasOverdueBadge = taskEl.querySelector('.status-badge.status-rejected');
-      taskEl.style.display = hasOverdueBadge ? 'block' : 'none';
-    }
-  });
-}
-
-// Update the createFollowUpTask function to ensure proper date formatting
-function createFollowUpTask(callData) {
-  const disposition = callData.disposition;
-  const customerName = callData.name;
-  const phone = callData.phone;
-  const remarks = callData.dispositionData?.remarks || '';
-  
-  let taskData = null;
-
-  switch(disposition) {
-    case 'interested':
-      taskData = {
-        title: `Follow up - Interested Customer: ${customerName}`,
-        description: `Customer expressed interest in loan services. Phone: ${phone}. Remarks: ${remarks}`,
-        dueDate: calculateDueDate(1, 10, 0), // Tomorrow at 10:00 AM
-        priority: 'high',
-        type: 'follow-up',
-        category: 'interested'
-      };
-      break;
-
-    case 'callback':
-      const callbackDate = callData.dispositionData?.date || new Date().toISOString().split('T')[0];
-      const callbackTime = callData.dispositionData?.time || '10:00';
-      const [hours, minutes] = callbackTime.split(':');
-      taskData = {
-        title: `Scheduled Callback: ${customerName}`,
-        description: `Callback scheduled. Phone: ${phone}. Remarks: ${remarks}`,
-        dueDate: calculateSpecificDueDate(callbackDate, parseInt(hours), parseInt(minutes)),
-        priority: 'medium',
-        type: 'callback',
-        category: 'callback'
-      };
-      break;
-
-    case 'follow-up':
-      const followupDate = callData.dispositionData?.date || new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
-      taskData = {
-        title: `Follow up Required: ${customerName}`,
-        description: `Customer requires follow-up. Phone: ${phone}. Remarks: ${remarks}`,
-        dueDate: calculateSpecificDueDate(followupDate, 10, 0), // 10:00 AM on specified date
-        priority: 'medium',
-        type: 'follow-up',
-        category: 'general'
-      };
-      break;
-
-    case 'ask-executive':
-      taskData = {
-        title: `Executive Attention Required: ${customerName}`,
-        description: `Customer needs executive attention. Phone: ${phone}. Remarks: ${remarks}`,
-        dueDate: calculateDueDate(0, 14, 0), // Today at 2:00 PM
-        priority: 'high',
-        type: 'escalation',
-        category: 'executive'
-      };
-      break;
-
-    case 'not-interested':
-      taskData = {
-        title: `Not Interested - Follow up: ${customerName}`,
-        description: `Customer not interested currently. Consider follow-up in future. Phone: ${phone}. Remarks: ${remarks}`,
-        dueDate: calculateDueDate(30, 10, 0), // 30 days at 10:00 AM
-        priority: 'low',
-        type: 'follow-up',
-        category: 'not-interested'
-      };
-      break;
-
-    case 'number-invalid':
-      taskData = {
-        title: `Invalid Number - Verification Needed: ${customerName}`,
-        description: `Phone number marked as invalid. Requires verification. Original number: ${phone}. Remarks: ${remarks}`,
-        dueDate: calculateDueDate(1, 10, 0),
-        priority: 'medium',
-        type: 'verification',
-        category: 'data-quality'
-      };
-      break;
-
-    case 'no-requirement':
-      // No task created for no requirement
-      showToast('Call completed - No follow-up required', 'success');
+  // Bulk Assignment Functions
+  function showBulkAssignModal() {
+    const selectedLeads = getSelectedLeads();
+    if (selectedLeads.length === 0) {
+      showToast('Please select leads to assign', 'warning');
       return;
+    }
+
+    // Populate agent select
+    const agentSelect = document.getElementById('bulkAssignAgent');
+    agentSelect.innerHTML = '<option value="">Select Agent</option>';
+    agents.filter(a => a.status === 'active').forEach(agent => {
+      const option = document.createElement('option');
+      option.value = agent.username;
+      option.textContent = agent.name;
+      agentSelect.appendChild(option);
+    });
+
+    // Update selected leads display
+    document.getElementById('selectedLeadsCount').textContent = `${selectedLeads.length} leads selected`;
+    
+    const leadsList = document.getElementById('selectedLeadsList');
+    leadsList.innerHTML = selectedLeads.map(leadId => {
+      const lead = leads.find(l => l.id === leadId);
+      return `<div class="text-sm py-1 border-b last:border-b-0">${lead.customerName} - ${lead.phone}</div>`;
+    }).join('');
+
+    document.getElementById('bulkAssignModal').classList.add('active');
   }
 
-  if (taskData) {
-    // Create the task
+  function closeBulkAssignModal() {
+    document.getElementById('bulkAssignModal').classList.remove('active');
+  }
+
+  function processBulkAssignment() {
+    const agentSelect = document.getElementById('bulkAssignAgent');
+    const selectedAgent = agentSelect.value;
+    const notes = document.getElementById('bulkAssignNotes').value;
+    const selectedLeads = getSelectedLeads();
+
+    if (!selectedAgent) {
+      showToast('Please select an agent', 'error');
+      return;
+    }
+
+    if (selectedLeads.length === 0) {
+      showToast('No leads selected', 'error');
+      return;
+    }
+
+    // Update leads with assignment
+    selectedLeads.forEach(leadId => {
+      const leadIndex = leads.findIndex(l => l.id === leadId);
+      if (leadIndex !== -1) {
+        leads[leadIndex].assignedTo = selectedAgent;
+        leads[leadIndex].assignmentDate = new Date().toISOString();
+        leads[leadIndex].assignmentNotes = notes;
+      }
+    });
+
+    // Save to localStorage
+    localStorage.setItem('crm_leads', JSON.stringify(leads));
+
+    // Create notification task
     const task = {
       id: Date.now(),
-      ...taskData,
-      assignedTo: currentUser.username,
-      status: 'pending',
-      reminder: 60, // 1 hour reminder
+      title: `Bulk Lead Assignment - ${selectedLeads.length} leads`,
+      description: `Assigned ${selectedLeads.length} leads to ${agents.find(a => a.username === selectedAgent)?.name}. Notes: ${notes}`,
+      dueDate: new Date().toISOString(),
+      priority: 'medium',
+      assignedTo: selectedAgent,
+      status: 'completed',
       createdBy: currentUser.username,
-      createdDate: new Date().toISOString(),
-      relatedCall: callData.id,
-      customerPhone: phone,
-      customerName: customerName
+      type: 'assignment'
     };
 
     tasks.push(task);
     localStorage.setItem('crm_tasks', JSON.stringify(tasks));
 
-    // Show appropriate message
-    showToast(`Call back scheduled: ${taskData.title}`, 'success');
+    showToast(`Successfully assigned ${selectedLeads.length} leads`, 'success');
     
-    // Refresh call backs if on call backs page
-    if (!document.getElementById('tasksPage').classList.contains('hidden')) {
-      loadCallBacks();
+    // Update agent stats
+    updateAgentStats(selectedAgent, selectedLeads.length);
+    
+    closeBulkAssignModal();
+    loadAdminData();
+  }
+
+  function getSelectedLeads() {
+    const checkboxes = document.querySelectorAll('.lead-checkbox:checked');
+    return Array.from(checkboxes).map(cb => parseInt(cb.value));
+  }
+
+  function updateAgentStats(agentUsername, leadsAssigned) {
+    const agentIndex = agents.findIndex(a => a.username === agentUsername);
+    if (agentIndex !== -1) {
+      agents[agentIndex].leadsAssigned += leadsAssigned;
+      localStorage.setItem('crm_agents', JSON.stringify(agents));
     }
+  }
+
+  // Enhanced updateProgress function
+  function updateProgress() {
+    if (!currentClientLead) return;
+
+    const leadId = currentClientLead.id;
+    const leadDocs = clientDocuments[leadId] || {};
+    const requiredDocs = ['aadhaar', 'pan']; // Add all required document types
+    let uploadedCount = 0;
+
+    requiredDocs.forEach(docType => {
+      if (leadDocs[docType]) uploadedCount++;
+    });
+
+    // Check if general info is filled
+    if (leadDocs.generalInfo) {
+      const generalInfo = leadDocs.generalInfo;
+      if (generalInfo.fullName && generalInfo.mobile && generalInfo.email) {
+        uploadedCount++;
+      }
+    }
+
+    const percentage = Math.round((uploadedCount / (requiredDocs.length + 1)) * 100);
     
-    // Update task notification badge
-    updateTaskNotificationBadge();
+    document.getElementById('progressStatus').textContent = 
+      percentage >= 75 ? 'Ready for Review' :
+      percentage >= 50 ? 'In Progress' :
+      percentage >= 25 ? 'Documents Started' : 'Documents Pending';
+      
+    document.getElementById('applicationProgressBar').style.width = percentage + '%';
   }
-}
-
-// Helper function to calculate due date with specific time
-function calculateDueDate(daysFromNow, hours = 10, minutes = 0) {
-  const dueDate = new Date();
-  dueDate.setDate(dueDate.getDate() + daysFromNow);
-  dueDate.setHours(hours, minutes, 0, 0);
-  return dueDate.toISOString();
-}
-
-// Helper function to calculate due date for specific date
-function calculateSpecificDueDate(dateString, hours = 10, minutes = 0) {
-  const dueDate = new Date(dateString);
-  dueDate.setHours(hours, minutes, 0, 0);
-  return dueDate.toISOString();
-}
-
-// Update the dashboard to show "Upcoming Call Backs" instead of "Upcoming Tasks"
-function loadDashboardData() {
-  // Calculate metrics
-  const totalLeads = leads.length;
-  const activeLoans = leads.filter(l => l.status === 'approved').length;
-  const pendingCallBacks = tasks.filter(t => t.status === 'pending').length;
-  const totalAmount = leads.reduce((sum, l) => sum + l.loanAmount, 0);
-
-  // Update metrics
-  document.getElementById('totalLeads').textContent = totalLeads;
-  document.getElementById('activeLoans').textContent = activeLoans;
-  document.getElementById('pendingTasks').textContent = pendingCallBacks; // This now shows pending call backs
-  document.getElementById('totalAmount').textContent = '₹' + totalAmount.toLocaleString('en-IN');
-
-  // Load recent leads (last 5)
-  const recentLeads = [...leads].sort((a, b) => new Date(b.createdDate) - new Date(a.createdDate)).slice(0, 5);
-  renderLeadsTable('recentLeadsTable', recentLeads, false);
-
-  // Load upcoming call backs
-  loadUpcomingCallBacks();
-}
-
-// Update loadUpcomingTasks to loadUpcomingCallBacks
-function loadUpcomingCallBacks() {
-  const upcomingTasksList = document.getElementById('upcomingTasksList');
-  const userTasks = currentUser.role === 'admin'
-    ? tasks
-    : tasks.filter(t => t.assignedTo === currentUser.username || t.assignedTo === 'all');
-
-  // Get today's and tomorrow's call backs
-  const today = new Date();
-  const tomorrow = new Date(today);
-  tomorrow.setDate(tomorrow.getDate() + 1);
-  
-  const upcomingCallBacks = userTasks
-    .filter(t => t.status === 'pending' && 
-          (isSameDay(new Date(t.dueDate), today) || isSameDay(new Date(t.dueDate), tomorrow)))
-    .sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate))
-    .slice(0, 5);
-
-  // Update the section title
-  const sectionTitle = document.querySelector('#upcomingTasksList').closest('.bg-white').querySelector('h3');
-  if (sectionTitle) {
-    sectionTitle.textContent = 'Upcoming Call Backs';
+  function loadRemarks(leadId) {
+    const leadData = clientDocuments[leadId];
+    if (leadData && leadData.remarks) {
+      document.getElementById('internalRemarks').value = leadData.remarks.internal || '';
+      document.getElementById('customerNotes').value = leadData.remarks.customer || '';
+      document.getElementById('nextAction').value = leadData.remarks.nextAction || '';
+    }
   }
 
-  if (upcomingCallBacks.length === 0) {
-    upcomingTasksList.innerHTML = '<p class="text-gray-500 text-center py-4">No upcoming call backs</p>';
-    return;
+  function saveRemarks() {
+    if (currentClientLead) {
+      const leadId = currentClientLead.id;
+      if (!clientDocuments[leadId]) {
+        clientDocuments[leadId] = {};
+      }
+      
+      clientDocuments[leadId].remarks = {
+        internal: document.getElementById('internalRemarks').value,
+        customer: document.getElementById('customerNotes').value,
+        nextAction: document.getElementById('nextAction').value,
+        updatedAt: new Date().toISOString(),
+        updatedBy: currentUser.username
+      };
+      
+      saveClientDocuments();
+    }
   }
 
-  upcomingTasksList.innerHTML = upcomingCallBacks.map(task => {
-    const taskDate = new Date(task.dueDate);
-    const dateBadge = isSameDay(taskDate, new Date()) ? 
-      '<span class="status-badge status-new ml-2">Today</span>' : 
-      '<span class="status-badge status-pending ml-2">Tomorrow</span>';
+  function saveAllClientData() {
+    // Save general information
+    saveGeneralInformation();
+    
+    // Save application status
+    updateApplicationStatus();
+    
+    // Save remarks
+    saveRemarks();
+    
+    showToast('All client data saved successfully', 'success');
+  }
 
-    return `
-      <div class="border rounded-lg p-4 hover:bg-gray-50">
-        <div class="flex justify-between items-start">
-          <div class="flex-1">
-            <div class="flex items-center gap-3 mb-2">
-              <h4 class="font-medium text-gray-900">${task.title}</h4>
-              ${dateBadge}
-            </div>
-            <p class="text-sm text-gray-600 mt-1">${task.description}</p>
-            <div class="flex items-center gap-3 mt-2">
-              <span class="task-priority priority-${task.priority}">${task.priority}</span>
-              <span class="text-xs text-gray-500">
-                <i class="fas fa-clock mr-1"></i>
-                ${formatTaskDateTime(task.dueDate)}
-              </span>
-            </div>
-          </div>
-          <button onclick="completeTask(${task.id})" class="btn-secondary text-sm">
-            <i class="fas fa-check mr-1"></i>Complete
-          </button>
-        </div>
-      </div>
-    `;
-  }).join('');
-}
+  function saveGeneralInformation() {
+    if (currentClientLead) {
+      const leadId = currentClientLead.id;
+      if (!clientDocuments[leadId]) {
+        clientDocuments[leadId] = {};
+      }
+      
+      clientDocuments[leadId].generalInfo = {
+        fullName: document.getElementById('generalFullName').value,
+        mobile: document.getElementById('generalMobile').value,
+        email: document.getElementById('generalEmail').value,
+        loanAmount: document.getElementById('generalLoanAmount').value,
+        monthlyIncome: document.getElementById('generalMonthlyIncome').value,
+        duration: document.getElementById('generalDuration').value,
+        presentAddress: document.getElementById('generalPresentAddress').value,
+        permanentAddress: document.getElementById('generalPermanentAddress').value,
+        updatedAt: new Date().toISOString()
+      };
+      
+      saveClientDocuments();
+    }
+  }
+
+  function saveClientDocuments() {
+    localStorage.setItem('crm_clientDocuments', JSON.stringify(clientDocuments));
+  }
+
+  function generateDocumentReport() {
+    if (!currentClientLead) return;
+    
+    const leadId = currentClientLead.id;
+    const leadData = clientDocuments[leadId] || {};
+    
+    // Create report content
+    const reportContent = `
+Client Document Report
+=====================
+
+Client: ${currentClientLead.customerName}
+Loan Type: ${getLoanTypeName(currentClientLead.loanType)}
+Application Status: ${document.getElementById('applicationStatus').value}
+Report Date: ${new Date().toLocaleDateString()}
+
+DOCUMENT PROGRESS:
+• Completion: ${document.getElementById('completionPercentage').textContent}
+• Uploaded: ${document.getElementById('uploadedCount').textContent} of ${document.getElementById('totalDocuments').textContent} documents
+
+REMARKS:
+${document.getElementById('internalRemarks').value || 'No internal remarks'}
+
+NEXT ACTION:
+${document.getElementById('nextAction').value || 'No next action defined'}
+  `;
+    
+    // Download as text file
+    const blob = new Blob([reportContent], { type: 'text/plain' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `document_report_${currentClientLead.customerName}_${new Date().toISOString().split('T')[0]}.txt`;
+    a.click();
+    
+    showToast('Document report generated successfully', 'success');
+  }
+
+  function sendDocumentReminder() {
+    if (!currentClientLead) return;
+    
+    // Simulate sending reminder
+    showToast(`Document reminder sent to ${currentClientLead.customerName}`, 'success');
+    
+    // Add to remarks
+    const remarks = document.getElementById('internalRemarks');
+    remarks.value += `\n[${new Date().toLocaleString()}] Document reminder sent to client.`;
+    
+    saveRemarks();
+  }
+
+  function closeClientDocumentsModal() {
+    document.getElementById('clientDocumentsModal').classList.remove('active');
+    currentClientLead = null;
+    currentUploads = [];
+  }
 </script>
 </body>
 </html>
