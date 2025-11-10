@@ -5004,6 +5004,10 @@ function handleTaskSubmit(e) {
     updateTaskNotificationBadge();
     closeTaskModal();
 }
+  function closeTaskModal() {
+    document.getElementById('taskModal').classList.remove('active');
+}
+
 
 function completeTask(id) {
     const task = tasks.find(t => t.id === id);
@@ -7427,4 +7431,5 @@ ${document.getElementById('nextAction').value || 'No next action defined'}
 </script>
 </body>
 </html>
+
 
