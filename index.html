@@ -5004,11 +5004,7 @@ function handleTaskSubmit(e) {
     updateTaskNotificationBadge();
     closeTaskModal();
 }
-  function closeTaskModal() {
-    document.getElementById('taskModal').classList.remove('active');
-}
-
-
+ 
 function completeTask(id) {
     const task = tasks.find(t => t.id === id);
     if (task) {
@@ -7428,8 +7424,13 @@ ${document.getElementById('nextAction').value || 'No next action defined'}
     currentClientLead = null;
     currentUploads = [];
   }
+  function closeTaskModal() {
+    document.getElementById('taskModal').classList.remove('active');
+}
+
 </script>
 </body>
 </html>
+
 
 
