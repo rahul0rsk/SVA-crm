@@ -7,6 +7,62 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
+  /* New styles for enhanced reports */
+    .report-card {
+        background: white;
+        border-radius: 0.75rem;
+        padding: 1.5rem;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s;
+        height: 100%;
+    }
+    
+    .report-card:hover {
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        transform: translateY(-2px);
+    }
+    
+    .report-chart-container {
+        position: relative;
+        height: 250px;
+        width: 100%;
+    }
+    
+    .report-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    
+    .report-table th {
+        background: #f8fafc;
+        padding: 0.75rem;
+        text-align: left;
+        font-weight: 600;
+        color: #374151;
+        border-bottom: 1px solid #e5e7eb;
+    }
+    
+    .report-table td {
+        padding: 0.75rem;
+        border-bottom: 1px solid #f3f4f6;
+    }
+    
+    .report-table tr:hover {
+        background: #f9fafb;
+    }
+    
+    .metric-trend-up {
+        color: #10b981;
+    }
+    
+    .metric-trend-down {
+        color: #ef4444;
+    }
+    
+    .metric-trend-neutral {
+        color: #6b7280;
+    }
+    
     * {
         margin: 0;
         padding: 0;
@@ -1538,6 +1594,149 @@
             gap: 0.5rem;
             margin-top: 1rem;
         }
+        * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    /* ... All existing CSS styles ... */
+
+    /* Pipeline Styles */
+    .pipeline-container {
+        display: flex;
+        gap: 1rem;
+        overflow-x: auto;
+        padding: 1rem 0;
+    }
+
+    .pipeline-stage {
+        min-width: 280px;
+        background: #f8fafc;
+        border-radius: 0.75rem;
+        padding: 1rem;
+        border: 1px solid #e5e7eb;
+    }
+
+    .pipeline-stage-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid;
+    }
+
+    .pipeline-stage-title {
+        font-weight: 600;
+        font-size: 0.875rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    .pipeline-stage-count {
+        background: white;
+        border-radius: 9999px;
+        padding: 0.25rem 0.5rem;
+        font-size: 0.75rem;
+        font-weight: 600;
+    }
+
+    .pipeline-lead {
+        background: white;
+        border-radius: 0.5rem;
+        padding: 0.75rem;
+        margin-bottom: 0.5rem;
+        border: 1px solid #e5e7eb;
+        cursor: grab;
+        transition: all 0.2s;
+    }
+
+    .pipeline-lead:hover {
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        transform: translateY(-1px);
+    }
+
+    .pipeline-lead:active {
+        cursor: grabbing;
+    }
+
+    .pipeline-lead-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 0.5rem;
+    }
+
+    .pipeline-lead-name {
+        font-weight: 600;
+        font-size: 0.875rem;
+    }
+
+    .pipeline-lead-amount {
+        font-weight: 600;
+        color: #059669;
+        font-size: 0.75rem;
+    }
+
+    .pipeline-lead-company {
+        font-size: 0.75rem;
+        color: #6b7280;
+        margin-bottom: 0.25rem;
+    }
+
+    .pipeline-lead-location {
+        font-size: 0.75rem;
+        color: #6b7280;
+    }
+
+    .pipeline-lead-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 0.5rem;
+        padding-top: 0.5rem;
+        border-top: 1px solid #f3f4f6;
+    }
+
+    .pipeline-lead-actions {
+        display: flex;
+        gap: 0.25rem;
+    }
+
+    .pipeline-action-btn {
+        padding: 0.25rem;
+        border-radius: 0.25rem;
+        font-size: 0.75rem;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .pipeline-action-btn:hover {
+        background: #f3f4f6;
+    }
+
+    /* Chart Container */
+    .chart-container {
+        position: relative;
+        height: 300px;
+        width: 100%;
+    }
+
+    /* Drag and Drop Styles */
+    .pipeline-stage.drag-over {
+        background: #eff6ff;
+        border-color: #3b82f6;
+    }
+
+    .pipeline-lead.dragging {
+        opacity: 0.5;
+        transform: rotate(5deg);
+    }
 </style>
 </head>
 <body class="bg-gray-50">
@@ -3841,204 +4040,253 @@
       </div>
     </header>
 
+    <!-- Main Application -->
+  <div id="mainApp" class="hidden">
+    <!-- Sidebar and header remain the same -->
+
     <!-- Dashboard Page -->
-<div id="dashboardPage" class="page">
-  <!-- Enhanced Metrics -->
-  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-    <div class="metric-card">
-      <div class="flex items-center justify-between">
-        <div>
-          <p class="text-sm font-medium text-gray-600">Total Leads</p>
-          <p id="totalLeads" class="text-2xl font-bold text-gray-900 mt-1">0</p>
+    <div id="dashboardPage" class="page">
+      <!-- Enhanced Metrics -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div class="metric-card">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-sm font-medium text-gray-600">Total Leads</p>
+              <p id="totalLeads" class="text-2xl font-bold text-gray-900 mt-1">0</p>
+              <p id="totalLeadsTrend" class="text-xs metric-trend-neutral mt-1">
+                <i class="fas fa-minus mr-1"></i>No change
+              </p>
+            </div>
+            <div class="h-12 w-12 bg-blue-100 rounded-full flex items-center justify-center">
+              <i class="fas fa-users text-blue-600"></i>
+            </div>
+          </div>
         </div>
-        <div class="h-12 w-12 bg-blue-100 rounded-full flex items-center justify-center">
-          <i class="fas fa-users text-blue-600"></i>
-        </div>
-      </div>
-    </div>
 
-    <div class="metric-card">
-      <div class="flex items-center justify-between">
-        <div>
-          <p class="text-sm font-medium text-gray-600">Approval Count</p>
-          <p id="approvalCount" class="text-2xl font-bold text-gray-900 mt-1">0</p>
+        <div class="metric-card">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-sm font-medium text-gray-600">Approval Count</p>
+              <p id="approvalCount" class="text-2xl font-bold text-gray-900 mt-1">0</p>
+              <p id="approvalCountTrend" class="text-xs metric-trend-neutral mt-1">
+                <i class="fas fa-minus mr-1"></i>No change
+              </p>
+            </div>
+            <div class="h-12 w-12 bg-green-100 rounded-full flex items-center justify-center">
+              <i class="fas fa-check-circle text-green-600"></i>
+            </div>
+          </div>
         </div>
-        <div class="h-12 w-12 bg-green-100 rounded-full flex items-center justify-center">
-          <i class="fas fa-check-circle text-green-600"></i>
-        </div>
-      </div>
-    </div>
 
-    <div class="metric-card">
-      <div class="flex items-center justify-between">
-        <div>
-          <p class="text-sm font-medium text-gray-600">Rejection Count</p>
-          <p id="rejectionCount" class="text-2xl font-bold text-gray-900 mt-1">0</p>
+        <div class="metric-card">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-sm font-medium text-gray-600">Rejection Count</p>
+              <p id="rejectionCount" class="text-2xl font-bold text-gray-900 mt-1">0</p>
+              <p id="rejectionCountTrend" class="text-xs metric-trend-neutral mt-1">
+                <i class="fas fa-minus mr-1"></i>No change
+              </p>
+            </div>
+            <div class="h-12 w-12 bg-red-100 rounded-full flex items-center justify-center">
+              <i class="fas fa-times-circle text-red-600"></i>
+            </div>
+          </div>
         </div>
-        <div class="h-12 w-12 bg-red-100 rounded-full flex items-center justify-center">
-          <i class="fas fa-times-circle text-red-600"></i>
-        </div>
-      </div>
-    </div>
 
-    <div class="metric-card">
-      <div class="flex items-center justify-between">
-        <div>
-          <p class="text-sm font-medium text-gray-600">Pending/Followups</p>
-          <p id="pendingFollowups" class="text-2xl font-bold text-gray-900 mt-1">0</p>
-        </div>
-        <div class="h-12 w-12 bg-yellow-100 rounded-full flex items-center justify-center">
-          <i class="fas fa-clock text-yellow-600"></i>
+        <div class="metric-card">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-sm font-medium text-gray-600">Pending/Followups</p>
+              <p id="pendingFollowups" class="text-2xl font-bold text-gray-900 mt-1">0</p>
+              <p id="pendingFollowupsTrend" class="text-xs metric-trend-neutral mt-1">
+                <i class="fas fa-minus mr-1"></i>No change
+              </p>
+            </div>
+            <div class="h-12 w-12 bg-yellow-100 rounded-full flex items-center justify-center">
+              <i class="fas fa-clock text-yellow-600"></i>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
-  </div>
 
-  <!-- Second Row of Metrics -->
-  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-    <div class="metric-card">
-      <div class="flex items-center justify-between">
-        <div>
-          <p class="text-sm font-medium text-gray-600">Approval Amount</p>
-          <p id="approvalAmount" class="text-2xl font-bold text-gray-900 mt-1">₹0</p>
+      <!-- Second Row of Metrics -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div class="metric-card">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-sm font-medium text-gray-600">Approval Amount</p>
+              <p id="approvalAmount" class="text-2xl font-bold text-gray-900 mt-1">₹0</p>
+              <p id="approvalAmountTrend" class="text-xs metric-trend-neutral mt-1">
+                <i class="fas fa-minus mr-1"></i>No change
+              </p>
+            </div>
+            <div class="h-12 w-12 bg-green-100 rounded-full flex items-center justify-center">
+              <i class="fas fa-rupee-sign text-green-600"></i>
+            </div>
+          </div>
         </div>
-        <div class="h-12 w-12 bg-green-100 rounded-full flex items-center justify-center">
-          <i class="fas fa-rupee-sign text-green-600"></i>
-        </div>
-      </div>
-    </div>
 
-    <div class="metric-card">
-      <div class="flex items-center justify-between">
-        <div>
-          <p class="text-sm font-medium text-gray-600">Disbursement Amount</p>
-          <p id="disbursementAmount" class="text-2xl font-bold text-gray-900 mt-1">₹0</p>
+        <div class="metric-card">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-sm font-medium text-gray-600">Disbursement Amount</p>
+              <p id="disbursementAmount" class="text-2xl font-bold text-gray-900 mt-1">₹0</p>
+              <p id="disbursementAmountTrend" class="text-xs metric-trend-neutral mt-1">
+                <i class="fas fa-minus mr-1"></i>No change
+              </p>
+            </div>
+            <div class="h-12 w-12 bg-purple-100 rounded-full flex items-center justify-center">
+              <i class="fas fa-money-bill-wave text-purple-600"></i>
+            </div>
+          </div>
         </div>
-        <div class="h-12 w-12 bg-purple-100 rounded-full flex items-center justify-center">
-          <i class="fas fa-money-bill-wave text-purple-600"></i>
-        </div>
-      </div>
-    </div>
 
-    <div class="metric-card">
-      <div class="flex items-center justify-between">
-        <div>
-          <p class="text-sm font-medium text-gray-600">Active Loans</p>
-          <p id="activeLoans" class="text-2xl font-bold text-gray-900 mt-1">0</p>
+        <div class="metric-card">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-sm font-medium text-gray-600">Active Loans</p>
+              <p id="activeLoans" class="text-2xl font-bold text-gray-900 mt-1">0</p>
+              <p id="activeLoansTrend" class="text-xs metric-trend-neutral mt-1">
+                <i class="fas fa-minus mr-1"></i>No change
+              </p>
+            </div>
+            <div class="h-12 w-12 bg-indigo-100 rounded-full flex items-center justify-center">
+              <i class="fas fa-file-contract text-indigo-600"></i>
+            </div>
+          </div>
         </div>
-        <div class="h-12 w-12 bg-indigo-100 rounded-full flex items-center justify-center">
-          <i class="fas fa-file-contract text-indigo-600"></i>
-        </div>
-      </div>
-    </div>
 
-    <div class="metric-card">
-      <div class="flex items-center justify-between">
-        <div>
-          <p class="text-sm font-medium text-gray-600">Conversion Rate</p>
-          <p id="dashboardConversionRate" class="text-2xl font-bold text-gray-900 mt-1">0%</p>
-        </div>
-        <div class="h-12 w-12 bg-teal-100 rounded-full flex items-center justify-center">
-          <i class="fas fa-chart-line text-teal-600"></i>
+        <div class="metric-card">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-sm font-medium text-gray-600">Conversion Rate</p>
+              <p id="dashboardConversionRate" class="text-2xl font-bold text-gray-900 mt-1">0%</p>
+              <p id="conversionRateTrend" class="text-xs metric-trend-neutral mt-1">
+                <i class="fas fa-minus mr-1"></i>No change
+              </p>
+            </div>
+            <div class="h-12 w-12 bg-teal-100 rounded-full flex items-center justify-center">
+              <i class="fas fa-chart-line text-teal-600"></i>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
-  </div>
 
-  <!-- Missing Dashboard Elements -->
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-    <div class="metric-card">
-      <div class="flex items-center justify-between">
-        <div>
-          <p class="text-sm font-medium text-gray-600">Pending Tasks</p>
-          <p id="pendingTasks" class="text-2xl font-bold text-gray-900 mt-1">0</p>
+      <!-- Missing Dashboard Elements -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+        <div class="metric-card">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-sm font-medium text-gray-600">Pending Tasks</p>
+              <p id="pendingTasks" class="text-2xl font-bold text-gray-900 mt-1">0</p>
+              <p id="pendingTasksTrend" class="text-xs metric-trend-neutral mt-1">
+                <i class="fas fa-minus mr-1"></i>No change
+              </p>
+            </div>
+            <div class="h-12 w-12 bg-orange-100 rounded-full flex items-center justify-center">
+              <i class="fas fa-tasks text-orange-600"></i>
+            </div>
+          </div>
         </div>
-        <div class="h-12 w-12 bg-orange-100 rounded-full flex items-center justify-center">
-          <i class="fas fa-tasks text-orange-600"></i>
+        <div class="metric-card">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-sm font-medium text-gray-600">Total Loan Amount</p>
+              <p id="totalAmount" class="text-2xl font-bold text-gray-900 mt-1">₹0</p>
+              <p id="totalAmountTrend" class="text-xs metric-trend-neutral mt-1">
+                <i class="fas fa-minus mr-1"></i>No change
+              </p>
+            </div>
+            <div class="h-12 w-12 bg-blue-100 rounded-full flex items-center justify-center">
+              <i class="fas fa-hand-holding-usd text-blue-600"></i>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
-    <div class="metric-card">
-      <div class="flex items-center justify-between">
-        <div>
-          <p class="text-sm font-medium text-gray-600">Total Loan Amount</p>
-          <p id="totalAmount" class="text-2xl font-bold text-gray-900 mt-1">₹0</p>
-        </div>
-        <div class="h-12 w-12 bg-blue-100 rounded-full flex items-center justify-center">
-          <i class="fas fa-hand-holding-usd text-blue-600"></i>
-        </div>
-      </div>
-    </div>
-  </div>
 
-  <!-- Lead Conversion Chart -->
-  <div class="bg-white rounded-xl shadow-lg p-6 mb-6">
-    <h3 class="text-lg font-semibold text-gray-900 mb-4">Lead Conversion Trend</h3>
-    <div class="chart-container">
-      <canvas id="leadConversionChart"></canvas>
-    </div>
-  </div>
-
-  <!-- Lead Pipeline View -->
-  <div class="bg-white rounded-xl shadow-lg p-6 mb-6">
-    <div class="flex justify-between items-center mb-6">
-      <h3 class="text-lg font-semibold text-gray-900">Lead Pipeline</h3>
-      <div class="flex gap-2">
-        <button onclick="refreshPipeline()" class="btn-secondary text-sm">
-          <i class="fas fa-sync-alt mr-1"></i>Refresh
-        </button>
-        <button onclick="togglePipelineView()" class="btn-secondary text-sm">
-          <i class="fas fa-th-list mr-1"></i>Toggle View
-        </button>
+      <!-- Lead Conversion Chart -->
+      <div class="bg-white rounded-xl shadow-lg p-6 mb-6">
+        <h3 class="text-lg font-semibold text-gray-900 mb-4">Lead Conversion Trend</h3>
+        <div class="chart-container">
+          <canvas id="leadConversionChart"></canvas>
+        </div>
       </div>
-    </div>
-    
-    <div id="pipelineView" class="pipeline-container">
-      <!-- Pipeline stages will be populated here -->
-    </div>
-  </div>
-        <!-- Recent Leads -->
-        <div class="bg-white rounded-xl shadow-lg p-6 mb-6">
-          <div class="flex justify-between items-center mb-6">
-            <h3 class="text-lg font-semibold text-gray-900">Recent Leads</h3>
-            <button onclick="showAddLeadModal()" class="btn-primary">
-              <i class="fas fa-plus mr-2"></i>Add New Lead
+
+      <!-- Lead Pipeline View -->
+      <div class="bg-white rounded-xl shadow-lg p-6 mb-6">
+        <div class="flex justify-between items-center mb-6">
+          <h3 class="text-lg font-semibold text-gray-900">Lead Pipeline</h3>
+          <div class="flex gap-2">
+            <button onclick="refreshPipeline()" class="btn-secondary text-sm">
+              <i class="fas fa-sync-alt mr-1"></i>Refresh
             </button>
           </div>
+        </div>
+        
+        <div id="pipelineView" class="pipeline-container">
+          <!-- Pipeline stages will be populated here -->
+        </div>
+      </div>
+      
+      <!-- Recent Leads -->
+      <div class="bg-white rounded-xl shadow-lg p-6 mb-6">
+        <div class="flex justify-between items-center mb-6">
+          <h3 class="text-lg font-semibold text-gray-900">Recent Leads</h3>
+          <button onclick="showAddLeadModal()" class="btn-primary">
+            <i class="fas fa-plus mr-2"></i>Add New Lead
+          </button>
+        </div>
 
-          <div class="table-container">
-            <table>
-              <thead>
+        <div class="table-container">
+          <table>
+            <thead>
               <tr>
                 <th>Customer</th>
                 <th>Contact</th>
                 <th>Loan Type</th>
+                <th>Company Name</th>
+                <th>Location</th>
                 <th>Amount</th>
                 <th>Status</th>
                 <th>Actions</th>
               </tr>
-              </thead>
-              <tbody id="recentLeadsTable">
+            </thead>
+            <tbody id="recentLeadsTable">
               <!-- Leads will be populated here -->
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        <!-- Upcoming Call Backs -->
-        <div class="bg-white rounded-xl shadow-lg p-6">
-          <div class="flex justify-between items-center mb-6">
-            <h3 class="text-lg font-semibold text-gray-900">Upcoming Call Backs</h3>
-            <button onclick="showTaskModal()" class="btn-primary">
-              <i class="fas fa-plus mr-2"></i>Add Call Back
-            </button>
-          </div>
-
-          <div id="upcomingTasksList" class="space-y-3">
-            <!-- Call backs will be populated here -->
-          </div>
+            </tbody>
+          </table>
         </div>
       </div>
+
+      <!-- Upcoming Call Backs -->
+      <div class="bg-white rounded-xl shadow-lg p-6">
+        <div class="flex justify-between items-center mb-6">
+          <h3 class="text-lg font-semibold text-gray-900">Upcoming Call Backs</h3>
+          <button onclick="showTaskModal()" class="btn-primary">
+            <i class="fas fa-plus mr-2"></i>Add Call Back
+          </button>
+        </div>
+
+        <div id="upcomingTasksList" class="space-y-3">
+          <!-- Call backs will be populated here -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Upcoming Call Backs -->
+      <div class="bg-white rounded-xl shadow-lg p-6">
+        <div class="flex justify-between items-center mb-6">
+          <h3 class="text-lg font-semibold text-gray-900">Upcoming Call Backs</h3>
+          <button onclick="showTaskModal()" class="btn-primary">
+            <i class="fas fa-plus mr-2"></i>Add Call Back
+          </button>
+        </div>
+
+        <div id="upcomingTasksList" class="space-y-3">
+          <!-- Call backs will be populated here -->
+        </div>
+      </div>
+    </div>
 
       <!-- Call Backs Page -->
       <div id="tasksPage" class="page hidden">
@@ -4168,40 +4416,66 @@
       </div>
 
       <!-- Leads Management Page -->
-      <div id="leadsPage" class="page hidden">
-        <div class="bg-white rounded-xl shadow-lg p-6">
-          <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
-            <h3 class="text-lg font-semibold text-gray-900">All Leads</h3>
-            <div class="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
-              <div class="relative">
-                <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
-                <input type="text" id="searchLeads" class="form-input pl-10" placeholder="Search leads...">
-              </div>
-              <button onclick="showAddLeadModal()" class="btn-primary">
-                <i class="fas fa-plus mr-2"></i>Add Lead
-              </button>
+    <div id="leadsPage" class="page hidden">
+      <div class="bg-white rounded-xl shadow-lg p-6">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+          <h3 class="text-lg font-semibold text-gray-900">All Leads</h3>
+          <div class="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+            <div class="relative">
+              <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+              <input type="text" id="searchLeads" class="form-input pl-10" placeholder="Search leads...">
             </div>
+            <button onclick="showAddLeadModal()" class="btn-primary">
+              <i class="fas fa-plus mr-2"></i>Add Lead
+            </button>
           </div>
+        </div>
 
-          <div class="table-container">
-            <table>
-              <thead>
+        <!-- Bulk Actions Section -->
+        <div id="bulkActionsSection" class="mb-4 p-4 bg-gray-50 rounded-lg hidden">
+          <div class="flex flex-wrap gap-3 items-center">
+            <span class="font-medium text-gray-700">Bulk Actions:</span>
+            <button onclick="showBulkAssignModal()" class="btn-primary text-sm">
+              <i class="fas fa-user-plus mr-2"></i>Assign to Agent
+            </button>
+            <button onclick="showBulkEmailModal()" class="btn-secondary text-sm">
+              <i class="fas fa-envelope mr-2"></i>Send Email
+            </button>
+            <button onclick="showWhatsAppShareModal()" class="btn-whatsapp text-sm">
+              <i class="fab fa-whatsapp mr-2"></i>Share via WhatsApp
+            </button>
+            <button onclick="bulkDeleteLeads()" class="btn-secondary text-red-600 text-sm">
+              <i class="fas fa-trash mr-2"></i>Delete Selected
+            </button>
+            <span id="selectedLeadsCount" class="text-sm text-gray-600">0 selected</span>
+          </div>
+        </div>
+
+        <div class="table-container">
+          <table>
+            <thead>
               <tr>
+                <th>
+                  <input type="checkbox" id="selectAllLeads" onchange="toggleSelectAllLeads()">
+                </th>
                 <th>Customer</th>
                 <th>Contact</th>
                 <th>Loan Type</th>
+                <th>Company Name</th>
+                <th>Location</th>
                 <th>Amount</th>
                 <th>Status</th>
                 <th>Actions</th>
               </tr>
-              </thead>
-              <tbody id="allLeadsTable">
+            </thead>
+            <tbody id="allLeadsTable">
               <!-- Leads will be populated here -->
-              </tbody>
-            </table>
-          </div>
+            </tbody>
+          </table>
         </div>
       </div>
+    </div>
+  
       <!-- Add this modal right after the existing modals in the HTML -->
 <!-- Lead Details Modal -->
 <div id="leadDetailsModal" class="modal">
@@ -4386,250 +4660,280 @@
 </div>
 
       <!-- Admin Panel Page -->
-      <div id="adminPage" class="page hidden">
-        <!-- Admin Metrics -->
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <div class="metric-card">
-            <div class="flex items-center justify-between">
-              <div>
-                <p class="text-sm font-medium text-gray-600">Total Agents</p>
-                <p id="totalAgents" class="text-2xl font-bold text-gray-900 mt-1">0</p>
-              </div>
-              <div class="h-12 w-12 bg-blue-100 rounded-full flex items-center justify-center">
-                <i class="fas fa-users text-blue-600"></i>
-              </div>
+    <div id="adminPage" class="page hidden">
+      <!-- Admin Metrics -->
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <div class="metric-card">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-sm font-medium text-gray-600">Total Agents</p>
+              <p id="totalAgents" class="text-2xl font-bold text-gray-900 mt-1">0</p>
             </div>
-          </div>
-
-          <div class="metric-card">
-            <div class="flex items-center justify-between">
-              <div>
-                <p class="text-sm font-medium text-gray-600">Active Agents</p>
-                <p id="activeAgents" class="text-2xl font-bold text-gray-900 mt-1">0</p>
-              </div>
-              <div class="h-12 w-12 bg-green-100 rounded-full flex items-center justify-center">
-                <i class="fas fa-user-check text-green-600"></i>
-              </div>
-            </div>
-          </div>
-
-          <div class="metric-card">
-            <div class="flex items-center justify-between">
-              <div>
-                <p class="text-sm font-medium text-gray-600">Leads Assigned</p>
-                <p id="leadsAssigned" class="text-2xl font-bold text-gray-900 mt-1">0</p>
-              </div>
-              <div class="h-12 w-12 bg-yellow-100 rounded-full flex items-center justify-center">
-                <i class="fas fa-tasks text-yellow-600"></i>
-              </div>
-            </div>
-          </div>
-
-          <div class="metric-card">
-            <div class="flex items-center justify-between">
-              <div>
-                <p class="text-sm font-medium text-gray-700 mb-1">Conversion Rate</p>
-                <p id="adminConversionRate" class="text-2xl font-bold text-gray-900 mt-1">0%</p>
-              </div>
-              <div class="h-12 w-12 bg-purple-100 rounded-full flex items-center justify-center">
-                <i class="fas fa-chart-line text-purple-600"></i>
-              </div>
+            <div class="h-12 w-12 bg-blue-100 rounded-full flex items-center justify-center">
+              <i class="fas fa-users text-blue-600"></i>
             </div>
           </div>
         </div>
 
-        <!-- Agent Management -->
-        <div class="bg-white rounded-xl shadow-lg p-6 mb-6">
-          <div class="flex justify-between items-center mb-6">
-            <h3 class="text-lg font-semibold text-gray-900">Agent Management</h3>
-            <button onclick="showAddAgentModal()" class="btn-primary">
-              <i class="fas fa-user-plus mr-2"></i>Add Agent
+        <div class="metric-card">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-sm font-medium text-gray-600">Active Agents</p>
+              <p id="activeAgents" class="text-2xl font-bold text-gray-900 mt-1">0</p>
+            </div>
+            <div class="h-12 w-12 bg-green-100 rounded-full flex items-center justify-center">
+              <i class="fas fa-user-check text-green-600"></i>
+            </div>
+          </div>
+        </div>
+
+        <div class="metric-card">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-sm font-medium text-gray-600">Leads Assigned</p>
+              <p id="leadsAssigned" class="text-2xl font-bold text-gray-900 mt-1">0</p>
+            </div>
+            <div class="h-12 w-12 bg-yellow-100 rounded-full flex items-center justify-center">
+              <i class="fas fa-tasks text-yellow-600"></i>
+            </div>
+          </div>
+        </div>
+
+        <div class="metric-card">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-sm font-medium text-gray-700 mb-1">Conversion Rate</p>
+              <p id="adminConversionRate" class="text-2xl font-bold text-gray-900 mt-1">0%</p>
+            </div>
+            <div class="h-12 w-12 bg-purple-100 rounded-full flex items-center justify-center">
+              <i class="fas fa-chart-line text-purple-600"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Agent Management -->
+      <div class="bg-white rounded-xl shadow-lg p-6 mb-6">
+        <div class="flex justify-between items-center mb-6">
+          <h3 class="text-lg font-semibold text-gray-900">Agent Management</h3>
+          <button onclick="showAddAgentModal()" class="btn-primary">
+            <i class="fas fa-user-plus mr-2"></i>Add Agent
+          </button>
+        </div>
+
+        <div class="table-container">
+          <table>
+            <thead>
+            <tr>
+              <th>Name</th>
+              <th>Username</th>
+              <th>Contact</th>
+              <th>Status</th>
+              <th>Performance</th>
+              <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody id="agentsTable">
+            <!-- Agents will be populated here -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- All Leads Management for Admin -->
+      <div class="bg-white rounded-xl shadow-lg p-6">
+        <div class="flex justify-between items-center mb-6">
+          <h3 class="text-lg font-semibold text-gray-900">All Leads Management</h3>
+          <div class="flex gap-3">
+            <button onclick="showBulkAssignModal()" class="btn-primary" id="bulkAssignBtn">
+              <i class="fas fa-user-plus mr-2"></i>Bulk Assign
+            </button>
+            <button onclick="exportLeads()" class="btn-secondary">
+              <i class="fas fa-download mr-2"></i>Export Leads
+            </button>
+            <button onclick="bulkDeleteLeads()" class="btn-secondary text-red-600">
+              <i class="fas fa-trash mr-2"></i>Bulk Delete
             </button>
           </div>
+        </div>
 
-          <div class="table-container">
-            <table>
-              <thead>
-              <tr>
-                <th>Name</th>
-                <th>Username</th>
-                <th>Contact</th>
-                <th>Status</th>
-                <th>Performance</th>
-                <th>Actions</th>
-              </tr>
-              </thead>
-              <tbody id="agentsTable">
-              <!-- Agents will be populated here -->
-              </tbody>
-            </table>
+        <!-- Bulk Actions Section for Admin -->
+        <div id="adminBulkActionsSection" class="mb-4 p-4 bg-gray-50 rounded-lg hidden">
+          <div class="flex flex-wrap gap-3 items-center">
+            <span class="font-medium text-gray-700">Bulk Actions:</span>
+            <button onclick="showBulkAssignModal()" class="btn-primary text-sm">
+              <i class="fas fa-user-plus mr-2"></i>Assign to Agent
+            </button>
+            <button onclick="showBulkEmailModal()" class="btn-secondary text-sm">
+              <i class="fas fa-envelope mr-2"></i>Send Email
+            </button>
+            <button onclick="showWhatsAppShareModal()" class="btn-whatsapp text-sm">
+              <i class="fab fa-whatsapp mr-2"></i>Share via WhatsApp
+            </button>
+            <button onclick="bulkDeleteLeads()" class="btn-secondary text-red-600 text-sm">
+              <i class="fas fa-trash mr-2"></i>Delete Selected
+            </button>
+            <span id="adminSelectedLeadsCount" class="text-sm text-gray-600">0 selected</span>
           </div>
         </div>
 
-        <!-- All Leads Management for Admin -->
-        <div class="bg-white rounded-xl shadow-lg p-6">
-          <div class="flex justify-between items-center mb-6">
-            <h3 class="text-lg font-semibold text-gray-900">All Leads Management</h3>
-            <div class="flex gap-3">
-              <button onclick="showBulkAssignModal()" class="btn-primary" id="bulkAssignBtn">
-                <i class="fas fa-user-plus mr-2"></i>Bulk Assign
-              </button>
-              <button onclick="exportLeads()" class="btn-secondary">
-                <i class="fas fa-download mr-2"></i>Export Leads
-              </button>
-              <button onclick="bulkDeleteLeads()" class="btn-secondary text-red-600">
-                <i class="fas fa-trash mr-2"></i>Bulk Delete
-              </button>
-            </div>
-          </div>
-
-          <div class="table-container">
-            <table>
-              <thead>
-              <tr>
-                <th>
-                  <input type="checkbox" id="selectAllLeads" onchange="toggleSelectAllLeads()">
-                </th>
-                <th>Customer</th>
-                <th>Contact</th>
-                <th>Loan Type</th>
-                <th>Amount</th>
-                <th>Status</th>
-                <th>Assigned To</th>
-                <th>Actions</th>
-              </tr>
-              </thead>
-              <tbody id="adminLeadsTable">
-              <!-- Leads will be populated here -->
-              </tbody>
-            </table>
-          </div>
+        <div class="table-container">
+          <table>
+            <thead>
+            <tr>
+              <th>
+                <input type="checkbox" id="adminSelectAllLeads" onchange="toggleAdminSelectAllLeads()">
+              </th>
+              <th>Customer</th>
+              <th>Contact</th>
+              <th>Loan Type</th>
+              <th>Company Name</th>
+              <th>Location</th>
+              <th>Status</th>
+              <th>Assigned To</th>
+              <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody id="adminLeadsTable">
+            <!-- Leads will be populated here -->
+            </tbody>
+          </table>
         </div>
-      </div>
-      <!-- Bulk Lead Assignment Modal (Admin Only) -->
-<div id="bulkAssignModal" class="modal">
-  <div class="modal-content">
-    <div class="flex justify-between items-center mb-6">
-      <h3 class="text-xl font-semibold text-gray-900">Bulk Assign Leads</h3>
-      <button onclick="closeBulkAssignModal()" class="text-gray-400 hover:text-gray-600">
-        <i class="fas fa-times text-xl"></i>
-      </button>
-    </div>
-
-    <div class="space-y-4">
-      <div>
-        <label for="bulkAssignAgent" class="block text-sm font-medium text-gray-700 mb-2">Select Agent</label>
-        <select id="bulkAssignAgent" class="form-input">
-          <option value="">Select Agent</option>
-        </select>
-      </div>
-
-      <div>
-        <label class="block text-sm font-medium text-gray-700 mb-2">Selected Leads</label>
-        <div id="selectedLeadsCount" class="text-sm text-gray-600 mb-2">0 leads selected</div>
-        <div id="selectedLeadsList" class="max-h-40 overflow-y-auto border rounded-lg p-3 bg-gray-50">
-          <!-- Selected leads will be listed here -->
-        </div>
-      </div>
-
-      <div>
-        <label for="bulkAssignNotes" class="block text-sm font-medium text-gray-700 mb-2">Assignment Notes</label>
-        <textarea id="bulkAssignNotes" class="form-input" rows="3" placeholder="Add notes about this assignment..."></textarea>
-      </div>
-
-      <div class="flex justify-end space-x-3 pt-4">
-        <button onclick="closeBulkAssignModal()" class="btn-secondary">Cancel</button>
-        <button onclick="processBulkAssignment()" class="btn-primary">
-          <i class="fas fa-user-plus mr-2"></i>Assign Leads
-        </button>
       </div>
     </div>
-  </div>
-</div>
-
 
       <!-- Reports Page -->
-      <div id="reportsPage" class="page hidden">
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-          <!-- Daily Worksheet Report -->
-          <div class="bg-white rounded-xl shadow-lg p-6">
-            <h3 class="text-lg font-semibold text-gray-900 mb-4">Daily Worksheet Report</h3>
+    <div id="reportsPage" class="page hidden">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+        <!-- Daily Worksheet Report -->
+        <div class="report-card">
+          <h3 class="text-lg font-semibold text-gray-900 mb-4">Daily Worksheet Report</h3>
 
-            <div class="space-y-4">
-              <div>
-                <label for="reportAgent" class="block text-sm font-medium text-gray-700 mb-1">Select Agent</label>
-                <select id="reportAgent" class="form-input">
-                  <option value="">All Agents</option>
-                </select>
-              </div>
-
-              <div>
-                <label for="reportDate" class="block text-sm font-medium text-gray-700 mb-1">Date Range</label>
-                <input type="date" id="reportDate" class="form-input">
-              </div>
-
-              <button onclick="generateDailyReport()" class="w-full btn-primary">
-                <i class="fas fa-file-alt mr-2"></i>Generate Report
-              </button>
+          <div class="space-y-4">
+            <div>
+              <label for="reportAgent" class="block text-sm font-medium text-gray-700 mb-1">Select Agent</label>
+              <select id="reportAgent" class="form-input">
+                <option value="">All Agents</option>
+              </select>
             </div>
 
-            <div id="dailyReportContent" class="mt-6 hidden">
-              <!-- Report content will be populated here -->
+            <div>
+              <label for="reportDate" class="block text-sm font-medium text-gray-700 mb-1">Date Range</label>
+              <input type="date" id="reportDate" class="form-input">
             </div>
+
+            <button onclick="generateDailyReport()" class="w-full btn-primary">
+              <i class="fas fa-file-alt mr-2"></i>Generate Report
+            </button>
           </div>
 
-          <!-- Commitment Tracking -->
-          <div class="bg-white rounded-xl shadow-lg p-6">
-            <h3 class="text-lg font-semibold text-gray-900 mb-4">Commitment Tracking</h3>
-
-            <div class="space-y-4">
-              <div>
-                <label for="commitmentTitle" class="block text-sm font-medium text-gray-700 mb-1">Add Commitment</label>
-                <input type="text" id="commitmentTitle" class="form-input" placeholder="Commitment title">
-              </div>
-
-              <div>
-                <label for="commitmentAmount" class="block text-sm font-medium text-gray-700 mb-1">Target Amount (₹)</label>
-                <input type="number" id="commitmentAmount" class="form-input" placeholder="0">
-              </div>
-
-              <div>
-                <label for="commitmentDueDate" class="block text-sm font-medium text-gray-700 mb-1">Due Date</label>
-                <input type="date" id="commitmentDueDate" class="form-input">
-              </div>
-
-              <button onclick="addCommitment()" class="w-full btn-primary">
-                <i class="fas fa-plus mr-2"></i>Add Commitment
-              </button>
-            </div>
-
-            <div id="commitmentsList" class="mt-6 space-y-3">
-              <!-- Commitments will be populated here -->
-            </div>
+          <div id="dailyReportContent" class="mt-6 hidden">
+            <!-- Report content will be populated here -->
           </div>
         </div>
 
-        <!-- Performance Reports -->
-        <div class="bg-white rounded-xl shadow-lg p-6">
-          <h3 class="text-lg font-semibold text-gray-900 mb-4">Performance Reports</h3>
+        <!-- Commitment Tracking -->
+        <div class="report-card">
+          <h3 class="text-lg font-semibold text-gray-900 mb-4">Commitment Tracking</h3>
 
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-            <button onclick="generatePerformanceReport('weekly')" class="btn-secondary">
-              <i class="fas fa-calendar-week mr-2"></i>Weekly Report
-            </button>
-            <button onclick="generatePerformanceReport('monthly')" class="btn-secondary">
-              <i class="fas fa-calendar-alt mr-2"></i>Monthly Report
-            </button>
-            <button onclick="generatePerformanceReport('custom')" class="btn-secondary">
-              <i class="fas fa-calendar mr-2"></i>Custom Range
+          <div class="space-y-4">
+            <div>
+              <label for="commitmentTitle" class="block text-sm font-medium text-gray-700 mb-1">Add Commitment</label>
+              <input type="text" id="commitmentTitle" class="form-input" placeholder="Commitment title">
+            </div>
+
+            <div>
+              <label for="commitmentAmount" class="block text-sm font-medium text-gray-700 mb-1">Target Amount (₹)</label>
+              <input type="number" id="commitmentAmount" class="form-input" placeholder="0">
+            </div>
+
+            <div>
+              <label for="commitmentDueDate" class="block text-sm font-medium text-gray-700 mb-1">Due Date</label>
+              <input type="date" id="commitmentDueDate" class="form-input">
+            </div>
+
+            <button onclick="addCommitment()" class="w-full btn-primary">
+              <i class="fas fa-plus mr-2"></i>Add Commitment
             </button>
           </div>
 
-          <div id="performanceReportContent" class="hidden">
-            <!-- Performance report content will be populated here -->
+          <div id="commitmentsList" class="mt-6 space-y-3">
+            <!-- Commitments will be populated here -->
           </div>
         </div>
       </div>
+
+      <!-- Performance Reports -->
+      <div class="report-card">
+        <h3 class="text-lg font-semibold text-gray-900 mb-4">Performance Reports</h3>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+          <button onclick="generatePerformanceReport('weekly')" class="btn-secondary">
+            <i class="fas fa-calendar-week mr-2"></i>Weekly Report
+          </button>
+          <button onclick="generatePerformanceReport('monthly')" class="btn-secondary">
+            <i class="fas fa-calendar-alt mr-2"></i>Monthly Report
+          </button>
+          <button onclick="generatePerformanceReport('custom')" class="btn-secondary">
+            <i class="fas fa-calendar mr-2"></i>Custom Range
+          </button>
+        </div>
+
+        <div id="performanceReportContent" class="hidden">
+          <!-- Performance report content will be populated here -->
+        </div>
+      </div>
+
+      <!-- Enhanced Reports Section -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+        <!-- Lead Conversion Report -->
+        <div class="report-card">
+          <h3 class="text-lg font-semibold text-gray-900 mb-4">Lead Conversion Report</h3>
+          <div class="report-chart-container">
+            <canvas id="leadConversionReportChart"></canvas>
+          </div>
+          <div class="mt-4">
+            <button onclick="exportConversionReport()" class="btn-secondary w-full">
+              <i class="fas fa-download mr-2"></i>Export Conversion Report
+            </button>
+          </div>
+        </div>
+
+        <!-- Agent Performance Report -->
+        <div class="report-card">
+          <h3 class="text-lg font-semibold text-gray-900 mb-4">Agent Performance Report</h3>
+          <div class="report-chart-container">
+            <canvas id="agentPerformanceChart"></canvas>
+          </div>
+          <div class="mt-4">
+            <button onclick="exportAgentPerformanceReport()" class="btn-secondary w-full">
+              <i class="fas fa-download mr-2"></i>Export Agent Report
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Detailed Reports Table -->
+      <div class="report-card mt-6">
+        <h3 class="text-lg font-semibold text-gray-900 mb-4">Detailed Performance Metrics</h3>
+        <div class="table-container">
+          <table class="report-table">
+            <thead>
+              <tr>
+                <th>Metric</th>
+                <th>Current</th>
+                <th>Previous</th>
+                <th>Change</th>
+                <th>Trend</th>
+              </tr>
+            </thead>
+            <tbody id="performanceMetricsTable">
+              <!-- Performance metrics will be populated here -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
 
       <!-- Profile Page -->
       <div id="profilePage" class="page hidden">
@@ -4744,7 +5048,7 @@
     </div>
   </main>
 
-  <!-- Add/Edit Lead Modal -->
+  <!-- Add/Edit Lead Modal with Enhanced Fields -->
   <div id="leadModal" class="modal">
     <div class="modal-content">
       <div class="flex justify-between items-center mb-6">
@@ -4798,6 +5102,28 @@
             </select>
           </div>
 
+          <!-- New Fields -->
+          <!-- Add these fields to your lead form in the modal -->
+<div class="form-group">
+  <label for="leadCompany" class="form-label">Company Name</label>
+  <input type="text" id="leadCompany" class="form-input" placeholder="Enter company name">
+</div>
+
+<div class="form-group">
+  <label for="leadLocation" class="form-label">Location</label>
+  <input type="text" id="leadLocation" class="form-input" placeholder="Enter location/city">
+</div>
+
+          <div>
+            <label for="leadApplicationId" class="block text-sm font-medium text-gray-700 mb-1">Application ID</label>
+            <input type="text" id="leadApplicationId" class="form-input" placeholder="Auto-generated">
+          </div>
+
+          <div>
+            <label for="leadBank" class="block text-sm font-medium text-gray-700 mb-1">Bank Name</label>
+            <input type="text" id="leadBank" class="form-input" placeholder="Enter bank name">
+          </div>
+
           <div id="agentAssignField" class="hidden">
             <label for="leadAgent" class="block text-sm font-medium text-gray-700 mb-1">Assign to Agent</label>
             <select id="leadAgent" class="form-input">
@@ -4820,6 +5146,7 @@
       </form>
     </div>
   </div>
+
 
 
   <!-- Add/Edit Agent Modal -->
@@ -4879,7 +5206,7 @@
   </div>
 </div>
 <script>
-  // Application State - Fixed duplicate declarations
+  // Consolidated Application State - Single declaration
   let currentUser = null;
   let leads = [];
   let agents = [];
@@ -4898,6 +5225,11 @@
   let dialPadNumber = '';
   let currentLeadDetails = null;
   let currentDocumentPreview = null;
+  
+  // Chart instances
+  let leadConversionChart = null;
+  let leadConversionReportChart = null;
+  let agentPerformanceChart = null;
   
   // Bulk Email Functions
   let emailAttachments = [];
@@ -4999,50 +5331,73 @@
 
     // Forms
     const leadForm = document.getElementById('leadForm');
-    if (leadForm) leadForm.addEventListener('submit', handleLeadSubmit);
+    if (leadForm) {
+      leadForm.removeEventListener('submit', handleLeadSubmit);
+      leadForm.addEventListener('submit', handleLeadSubmit);
+    }
 
     const agentForm = document.getElementById('agentForm');
-    if (agentForm) agentForm.addEventListener('submit', handleAgentSubmit);
+    if (agentForm) {
+      agentForm.removeEventListener('submit', handleAgentSubmit);
+      agentForm.addEventListener('submit', handleAgentSubmit);
+    }
 
     const taskForm = document.getElementById('taskForm');
-    if (taskForm) taskForm.addEventListener('submit', handleTaskSubmit);
-
-    const profileForm = document.getElementById('profileForm');
-    if (profileForm) profileForm.addEventListener('submit', handleProfileUpdate);
-
-    const passwordForm = document.getElementById('passwordForm');
-    if (passwordForm) passwordForm.addEventListener('submit', handlePasswordChange);
+    if (taskForm) {
+      taskForm.removeEventListener('submit', handleTaskSubmit);
+      taskForm.addEventListener('submit', handleTaskSubmit);
+    }
 
     // Search leads
     const searchLeads = document.getElementById('searchLeads');
     if (searchLeads) {
-      searchLeads.addEventListener('input', debounce(function() {
-        filterLeads(this.value);
-      }, 300));
+      searchLeads.removeEventListener('input', searchLeadsHandler);
+      searchLeads.addEventListener('input', searchLeadsHandler);
     }
 
     // Callback form submission
     const callbackForm = document.getElementById('callbackForm');
     if (callbackForm) {
+      callbackForm.removeEventListener('submit', scheduleCallbackFromForm);
       callbackForm.addEventListener('submit', scheduleCallbackFromForm);
     }
 
     // Quick action forms
     const quickTaskForm = document.getElementById('quickTaskForm');
-    if (quickTaskForm) quickTaskForm.addEventListener('submit', handleQuickTaskSubmit);
+    if (quickTaskForm) {
+      quickTaskForm.removeEventListener('submit', handleQuickTaskSubmit);
+      quickTaskForm.addEventListener('submit', handleQuickTaskSubmit);
+    }
 
     const quickScheduleForm = document.getElementById('quickScheduleForm');
-    if (quickScheduleForm) quickScheduleForm.addEventListener('submit', handleQuickScheduleSubmit);
+    if (quickScheduleForm) {
+      quickScheduleForm.removeEventListener('submit', handleQuickScheduleSubmit);
+      quickScheduleForm.addEventListener('submit', handleQuickScheduleSubmit);
+    }
 
     const quickReminderForm = document.getElementById('quickReminderForm');
-    if (quickReminderForm) quickReminderForm.addEventListener('submit', handleQuickReminderSubmit);
+    if (quickReminderForm) {
+      quickReminderForm.removeEventListener('submit', handleQuickReminderSubmit);
+      quickReminderForm.addEventListener('submit', handleQuickReminderSubmit);
+    }
 
     // Bulk action forms
     const bulkEmailForm = document.getElementById('bulkEmailForm');
-    if (bulkEmailForm) bulkEmailForm.addEventListener('submit', handleBulkEmailSubmit);
+    if (bulkEmailForm) {
+      bulkEmailForm.removeEventListener('submit', handleBulkEmailSubmit);
+      bulkEmailForm.addEventListener('submit', handleBulkEmailSubmit);
+    }
 
     const whatsappShareForm = document.getElementById('whatsappShareForm');
-    if (whatsappShareForm) whatsappShareForm.addEventListener('submit', handleWhatsAppShareSubmit);
+    if (whatsappShareForm) {
+      whatsappShareForm.removeEventListener('submit', handleWhatsAppShareSubmit);
+      whatsappShareForm.addEventListener('submit', handleWhatsAppShareSubmit);
+    }
+  }
+
+  // Search leads handler
+  function searchLeadsHandler() {
+    filterLeads(this.value);
   }
 
   function initializeModals() {
@@ -5069,39 +5424,44 @@
   function setupEntityTypeHandler() {
     const entityTypeSelect = document.getElementById('entityType');
     if (entityTypeSelect) {
+      // Set initial state
+      updateEntityRequirements(entityTypeSelect.value);
+      
       entityTypeSelect.addEventListener('change', function() {
-        // Hide all entity requirements first
-        document.querySelectorAll('.entity-requirements').forEach(section => {
-          section.classList.add('hidden');
-        });
-        
-        // Show entity requirements section
-        const entityRequirements = document.getElementById('entityRequirements');
-        if (entityRequirements) {
-          entityRequirements.classList.remove('hidden');
-        }
-
-        // Show relevant entity based on selection
-        const selectedValue = this.value;
-        if (selectedValue === 'private') {
-          const privateReq = document.getElementById('privateRequirements');
-          if (privateReq) privateReq.classList.remove('hidden');
-          renderDirectorMembers();
-        } else if (selectedValue === 'proprietorship') {
-          const propReq = document.getElementById('proprietorshipRequirements');
-          if (propReq) propReq.classList.remove('hidden');
-        } else if (selectedValue === 'partnership') {
-          const partReq = document.getElementById('partnershipRequirements');
-          if (partReq) partReq.classList.remove('hidden');
-          renderPartnershipMembers();
-        } else {
-          // Hide entity requirements if no valid selection
-          const entityRequirements = document.getElementById('entityRequirements');
-          if (entityRequirements) {
-            entityRequirements.classList.add('hidden');
-          }
-        }
+        updateEntityRequirements(this.value);
       });
+    }
+  }
+
+  function updateEntityRequirements(entityType) {
+    // Hide all entity requirements first
+    document.querySelectorAll('.entity-requirements').forEach(section => {
+      section.classList.add('hidden');
+    });
+    
+    const entityRequirements = document.getElementById('entityRequirements');
+    if (!entityRequirements) return;
+    
+    if (entityType) {
+      entityRequirements.classList.remove('hidden');
+      
+      // Show relevant entity based on selection
+      if (entityType === 'private') {
+        const privateReq = document.getElementById('privateRequirements');
+        if (privateReq) privateReq.classList.remove('hidden');
+        renderDirectorMembers();
+      } else if (entityType === 'proprietorship') {
+        const propReq = document.getElementById('proprietorshipRequirements');
+        if (propReq) propReq.classList.remove('hidden');
+      } else if (entityType === 'partnership') {
+        const partReq = document.getElementById('partnershipRequirements');
+        if (partReq) partReq.classList.remove('hidden');
+        renderPartnershipMembers();
+      } else {
+        entityRequirements.classList.add('hidden');
+      }
+    } else {
+      entityRequirements.classList.add('hidden');
     }
   }
 
@@ -5175,14 +5535,12 @@
 
   // Enhanced Form Validation
   function validateBusinessForm() {
-    // Validate Business Nature
     const businessNature = document.querySelector('input[name="businessNature"]:checked');
     if (!businessNature) {
       showToast('Please select nature of business', 'error');
       return false;
     }
 
-    // If "Others" is selected for business nature, validate the input field
     if (businessNature.value === 'others') {
       const otherNatureInput = document.getElementById('otherNature');
       if (!otherNatureInput || !otherNatureInput.value.trim()) {
@@ -5192,14 +5550,12 @@
       }
     }
 
-    // Validate Industry
     const industry = document.querySelector('input[name="industry"]:checked');
     if (!industry) {
       showToast('Please select your industry', 'error');
       return false;
     }
 
-    // If "Other Industry" is selected, validate the input field
     if (industry.value === 'other-industry') {
       const otherIndustryInput = document.getElementById('otherIndustryName');
       if (!otherIndustryInput || !otherIndustryInput.value.trim()) {
@@ -5232,7 +5588,6 @@
       timestamp: new Date().toISOString()
     };
 
-    // Add other details if specified
     if (businessNature.value === 'others') {
       const otherNature = document.getElementById('otherNature');
       if (otherNature) businessData.otherNature = otherNature.value.trim();
@@ -5243,7 +5598,6 @@
       if (otherIndustry) businessData.otherIndustry = otherIndustry.value.trim();
     }
 
-    // Save to client documents
     if (currentClientLead) {
       const leadId = currentClientLead.id;
       if (!clientDocuments[leadId]) {
@@ -5263,7 +5617,6 @@
 
     const businessData = clientDocuments[leadId].businessInformation;
 
-    // Set business nature
     const businessNatureRadio = document.querySelector(`input[name="businessNature"][value="${businessData.businessNature}"]`);
     if (businessNatureRadio) {
       businessNatureRadio.checked = true;
@@ -5275,7 +5628,6 @@
       }
     }
 
-    // Set industry
     const industryRadio = document.querySelector(`input[name="industry"][value="${businessData.industry}"]`);
     if (industryRadio) {
       industryRadio.checked = true;
@@ -5289,7 +5641,7 @@
   }
 
   function loadSampleData() {
-    // Load sample leads
+    // Load leads
     try {
       const storedLeads = localStorage.getItem('crm_leads');
       if (storedLeads) {
@@ -5301,36 +5653,11 @@
     }
 
     if (leads.length === 0) {
-      leads = [
-        {
-          id: 1,
-          customerName: 'Rahul Sharma',
-          email: 'rahul.sharma@email.com',
-          phone: '+919876543210',
-          loanType: 'home',
-          loanAmount: 5000000,
-          status: 'approved',
-          createdDate: new Date('2024-01-15').toISOString(),
-          notes: 'Looking for a home loan in Mumbai',
-          assignedTo: 'agent1'
-        },
-        {
-          id: 2,
-          customerName: 'Priya Patel',
-          email: 'priya.patel@email.com',
-          phone: '+919812345678',
-          loanType: 'personal',
-          loanAmount: 1000000,
-          status: 'in-progress',
-          createdDate: new Date('2024-01-18').toISOString(),
-          notes: 'Personal loan for wedding expenses',
-          assignedTo: 'agent2'
-        }
-      ];
+      leads = getSampleLeads();
       localStorage.setItem('crm_leads', JSON.stringify(leads));
     }
 
-    // Load sample agents
+    // Load agents
     try {
       const storedAgents = localStorage.getItem('crm_agents');
       if (storedAgents) {
@@ -5342,38 +5669,11 @@
     }
 
     if (agents.length === 0) {
-      agents = [
-        {
-          id: 1,
-          name: 'Agent One',
-          username: 'agent1',
-          email: 'agent1@loanleads.com',
-          phone: '+919812345678',
-          role: 'agent',
-          status: 'active',
-          joinDate: '2023-01-15',
-          leadsAssigned: 24,
-          leadsConverted: 18,
-          password: 'agent123'
-        },
-        {
-          id: 2,
-          name: 'Agent Two',
-          username: 'agent2',
-          email: 'agent2@loanleads.com',
-          phone: '+919823456789',
-          role: 'agent',
-          status: 'active',
-          joinDate: '2023-02-20',
-          leadsAssigned: 32,
-          leadsConverted: 22,
-          password: 'agent123'
-        }
-      ];
+      agents = getSampleAgents();
       localStorage.setItem('crm_agents', JSON.stringify(agents));
     }
 
-    // Load sample tasks
+    // Load tasks
     try {
       const storedTasks = localStorage.getItem('crm_tasks');
       if (storedTasks) {
@@ -5385,23 +5685,11 @@
     }
 
     if (tasks.length === 0) {
-      tasks = [
-        {
-          id: 1,
-          title: 'Follow up with Rahul Sharma',
-          description: 'Discuss home loan application status',
-          dueDate: new Date(Date.now() + 86400000).toISOString(),
-          priority: 'high',
-          assignedTo: 'agent1',
-          status: 'pending',
-          reminder: 60,
-          createdBy: 'admin'
-        }
-      ];
+      tasks = getSampleTasks();
       localStorage.setItem('crm_tasks', JSON.stringify(tasks));
     }
 
-    // Load sample commitments
+    // Load commitments
     try {
       const storedCommitments = localStorage.getItem('crm_commitments');
       if (storedCommitments) {
@@ -5413,17 +5701,7 @@
     }
 
     if (commitments.length === 0) {
-      commitments = [
-        {
-          id: 1,
-          title: 'Monthly Target - January',
-          targetAmount: 10000000,
-          currentAmount: 7500000,
-          dueDate: new Date('2024-01-31').toISOString(),
-          status: 'pending',
-          assignedTo: 'all'
-        }
-      ];
+      commitments = getSampleCommitments();
       localStorage.setItem('crm_commitments', JSON.stringify(commitments));
     }
 
@@ -5459,6 +5737,101 @@
       console.error('Error loading client documents:', e);
       clientDocuments = {};
     }
+  }
+
+  // Sample data functions
+  function getSampleLeads() {
+    return [
+      {
+        id: 1,
+        customerName: 'Rahul Sharma',
+        email: 'rahul.sharma@email.com',
+        phone: '+919876543210',
+        loanType: 'home',
+        loanAmount: 5000000,
+        status: 'approved',
+        createdDate: new Date('2024-01-15').toISOString(),
+        notes: 'Looking for a home loan in Mumbai',
+        assignedTo: 'agent1',
+        company: 'Sharma Enterprises',
+        location: 'Mumbai'
+      },
+      {
+        id: 2,
+        customerName: 'Priya Patel',
+        email: 'priya.patel@email.com',
+        phone: '+919812345678',
+        loanType: 'personal',
+        loanAmount: 1000000,
+        status: 'in-progress',
+        createdDate: new Date('2024-01-18').toISOString(),
+        notes: 'Personal loan for wedding expenses',
+        assignedTo: 'agent2',
+        company: 'Patel Jewelers',
+        location: 'Delhi'
+      }
+    ];
+  }
+
+  function getSampleAgents() {
+    return [
+      {
+        id: 1,
+        name: 'Agent One',
+        username: 'agent1',
+        email: 'agent1@loanleads.com',
+        phone: '+919812345678',
+        role: 'agent',
+        status: 'active',
+        joinDate: '2023-01-15',
+        leadsAssigned: 24,
+        leadsConverted: 18,
+        password: 'agent123'
+      },
+      {
+        id: 2,
+        name: 'Agent Two',
+        username: 'agent2',
+        email: 'agent2@loanleads.com',
+        phone: '+919823456789',
+        role: 'agent',
+        status: 'active',
+        joinDate: '2023-02-20',
+        leadsAssigned: 32,
+        leadsConverted: 22,
+        password: 'agent123'
+      }
+    ];
+  }
+
+  function getSampleTasks() {
+    return [
+      {
+        id: 1,
+        title: 'Follow up with Rahul Sharma',
+        description: 'Discuss home loan application status',
+        dueDate: new Date(Date.now() + 86400000).toISOString(),
+        priority: 'high',
+        assignedTo: 'agent1',
+        status: 'pending',
+        reminder: 60,
+        createdBy: 'admin'
+      }
+    ];
+  }
+
+  function getSampleCommitments() {
+    return [
+      {
+        id: 1,
+        title: 'Monthly Target - January',
+        targetAmount: 10000000,
+        currentAmount: 7500000,
+        dueDate: new Date('2024-01-31').toISOString(),
+        status: 'pending',
+        assignedTo: 'all'
+      }
+    ];
   }
 
   function handleLogin(e) {
@@ -5672,6 +6045,8 @@
   }
 
   function loadPageData(page) {
+    console.log('Loading page:', page);
+    
     switch(page) {
       case 'dashboard':
         loadDashboardData();
@@ -5725,49 +6100,355 @@
   }
 
   function loadDashboardData() {
-    // Calculate comprehensive metrics
-    const totalLeads = leads.length;
-    const approvedLeads = leads.filter(l => l.status === 'approved').length;
-    const rejectedLeads = leads.filter(l => l.status === 'rejected').length;
-    const pendingLeads = leads.filter(l => ['new', 'in-progress', 'pending'].includes(l.status)).length;
-    const activeLoans = approvedLeads;
-    const pendingTasks = tasks.filter(t => t.status === 'pending').length;
-    const totalAmount = leads.reduce((sum, l) => sum + (l.loanAmount || 0), 0);
-    const approvalAmount = leads.filter(l => l.status === 'approved')
-                              .reduce((sum, l) => sum + (l.loanAmount || 0), 0);
+    console.log('Loading dashboard data...');
     
-    // Calculate conversion rate
-    const conversionRate = totalLeads > 0 ? Math.round((approvedLeads / totalLeads) * 100) : 0;
+    try {
+        // Calculate comprehensive metrics with error handling
+        const totalLeads = leads.length;
+        const approvedLeads = leads.filter(l => l.status === 'approved').length;
+        const rejectedLeads = leads.filter(l => l.status === 'rejected').length;
+        const pendingLeads = leads.filter(l => ['new', 'in-progress', 'pending'].includes(l.status)).length;
+        const activeLoans = approvedLeads;
+        const pendingTasks = tasks.filter(t => t.status === 'pending').length;
+        const totalAmount = leads.reduce((sum, l) => sum + (l.loanAmount || 0), 0);
+        const approvalAmount = leads.filter(l => l.status === 'approved')
+                                  .reduce((sum, l) => sum + (l.loanAmount || 0), 0);
+        const disbursementAmount = approvalAmount * 0.8; // Simulate 80% disbursement
+        
+        // Calculate conversion rate safely
+        const conversionRate = totalLeads > 0 ? Math.round((approvedLeads / totalLeads) * 100) : 0;
 
-    // Update all metric elements
-    const metrics = {
-      'totalLeads': totalLeads,
-      'approvalCount': approvedLeads,
-      'rejectionCount': rejectedLeads,
-      'pendingFollowups': pendingLeads,
-      'activeLoans': activeLoans,
-      'pendingTasks': pendingTasks,
-      'totalAmount': '₹' + totalAmount.toLocaleString('en-IN'),
-      'approvalAmount': '₹' + approvalAmount.toLocaleString('en-IN'),
-      'disbursementAmount': '₹' + (approvalAmount * 0.8).toLocaleString('en-IN'), // Simulate 80% disbursement
-      'dashboardConversionRate': conversionRate + '%'
-    };
+        console.log('Dashboard metrics calculated:', {
+            totalLeads, approvedLeads, rejectedLeads, pendingLeads,
+            pendingTasks, totalAmount, conversionRate
+        });
 
-    Object.keys(metrics).forEach(key => {
-      const element = document.getElementById(key);
-      if (element) {
-        element.textContent = metrics[key];
-      }
-    });
+        // Update all metric elements with null checks
+        const metrics = {
+            'totalLeads': totalLeads.toString(),
+            'approvalCount': approvedLeads.toString(),
+            'rejectionCount': rejectedLeads.toString(),
+            'pendingFollowups': pendingLeads.toString(),
+            'activeLoans': activeLoans.toString(),
+            'pendingTasks': pendingTasks.toString(),
+            'totalAmount': '₹' + totalAmount.toLocaleString('en-IN'),
+            'approvalAmount': '₹' + approvalAmount.toLocaleString('en-IN'),
+            'disbursementAmount': '₹' + disbursementAmount.toLocaleString('en-IN'),
+            'dashboardConversionRate': conversionRate + '%'
+        };
 
-    // Load recent leads
-    const recentLeads = [...leads].sort((a, b) => new Date(b.createdDate) - new Date(a.createdDate)).slice(0, 5);
-    renderLeadsTable('recentLeadsTable', recentLeads, false);
+        Object.keys(metrics).forEach(key => {
+            const element = document.getElementById(key);
+            if (element) {
+                element.textContent = metrics[key];
+            } else {
+                console.warn('Dashboard metric element not found:', key);
+            }
+        });
 
-    // Load upcoming tasks
-    loadUpcomingTasks();
-  }
-  
+        // Calculate trends
+        updateMetricTrends();
+
+        // Load recent leads with error handling
+        try {
+            const recentLeads = [...leads]
+                .sort((a, b) => new Date(b.createdDate) - new Date(a.createdDate))
+                .slice(0, 5);
+            renderLeadsTable('recentLeadsTable', recentLeads, false);
+        } catch (e) {
+            console.error('Error loading recent leads:', e);
+        }
+
+        // Load upcoming tasks
+        loadUpcomingTasks();
+        
+        // Initialize charts safely
+        initializeCharts();
+        
+        // Initialize pipeline
+        initializePipeline();
+        
+        console.log('Dashboard loaded successfully');
+        
+    } catch (error) {
+        console.error('Error loading dashboard:', error);
+        showToast('Error loading dashboard data', 'error');
+    }
+}
+
+// Fixed chart initialization
+function initializeCharts() {
+    try {
+        const chartCanvas = document.getElementById('leadConversionChart');
+        if (!chartCanvas) {
+            console.log('Chart canvas not found, skipping chart initialization');
+            return;
+        }
+        
+        // Check if Chart.js is available
+        if (typeof Chart === 'undefined') {
+            console.log('Chart.js not available, using fallback');
+            const ctx = chartCanvas.getContext('2d');
+            ctx.font = '14px Arial';
+            ctx.fillStyle = '#666';
+            ctx.textAlign = 'center';
+            ctx.fillText('Chart visualization would appear here', chartCanvas.width/2, chartCanvas.height/2);
+            return;
+        }
+        
+        // Destroy existing chart if it exists
+        if (leadConversionChart) {
+            leadConversionChart.destroy();
+        }
+        
+        // Create simple chart data
+        const chartData = {
+            labels: ['Approved', 'Rejected', 'Pending', 'New'],
+            datasets: [{
+                data: [
+                    leads.filter(l => l.status === 'approved').length,
+                    leads.filter(l => l.status === 'rejected').length,
+                    leads.filter(l => l.status === 'pending').length,
+                    leads.filter(l => l.status === 'new').length
+                ],
+                backgroundColor: [
+                    '#10b981',
+                    '#ef4444',
+                    '#f59e0b',
+                    '#3b82f6'
+                ],
+                borderWidth: 2,
+                borderColor: '#fff'
+            }]
+        };
+        
+        leadConversionChart = new Chart(chartCanvas, {
+            type: 'doughnut',
+            data: chartData,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    },
+                    title: {
+                        display: true,
+                        text: 'Lead Status Distribution'
+                    }
+                }
+            }
+        });
+        
+    } catch (error) {
+        console.error('Error initializing charts:', error);
+    }
+}
+
+// Fixed pipeline initialization
+function initializePipeline() {
+    try {
+        const pipelineView = document.getElementById('pipelineView');
+        if (!pipelineView) {
+            console.log('Pipeline view not found');
+            return;
+        }
+        
+        const stages = [
+            { id: 'new', title: 'New Leads', color: '#3b82f6', count: leads.filter(l => l.status === 'new').length },
+            { id: 'contacted', title: 'Contacted', color: '#f59e0b', count: leads.filter(l => l.status === 'in-progress').length },
+            { id: 'qualified', title: 'Qualified', color: '#10b981', count: leads.filter(l => l.status === 'pending').length },
+            { id: 'proposal', title: 'Proposal Sent', color: '#8b5cf6', count: Math.floor(leads.length * 0.1) }, // Simulated
+            { id: 'negotiation', title: 'Negotiation', color: '#ec4899', count: Math.floor(leads.length * 0.05) }, // Simulated
+            { id: 'closed-won', title: 'Approved', color: '#059669', count: leads.filter(l => l.status === 'approved').length },
+            { id: 'closed-lost', title: 'Rejected', color: '#dc2626', count: leads.filter(l => l.status === 'rejected').length }
+        ];
+        
+        pipelineView.innerHTML = stages.map(stage => `
+            <div class="pipeline-stage">
+                <div class="pipeline-stage-header" style="border-left-color: ${stage.color}">
+                    <div class="pipeline-stage-title" style="color: ${stage.color}">${stage.title}</div>
+                    <div class="pipeline-stage-count">${stage.count}</div>
+                </div>
+                <div class="pipeline-leads-container" id="pipeline-${stage.id}">
+                    ${getPipelineLeads(stage.id)}
+                </div>
+            </div>
+        `).join('');
+        
+    } catch (error) {
+        console.error('Error initializing pipeline:', error);
+    }
+}
+
+// Fixed function to get pipeline leads
+function getPipelineLeads(stageId) {
+    let filteredLeads = [];
+    
+    switch(stageId) {
+        case 'new':
+            filteredLeads = leads.filter(l => l.status === 'new');
+            break;
+        case 'contacted':
+            filteredLeads = leads.filter(l => l.status === 'in-progress');
+            break;
+        case 'qualified':
+            filteredLeads = leads.filter(l => l.status === 'pending');
+            break;
+        case 'closed-won':
+            filteredLeads = leads.filter(l => l.status === 'approved');
+            break;
+        case 'closed-lost':
+            filteredLeads = leads.filter(l => l.status === 'rejected');
+            break;
+        default:
+            // For simulated stages, show some leads
+            filteredLeads = leads.slice(0, 2);
+    }
+    
+    if (filteredLeads.length === 0) {
+        return '<div class="pipeline-empty">No leads</div>';
+    }
+    
+    return filteredLeads.slice(0, 5).map(lead => `
+        <div class="pipeline-lead" data-lead-id="${lead.id}">
+            <div class="pipeline-lead-header">
+                <div class="pipeline-lead-name">${lead.customerName || 'Unknown'}</div>
+                <div class="pipeline-lead-amount">₹${(lead.loanAmount || 0).toLocaleString('en-IN')}</div>
+            </div>
+            <div class="pipeline-lead-company">${lead.company || 'N/A'}</div>
+            <div class="pipeline-lead-location">${lead.location || 'N/A'}</div>
+            <div class="pipeline-lead-footer">
+                <div class="pipeline-lead-date">${new Date(lead.createdDate).toLocaleDateString()}</div>
+                <div class="pipeline-lead-actions">
+                    ${lead.phone ? `<button onclick="makeIVRCall('${lead.phone}', '${lead.customerName || 'Customer'}')" class="pipeline-action-btn">
+                        <i class="fas fa-phone text-green-500"></i>
+                    </button>` : ''}
+                    <button onclick="showLeadDetails(${lead.id})" class="pipeline-action-btn">
+                        <i class="fas fa-eye text-blue-500"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    `).join('');
+}
+
+// Fixed metric trends function
+function updateMetricTrends() {
+    try {
+        // Simplified trend calculation with null checks
+        const trends = [
+            'totalLeadsTrend',
+            'approvalCountTrend',
+            'rejectionCountTrend',
+            'pendingFollowupsTrend',
+            'activeLoansTrend',
+            'pendingTasksTrend',
+            'approvalAmountTrend',
+            'disbursementAmountTrend',
+            'totalAmountTrend',
+            'conversionRateTrend'
+        ];
+        
+        trends.forEach(trendId => {
+            const element = document.getElementById(trendId);
+            if (element) {
+                // Random trend for demo purposes
+                const random = Math.random();
+                if (random > 0.6) {
+                    element.innerHTML = '<i class="fas fa-arrow-up mr-1"></i>+' + Math.floor(Math.random() * 15) + '%';
+                    element.className = 'text-xs metric-trend-up mt-1';
+                } else if (random > 0.3) {
+                    element.innerHTML = '<i class="fas fa-arrow-down mr-1"></i>-' + Math.floor(Math.random() * 10) + '%';
+                    element.className = 'text-xs metric-trend-down mt-1';
+                } else {
+                    element.innerHTML = '<i class="fas fa-minus mr-1"></i>No change';
+                    element.className = 'text-xs metric-trend-neutral mt-1';
+                }
+            }
+        });
+    } catch (error) {
+        console.error('Error updating metric trends:', error);
+    }
+}
+
+// Fixed upcoming tasks function
+function loadUpcomingTasks() {
+    try {
+        const upcomingTasksList = document.getElementById('upcomingTasksList');
+        if (!upcomingTasksList) {
+            console.log('Upcoming tasks list element not found');
+            return;
+        }
+        
+        const userTasks = currentUser && currentUser.role === 'admin'
+            ? tasks
+            : tasks.filter(t => t.assignedTo === currentUser.username || t.assignedTo === 'all');
+        
+        const now = new Date();
+        const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        
+        const upcomingTasks = userTasks
+            .filter(task => {
+                if (!task.dueDate) return false;
+                const taskDate = new Date(task.dueDate);
+                return taskDate >= today && task.status === 'pending';
+            })
+            .sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate))
+            .slice(0, 5);
+        
+        if (upcomingTasks.length === 0) {
+            upcomingTasksList.innerHTML = '<p class="text-gray-500 text-center py-4">No upcoming tasks</p>';
+            return;
+        }
+        
+        upcomingTasksList.innerHTML = upcomingTasks.map(task => {
+            const taskDate = new Date(task.dueDate);
+            const formattedDate = taskDate.toLocaleDateString();
+            const formattedTime = taskDate.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            
+            return `
+                <div class="task-item">
+                    <div class="task-item-header">
+                        <div class="task-title">${task.title || 'Untitled Task'}</div>
+                        <div class="task-actions">
+                            <span class="task-priority-badge priority-${task.priority || 'medium'}">${task.priority || 'medium'}</span>
+                        </div>
+                    </div>
+                    <p class="text-sm text-gray-600 mb-2">${task.description || 'No description'}</p>
+                    <div class="flex justify-between items-center text-sm text-gray-500">
+                        <span>${formattedDate} at ${formattedTime}</span>
+                        ${task.customerPhone ? `<button onclick="makeIVRCall('${task.customerPhone}', '${task.customerName || 'Customer'}')" class="btn-call text-xs">
+                            <i class="fas fa-phone"></i> Call
+                        </button>` : ''}
+                    </div>
+                </div>
+            `;
+        }).join('');
+        
+    } catch (error) {
+        console.error('Error loading upcoming tasks:', error);
+        upcomingTasksList.innerHTML = '<p class="text-gray-500 text-center py-4">Error loading tasks</p>';
+    }
+}
+
+// Add this debug function to help identify issues
+function debugDashboard() {
+    console.log('=== DASHBOARD DEBUG INFO ===');
+    console.log('Leads count:', leads.length);
+    console.log('Tasks count:', tasks.length);
+    console.log('Current user:', currentUser);
+    console.log('Chart element exists:', !!document.getElementById('leadConversionChart'));
+    console.log('Pipeline element exists:', !!document.getElementById('pipelineView'));
+    console.log('Recent leads table exists:', !!document.getElementById('recentLeadsTable'));
+    console.log('Upcoming tasks list exists:', !!document.getElementById('upcomingTasksList'));
+    console.log('==========================');
+}
+
+// Call this from browser console to debug
+window.debugDashboard = debugDashboard;
+debugDashboard();
+
   function loadUpcomingTasks() {
     const upcomingTasksList = document.getElementById('upcomingTasksList');
     if (!upcomingTasksList) return;
@@ -5820,7 +6501,7 @@
     
     if (!callBacksList || !emptyCallBacksState) return;
     
-    // Filter for call back tasks (tasks with phone numbers or call-related)
+    // Filter for call back tasks
     const userTasks = currentUser && currentUser.role === 'admin'
       ? tasks
       : tasks.filter(t => t.assignedTo === currentUser.username || t.assignedTo === 'all');
@@ -6182,7 +6863,24 @@
   }
 
   function loadAllLeads() {
-    renderLeadsTable('allLeadsTable', leads, false);
+    console.log('Loading all leads, count:', leads.length);
+    
+    // Clear any existing bulk actions
+    setupBulkActions();
+    
+    // Render the table
+    renderLeadsTable('allLeadsTable', leads, true);
+    
+    // Update search functionality
+    const searchLeads = document.getElementById('searchLeads');
+    if (searchLeads) {
+      searchLeads.value = ''; // Clear search
+      searchLeads.addEventListener('input', function() {
+        filterLeads(this.value);
+      });
+    }
+    
+    // Add bulk action buttons if they don't exist
     addBulkActionButtons();
   }
 
@@ -6193,13 +6891,21 @@
     tbody.innerHTML = '';
 
     if (leadsData.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="${showCheckbox ? 8 : 7}" class="text-center py-8 text-gray-500">No leads found</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="${showCheckbox ? 9 : 8}" class="text-center py-8 text-gray-500">No leads found</td></tr>`;
       return;
     }
 
     leadsData.forEach(lead => {
       const row = document.createElement('tr');
-      let checkboxHtml = showCheckbox ? `<td><input type="checkbox" class="lead-checkbox" value="${lead.id}"></td>` : '';
+      let checkboxHtml = showCheckbox ? `<td><input type="checkbox" class="lead-checkbox" value="${lead.id}" onchange="updateBulkActions()"></td>` : '';
+
+      // Get company name with multiple fallbacks
+      const companyName = lead.company || lead.businessName || lead.organization || 
+                          lead.customerName?.includes(' ') ? lead.customerName.split(' ')[0] + ' Co.' : 'Individual';
+      
+      // Get location with fallbacks
+      const locationName = lead.location || lead.city || lead.address || 
+                          lead.notes?.match(/\b([A-Za-z]+(?: [A-Za-z]+)*)\b/)?.[0] || 'N/A';
 
       row.innerHTML = `
         ${checkboxHtml}
@@ -6215,9 +6921,11 @@
           </div>
         </td>
         <td>${getLoanTypeBadge(lead.loanType)}</td>
+        <td>${companyName}</td>
+        <td>${locationName}</td>
         <td>₹${(lead.loanAmount || 0).toLocaleString('en-IN')}</td>
         <td>${getStatusBadge(lead.status)}</td>
-        ${showCheckbox ? `<td>${lead.assignedTo ? (agents.find(a => a.username === lead.assignedTo)?.name || 'Unassigned') : 'Unassigned'}</td>` : ''}
+        ${showCheckbox && tableId === 'adminLeadsTable' ? `<td>${lead.assignedTo ? (agents.find(a => a.username === lead.assignedTo)?.name || 'Unassigned') : 'Unassigned'}</td>` : ''}
         <td>
           <div class="action-buttons">
             <button onclick="openWhatsApp('${lead.phone}', '${lead.customerName}')" class="action-btn btn-whatsapp text-white" title="WhatsApp">
@@ -6243,12 +6951,73 @@
       `;
       tbody.appendChild(row);
     });
+  }
+
+  function setupBulkActions() {
+    // For regular leads page
+    const bulkActionsSection = document.getElementById('bulkActionsSection');
+    if (bulkActionsSection) {
+      bulkActionsSection.classList.add('hidden');
+    }
     
-    // Add event listeners to checkboxes for bulk actions
-    if (showCheckbox) {
-      document.querySelectorAll('.lead-checkbox').forEach(checkbox => {
-        checkbox.addEventListener('change', updateSelectedLeadsCount);
+    // For admin leads page
+    const adminBulkActionsSection = document.getElementById('adminBulkActionsSection');
+    if (adminBulkActionsSection) {
+      adminBulkActionsSection.classList.add('hidden');
+    }
+  }
+
+  function updateBulkActions() {
+    const selectedCount = document.querySelectorAll('.lead-checkbox:checked').length;
+    
+    // Update regular leads page
+    const bulkActionsSection = document.getElementById('bulkActionsSection');
+    const selectedLeadsCount = document.getElementById('selectedLeadsCount');
+    
+    if (bulkActionsSection && selectedLeadsCount) {
+      if (selectedCount > 0) {
+        bulkActionsSection.classList.remove('hidden');
+        selectedLeadsCount.textContent = `${selectedCount} selected`;
+      } else {
+        bulkActionsSection.classList.add('hidden');
+      }
+    }
+    
+    // Update admin leads page
+    const adminBulkActionsSection = document.getElementById('adminBulkActionsSection');
+    const adminSelectedLeadsCount = document.getElementById('adminSelectedLeadsCount');
+    
+    if (adminBulkActionsSection && adminSelectedLeadsCount) {
+      if (selectedCount > 0) {
+        adminBulkActionsSection.classList.remove('hidden');
+        adminSelectedLeadsCount.textContent = `${selectedCount} selected`;
+      } else {
+        adminBulkActionsSection.classList.add('hidden');
+      }
+    }
+  }
+
+  function toggleSelectAllLeads() {
+    const selectAll = document.getElementById('selectAllLeads');
+    const checkboxes = document.querySelectorAll('.lead-checkbox');
+    
+    if (selectAll) {
+      checkboxes.forEach(checkbox => {
+        checkbox.checked = selectAll.checked;
       });
+      updateBulkActions();
+    }
+  }
+
+  function toggleAdminSelectAllLeads() {
+    const selectAll = document.getElementById('adminSelectAllLeads');
+    const checkboxes = document.querySelectorAll('#adminLeadsTable .lead-checkbox');
+    
+    if (selectAll) {
+      checkboxes.forEach(checkbox => {
+        checkbox.checked = selectAll.checked;
+      });
+      updateBulkActions();
     }
   }
 
@@ -6279,10 +7048,8 @@
     // Render all leads table for admin
     renderLeadsTable('adminLeadsTable', leads, true);
     
-    // Add bulk action buttons
-    setTimeout(() => {
-        addBulkActionButtons();
-    }, 100);
+    // Setup bulk actions
+    setupBulkActions();
   }
 
   function renderAgentsTable() {
@@ -6290,6 +7057,11 @@
     if (!tbody) return;
     
     tbody.innerHTML = '';
+    
+    if (agents.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="6" class="text-center py-8 text-gray-500">No agents found</td></tr>`;
+      return;
+    }
     
     agents.forEach(agent => {
         const conversionRate = agent.leadsAssigned > 0 ? 
@@ -6329,6 +7101,31 @@
     });
   }
 
+  function deleteAgent(id) {
+    if (confirm('Are you sure you want to delete this agent? This will also remove their login access.')) {
+      // Check if agent has assigned leads
+      const agentLeads = leads.filter(l => l.assignedTo === agents.find(a => a.id === id)?.username);
+      if (agentLeads.length > 0) {
+        if (!confirm(`This agent has ${agentLeads.length} assigned leads. Deleting will unassign these leads. Continue?`)) {
+          return;
+        }
+        
+        // Unassign leads
+        leads.forEach(lead => {
+          if (lead.assignedTo === agents.find(a => a.id === id)?.username) {
+            lead.assignedTo = '';
+          }
+        });
+        localStorage.setItem('crm_leads', JSON.stringify(leads));
+      }
+      
+      agents = agents.filter(a => a.id !== id);
+      localStorage.setItem('crm_agents', JSON.stringify(agents));
+      showToast('Agent deleted successfully', 'success');
+      loadAdminData();
+    }
+  }
+
   function loadReportsData() {
     // Populate agent select for reports
     const reportAgentSelect = document.getElementById('reportAgent');
@@ -6350,102 +7147,181 @@
 
     // Load commitments
     loadCommitments();
+    
+    // Initialize report charts
+    initializeReportCharts();
+    
+    // Load performance metrics
+    loadPerformanceMetrics();
   }
 
-  function loadCommitments() {
-    const commitmentsList = document.getElementById('commitmentsList');
-    if (!commitmentsList) return;
-
-    if (commitments.length === 0) {
-      commitmentsList.innerHTML = '<p class="text-gray-500 text-center py-4">No commitments found</p>';
-      return;
+  function initializeReportCharts() {
+    // Lead Conversion Report Chart
+    const leadConversionReportCtx = document.getElementById('leadConversionReportChart');
+    if (leadConversionReportCtx) {
+      leadConversionReportChart = new Chart(leadConversionReportCtx, {
+        type: 'doughnut',
+        data: {
+          labels: ['Approved', 'Rejected', 'Pending', 'New'],
+          datasets: [{
+            data: [
+              leads.filter(l => l.status === 'approved').length,
+              leads.filter(l => l.status === 'rejected').length,
+              leads.filter(l => l.status === 'pending').length,
+              leads.filter(l => l.status === 'new').length
+            ],
+            backgroundColor: [
+              '#10b981',
+              '#ef4444',
+              '#f59e0b',
+              '#3b82f6'
+            ],
+            borderWidth: 2,
+            borderColor: '#fff'
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'bottom'
+            },
+            title: {
+              display: true,
+              text: 'Lead Status Distribution'
+            }
+          }
+        }
+      });
     }
 
-    commitmentsList.innerHTML = commitments.map(commitment => {
-      const progress = (commitment.currentAmount / commitment.targetAmount) * 100;
-      const status = progress >= 100 ? 'met' :
-        new Date(commitment.dueDate) < new Date() ? 'overdue' : 'pending';
+    // Agent Performance Chart
+    const agentPerformanceCtx = document.getElementById('agentPerformanceChart');
+    if (agentPerformanceCtx) {
+      const activeAgents = agents.filter(a => a.status === 'active');
+      
+      agentPerformanceChart = new Chart(agentPerformanceCtx, {
+        type: 'bar',
+        data: {
+          labels: activeAgents.map(a => a.name),
+          datasets: [{
+            label: 'Leads Assigned',
+            data: activeAgents.map(a => a.leadsAssigned || 0),
+            backgroundColor: '#3b82f6'
+          }, {
+            label: 'Leads Converted',
+            data: activeAgents.map(a => a.leadsConverted || 0),
+            backgroundColor: '#10b981'
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'top'
+            },
+            title: {
+              display: true,
+              text: 'Agent Performance'
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              title: {
+                display: true,
+                text: 'Number of Leads'
+              }
+            },
+            x: {
+              title: {
+                display: true,
+                text: 'Agents'
+              }
+            }
+          }
+        }
+      });
+    }
+  }
 
+  function loadPerformanceMetrics() {
+    const performanceMetricsTable = document.getElementById('performanceMetricsTable');
+    if (!performanceMetricsTable) return;
+    
+    // Calculate metrics (simplified for demo)
+    const totalLeads = leads.length;
+    const approvedLeads = leads.filter(l => l.status === 'approved').length;
+    const rejectedLeads = leads.filter(l => l.status === 'rejected').length;
+    const conversionRate = totalLeads > 0 ? Math.round((approvedLeads / totalLeads) * 100) : 0;
+    const totalAmount = leads.reduce((sum, l) => sum + (l.loanAmount || 0), 0);
+    const avgLoanAmount = totalLeads > 0 ? Math.round(totalAmount / totalLeads) : 0;
+    
+    // Previous period metrics (simulated)
+    const prevTotalLeads = Math.max(1, Math.round(totalLeads * 0.8));
+    const prevApprovedLeads = Math.round(approvedLeads * 0.85);
+    const prevConversionRate = Math.round((prevApprovedLeads / prevTotalLeads) * 100);
+    const prevTotalAmount = Math.round(totalAmount * 0.9);
+    const prevAvgLoanAmount = Math.round(prevTotalAmount / prevTotalLeads);
+    
+    const metrics = [
+      {
+        name: 'Total Leads',
+        current: totalLeads,
+        previous: prevTotalLeads,
+        change: totalLeads - prevTotalLeads,
+        changePercent: Math.round(((totalLeads - prevTotalLeads) / prevTotalLeads) * 100)
+      },
+      {
+        name: 'Approved Leads',
+        current: approvedLeads,
+        previous: prevApprovedLeads,
+        change: approvedLeads - prevApprovedLeads,
+        changePercent: Math.round(((approvedLeads - prevApprovedLeads) / prevApprovedLeads) * 100)
+      },
+      {
+        name: 'Conversion Rate',
+        current: conversionRate + '%',
+        previous: prevConversionRate + '%',
+        change: conversionRate - prevConversionRate,
+        changePercent: conversionRate - prevConversionRate
+      },
+      {
+        name: 'Total Loan Amount',
+        current: '₹' + totalAmount.toLocaleString('en-IN'),
+        previous: '₹' + prevTotalAmount.toLocaleString('en-IN'),
+        change: totalAmount - prevTotalAmount,
+        changePercent: Math.round(((totalAmount - prevTotalAmount) / prevTotalAmount) * 100)
+      },
+      {
+        name: 'Average Loan Amount',
+        current: '₹' + avgLoanAmount.toLocaleString('en-IN'),
+        previous: '₹' + prevAvgLoanAmount.toLocaleString('en-IN'),
+        change: avgLoanAmount - prevAvgLoanAmount,
+        changePercent: Math.round(((avgLoanAmount - prevAvgLoanAmount) / prevAvgLoanAmount) * 100)
+      }
+    ];
+    
+    performanceMetricsTable.innerHTML = metrics.map(metric => {
+      const trendClass = metric.change > 0 ? 'metric-trend-up' : 
+                        metric.change < 0 ? 'metric-trend-down' : 'metric-trend-neutral';
+      const trendIcon = metric.change > 0 ? 'fa-arrow-up' : 
+                       metric.change < 0 ? 'fa-arrow-down' : 'fa-minus';
+      
       return `
-        <div class="border rounded-lg p-4">
-          <div class="flex justify-between items-start mb-3">
-            <h4 class="font-medium text-gray-900">${commitment.title}</h4>
-            <span class="commitment-status commitment-${status}">
-              ${status === 'met' ? 'Met' : status === 'overdue' ? 'Overdue' : 'Pending'}
-            </span>
-          </div>
-          <div class="mb-3">
-            <div class="flex justify-between text-sm text-gray-600 mb-1">
-              <span>Progress: ₹${commitment.currentAmount.toLocaleString('en-IN')} / ₹${commitment.targetAmount.toLocaleString('en-IN')}</span>
-              <span>${Math.round(progress)}%</span>
-            </div>
-            <div class="w-full bg-gray-200 rounded-full h-2">
-              <div class="bg-blue-600 h-2 rounded-full" style="width: ${Math.min(progress, 100)}%"></div>
-            </div>
-          </div>
-          <div class="flex justify-between items-center text-sm text-gray-500">
-            <span><i class="fas fa-calendar mr-1"></i>Due: ${new Date(commitment.dueDate).toLocaleDateString()}</span>
-            <button onclick="updateCommitmentProgress(${commitment.id})" class="btn-secondary text-xs">
-              Update Progress
-            </button>
-          </div>
-        </div>
+        <tr>
+          <td class="font-medium">${metric.name}</td>
+          <td>${metric.current}</td>
+          <td>${metric.previous}</td>
+          <td>${metric.change > 0 ? '+' : ''}${metric.change}</td>
+          <td class="${trendClass}">
+            <i class="fas ${trendIcon} mr-1"></i>${metric.changePercent}%
+          </td>
+        </tr>
       `;
     }).join('');
-  }
-
-  function addCommitment() {
-    const title = document.getElementById('commitmentTitle');
-    const amount = document.getElementById('commitmentAmount');
-    const dueDate = document.getElementById('commitmentDueDate');
-
-    if (!title || !amount || !dueDate) {
-      showToast('Please fill in all commitment fields', 'error');
-      return;
-    }
-
-    const commitmentTitle = title.value;
-    const targetAmount = parseInt(amount.value);
-    const commitmentDueDate = dueDate.value;
-
-    if (!commitmentTitle || !targetAmount || !commitmentDueDate) {
-      showToast('Please fill in all commitment fields', 'error');
-      return;
-    }
-
-    const commitment = {
-      id: Date.now(),
-      title: commitmentTitle,
-      targetAmount: targetAmount,
-      currentAmount: 0,
-      dueDate: new Date(commitmentDueDate).toISOString(),
-      status: 'pending',
-      assignedTo: 'all'
-    };
-
-    commitments.push(commitment);
-    localStorage.setItem('crm_commitments', JSON.stringify(commitments));
-
-    // Clear form
-    title.value = '';
-    amount.value = '';
-    dueDate.value = '';
-
-    showToast('Commitment added successfully', 'success');
-    loadCommitments();
-  }
-
-  function updateCommitmentProgress(id) {
-    const commitment = commitments.find(c => c.id === id);
-    if (commitment) {
-      const newAmount = prompt(`Update current amount (Current: ₹${commitment.currentAmount.toLocaleString('en-IN')}):`);
-      if (newAmount && !isNaN(newAmount)) {
-        commitment.currentAmount = parseInt(newAmount);
-        localStorage.setItem('crm_commitments', JSON.stringify(commitments));
-        showToast('Commitment progress updated', 'success');
-        loadCommitments();
-      }
-    }
   }
 
   function generateDailyReport() {
@@ -6570,18 +7446,88 @@
   }
 
   function generatePerformanceReport(type) {
-    // Generate performance report based on type (weekly, monthly, custom)
-    showToast(`Generating ${type} performance report...`, 'success');
-
-    // This would typically generate a detailed performance report
-    // For demo purposes, showing a placeholder
+    let title = '';
+    let dateRange = '';
+    
+    switch(type) {
+      case 'weekly':
+        title = 'Weekly Performance Report';
+        dateRange = 'Last 7 days';
+        break;
+      case 'monthly':
+        title = 'Monthly Performance Report';
+        dateRange = 'Last 30 days';
+        break;
+      case 'custom':
+        title = 'Custom Performance Report';
+        dateRange = 'Custom date range';
+        break;
+    }
+    
     const reportContent = `
       <div class="bg-gray-50 rounded-lg p-6">
-        <h4 class="text-lg font-semibold mb-4">${type.charAt(0).toUpperCase() + type.slice(1)} Performance Report</h4>
-        <p class="text-gray-600">Performance metrics and analytics would be displayed here.</p>
-        <div class="mt-4">
-          <button onclick="downloadReport('performance', '${type}', '')" class="btn-primary">
+        <h4 class="text-lg font-semibold mb-4">${title}</h4>
+        <div class="grid grid-cols-2 gap-4 mb-6">
+          <div>
+            <p class="text-sm text-gray-600">Date Range</p>
+            <p class="font-medium">${dateRange}</p>
+          </div>
+          <div>
+            <p class="text-sm text-gray-600">Generated On</p>
+            <p class="font-medium">${new Date().toLocaleDateString()}</p>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+          <div class="bg-white p-4 rounded-lg border text-center">
+            <p class="text-sm text-gray-600">Total Leads</p>
+            <p class="text-2xl font-bold text-blue-600">${leads.length}</p>
+          </div>
+          <div class="bg-white p-4 rounded-lg border text-center">
+            <p class="text-sm text-gray-600">Conversion Rate</p>
+            <p class="text-2xl font-bold text-green-600">${leads.length > 0 ? Math.round((leads.filter(l => l.status === 'approved').length / leads.length) * 100) : 0}%</p>
+          </div>
+          <div class="bg-white p-4 rounded-lg border text-center">
+            <p class="text-sm text-gray-600">Total Amount</p>
+            <p class="text-2xl font-bold text-purple-600">₹${leads.reduce((sum, l) => sum + (l.loanAmount || 0), 0).toLocaleString('en-IN')}</p>
+          </div>
+        </div>
+
+        <div class="bg-white p-4 rounded-lg border">
+          <h5 class="font-medium mb-3">Top Performing Agents</h5>
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="border-b">
+                <th class="text-left py-2">Agent</th>
+                <th class="text-left py-2">Leads Assigned</th>
+                <th class="text-left py-2">Leads Converted</th>
+                <th class="text-left py-2">Conversion Rate</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${agents.filter(a => a.status === 'active').slice(0, 5).map(agent => {
+                const conversionRate = agent.leadsAssigned > 0 ? 
+                  Math.round(((agent.leadsConverted || 0) / agent.leadsAssigned) * 100) : 0;
+                
+                return `
+                  <tr class="border-b">
+                    <td class="py-2">${agent.name}</td>
+                    <td class="py-2">${agent.leadsAssigned || 0}</td>
+                    <td class="py-2">${agent.leadsConverted || 0}</td>
+                    <td class="py-2">${conversionRate}%</td>
+                  </tr>
+                `;
+              }).join('')}
+            </tbody>
+          </table>
+        </div>
+
+        <div class="mt-6 flex gap-3">
+          <button onclick="downloadReport('${type}', '${new Date().toISOString().split('T')[0]}', '')" class="btn-primary">
             <i class="fas fa-download mr-2"></i>Download Report
+          </button>
+          <button onclick="printReport()" class="btn-secondary">
+            <i class="fas fa-print mr-2"></i>Print Report
           </button>
         </div>
       </div>
@@ -6592,6 +7538,8 @@
       performanceReportContent.innerHTML = reportContent;
       performanceReportContent.classList.remove('hidden');
     }
+    
+    showToast(`${type} performance report generated`, 'success');
   }
 
   function downloadReport(type, date, agent) {
@@ -6627,54 +7575,201 @@
     window.print();
   }
 
+  function exportConversionReport() {
+    const csvContent = `Lead Conversion Report\nDate: ${new Date().toLocaleDateString()}\n\nStatus,Count,Percentage\n` +
+      `Approved,${leads.filter(l => l.status === 'approved').length},${leads.length > 0 ? Math.round((leads.filter(l => l.status === 'approved').length / leads.length) * 100) : 0}%\n` +
+      `Rejected,${leads.filter(l => l.status === 'rejected').length},${leads.length > 0 ? Math.round((leads.filter(l => l.status === 'rejected').length / leads.length) * 100) : 0}%\n` +
+      `Pending,${leads.filter(l => l.status === 'pending').length},${leads.length > 0 ? Math.round((leads.filter(l => l.status === 'pending').length / leads.length) * 100) : 0}%\n` +
+      `New,${leads.filter(l => l.status === 'new').length},${leads.length > 0 ? Math.round((leads.filter(l => l.status === 'new').length / leads.length) * 100) : 0}%\n` +
+      `Total,${leads.length},100%`;
+
+    downloadCSV(csvContent, 'conversion_report');
+    showToast('Conversion report exported successfully', 'success');
+  }
+
+  function exportAgentPerformanceReport() {
+    let csvContent = 'Agent Performance Report\nDate: ' + new Date().toLocaleDateString() + '\n\n';
+    csvContent += 'Agent,Leads Assigned,Leads Converted,Conversion Rate\n';
+    
+    agents.filter(a => a.status === 'active').forEach(agent => {
+      const conversionRate = agent.leadsAssigned > 0 ? 
+        Math.round(((agent.leadsConverted || 0) / agent.leadsAssigned) * 100) : 0;
+      
+      csvContent += `"${agent.name}",${agent.leadsAssigned || 0},${agent.leadsConverted || 0},${conversionRate}%\n`;
+    });
+    
+    downloadCSV(csvContent, 'agent_performance_report');
+    showToast('Agent performance report exported successfully', 'success');
+  }
+
+  function downloadCSV(csvContent, filename) {
+    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${filename}_${new Date().toISOString().split('T')[0]}.csv`;
+    a.click();
+  }
+
+  function loadCommitments() {
+    const commitmentsList = document.getElementById('commitmentsList');
+    if (!commitmentsList) return;
+
+    if (commitments.length === 0) {
+      commitmentsList.innerHTML = '<p class="text-gray-500 text-center py-4">No commitments found</p>';
+      return;
+    }
+
+    commitmentsList.innerHTML = commitments.map(commitment => {
+      const progress = (commitment.currentAmount / commitment.targetAmount) * 100;
+      const status = progress >= 100 ? 'met' :
+        new Date(commitment.dueDate) < new Date() ? 'overdue' : 'pending';
+
+      return `
+        <div class="border rounded-lg p-4">
+          <div class="flex justify-between items-start mb-3">
+            <h4 class="font-medium text-gray-900">${commitment.title}</h4>
+            <span class="commitment-status commitment-${status}">
+              ${status === 'met' ? 'Met' : status === 'overdue' ? 'Overdue' : 'Pending'}
+            </span>
+          </div>
+          <div class="mb-3">
+            <div class="flex justify-between text-sm text-gray-600 mb-1">
+              <span>Progress: ₹${commitment.currentAmount.toLocaleString('en-IN')} / ₹${commitment.targetAmount.toLocaleString('en-IN')}</span>
+              <span>${Math.round(progress)}%</span>
+            </div>
+            <div class="w-full bg-gray-200 rounded-full h-2">
+              <div class="bg-blue-600 h-2 rounded-full" style="width: ${Math.min(progress, 100)}%"></div>
+            </div>
+          </div>
+          <div class="flex justify-between items-center text-sm text-gray-500">
+            <span><i class="fas fa-calendar mr-1"></i>Due: ${new Date(commitment.dueDate).toLocaleDateString()}</span>
+            <button onclick="updateCommitmentProgress(${commitment.id})" class="btn-secondary text-xs">
+              Update Progress
+            </button>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  function addCommitment() {
+    const title = document.getElementById('commitmentTitle');
+    const amount = document.getElementById('commitmentAmount');
+    const dueDate = document.getElementById('commitmentDueDate');
+
+    if (!title || !amount || !dueDate) {
+      showToast('Please fill in all commitment fields', 'error');
+      return;
+    }
+
+    const commitmentTitle = title.value;
+    const targetAmount = parseInt(amount.value);
+    const commitmentDueDate = dueDate.value;
+
+    if (!commitmentTitle || !targetAmount || !commitmentDueDate) {
+      showToast('Please fill in all commitment fields', 'error');
+      return;
+    }
+
+    const commitment = {
+      id: Date.now(),
+      title: commitmentTitle,
+      targetAmount: targetAmount,
+      currentAmount: 0,
+      dueDate: new Date(commitmentDueDate).toISOString(),
+      status: 'pending',
+      assignedTo: 'all'
+    };
+
+    commitments.push(commitment);
+    localStorage.setItem('crm_commitments', JSON.stringify(commitments));
+
+    // Clear form
+    title.value = '';
+    amount.value = '';
+    dueDate.value = '';
+
+    showToast('Commitment added successfully', 'success');
+    loadCommitments();
+  }
+
+  function updateCommitmentProgress(id) {
+    const commitment = commitments.find(c => c.id === id);
+    if (commitment) {
+      const newAmount = prompt(`Update current amount (Current: ₹${commitment.currentAmount.toLocaleString('en-IN')}):`);
+      if (newAmount && !isNaN(newAmount)) {
+        commitment.currentAmount = parseInt(newAmount);
+        localStorage.setItem('crm_commitments', JSON.stringify(commitments));
+        showToast('Commitment progress updated', 'success');
+        loadCommitments();
+      }
+    }
+  }
+
   // Enhanced File Upload System for Client Documents
   function setupFileUploadHandlers() {
-    // Initialize all file inputs
-    document.querySelectorAll('input[type="file"]').forEach(input => {
-      input.addEventListener('change', function(e) {
-        const parentDocumentItem = this.closest('.document-item');
-        if (parentDocumentItem) {
-          handleFileUpload(this, e);
-        } else {
-          handleFiles(e.target.files);
-        }
-      });
+    // Initialize all file inputs for client documents
+    document.querySelectorAll('.document-item input[type="file"]').forEach(input => {
+        input.addEventListener('change', function(e) {
+            handleFileUpload(this, e);
+        });
     });
 
-    // Setup drag and drop areas
-    const uploadAreas = document.querySelectorAll('.file-upload-area, .upload-area');
-    uploadAreas.forEach(area => {
-      area.addEventListener('click', function() {
-        const fileInput = this.querySelector('input[type="file"]');
-        if (fileInput) fileInput.click();
-      });
-      
-      area.addEventListener('dragover', function(e) {
-        e.preventDefault();
-        this.classList.add('dragover');
-      });
-      
-      area.addEventListener('dragleave', function(e) {
-        e.preventDefault();
-        this.classList.remove('dragover');
-      });
-      
-      area.addEventListener('drop', function(e) {
-        e.preventDefault();
-        this.classList.remove('dragover');
-        const files = e.dataTransfer.files;
-        if (files.length > 0) {
-          const fileInput = this.querySelector('input[type="file"]');
-          if (fileInput) {
-            // Create new FileList (can't directly assign)
-            const dt = new DataTransfer();
-            for (let file of files) dt.items.add(file);
-            fileInput.files = dt.files;
-            fileInput.dispatchEvent(new Event('change'));
-          }
-        }
-      });
-    });
+    // General file upload area
+    const fileUploadArea = document.getElementById('fileUploadArea');
+    if (fileUploadArea) {
+        fileUploadArea.addEventListener('click', function() {
+            document.getElementById('fileInput').click();
+        });
+        
+        fileUploadArea.addEventListener('dragover', handleDragOver);
+        fileUploadArea.addEventListener('dragleave', handleDragLeave);
+        fileUploadArea.addEventListener('drop', handleDocumentDrop);
+    }
+
+    // Client document upload area
+    const documentUploadArea = document.getElementById('documentUploadArea');
+    if (documentUploadArea) {
+        documentUploadArea.addEventListener('click', function() {
+            document.getElementById('documentFileInput').click();
+        });
+        
+        // Add similar drag/drop handlers for document upload area
+        documentUploadArea.addEventListener('dragover', handleDragOver);
+        documentUploadArea.addEventListener('dragleave', handleDragLeave);
+        documentUploadArea.addEventListener('drop', handleDocumentDrop);
+    }
+  }
+
+  function handleDocumentDrop(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    const area = document.getElementById('documentUploadArea');
+    if (area) area.classList.remove('dragover');
+    handleFiles(e.dataTransfer.files);
+  }
+
+  function handleDragOver(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    const area = document.getElementById('fileUploadArea');
+    if (area) area.classList.add('dragover');
+  }
+
+  function handleDragLeave(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    const area = document.getElementById('fileUploadArea');
+    if (area) area.classList.remove('dragover');
+  }
+
+  function handleFileSelect(e) {
+    handleFiles(e.target.files);
+  }
+
+  function handleDocumentFileSelect(e) {
+    handleFiles(e.target.files);
   }
 
   // Enhanced file upload handler for client documents
@@ -6920,6 +8015,9 @@
     // Update document sections based on loan type
     updateDocumentSections(lead.loanType);
 
+    // Initialize client documents structure if it doesn't exist
+    initializeClientDocuments(leadId);
+
     // Load existing documents for this lead
     loadClientDocuments(leadId);
 
@@ -6936,6 +8034,21 @@
 
     const clientDocumentsModal = document.getElementById('clientDocumentsModal');
     if (clientDocumentsModal) clientDocumentsModal.classList.add('active');
+  }
+
+  // NEW FUNCTION: Initialize client documents structure
+  function initializeClientDocuments(leadId) {
+    if (!clientDocuments[leadId]) {
+        clientDocuments[leadId] = {
+            // Initialize with empty document structure
+            generalInfo: {},
+            businessInformation: {},
+            remarks: {},
+            followupHistory: [],
+            additional: []
+        };
+        localStorage.setItem('crm_clientDocuments', JSON.stringify(clientDocuments));
+    }
   }
 
   function getLoanTypeName(loanType) {
@@ -6959,8 +8072,11 @@
     }
   }
 
+  // Enhanced loadClientDocuments function
   function loadClientDocuments(leadId) {
     const leadDocs = clientDocuments[leadId] || {};
+    
+    console.log('Loading client documents for lead:', leadId, leadDocs);
 
     // Load document status for each type
     const documentTypes = [
@@ -6970,21 +8086,21 @@
     ];
 
     documentTypes.forEach(docType => {
-      const uploadElement = document.getElementById(`${docType}Upload`);
-      if (uploadElement) {
-        const docElement = uploadElement.closest('.document-item');
-        const statusBadge = docElement ? docElement.querySelector('.status-badge') : null;
+        const uploadElement = document.getElementById(`${docType}Upload`);
+        if (uploadElement) {
+            const docElement = uploadElement.closest('.document-item');
+            const statusBadge = docElement ? docElement.querySelector('.status-badge') : null;
 
-        if (statusBadge) {
-          if (leadDocs[docType]) {
-            statusBadge.textContent = 'Uploaded';
-            statusBadge.className = 'status-badge status-uploaded';
-          } else {
-            statusBadge.textContent = 'Pending';
-            statusBadge.className = 'status-badge status-pending';
-          }
+            if (statusBadge) {
+                if (leadDocs[docType]) {
+                    statusBadge.textContent = 'Uploaded';
+                    statusBadge.className = 'status-badge status-uploaded';
+                } else {
+                    statusBadge.textContent = 'Pending';
+                    statusBadge.className = 'status-badge status-pending';
+                }
+            }
         }
-      }
     });
 
     // Load business information
@@ -7346,18 +8462,36 @@
     const agentAssignField = document.getElementById('agentAssignField');
     
     if (leadModalTitle) leadModalTitle.textContent = 'Add New Lead';
-    if (leadForm) leadForm.reset();
+    if (leadForm) {
+        leadForm.reset();
+        
+        // Explicitly clear all fields
+        const fields = ['leadName', 'leadEmail', 'leadPhone', 'leadAmount', 'leadCompany', 'leadLocation', 'leadNotes'];
+        fields.forEach(fieldId => {
+            const field = document.getElementById(fieldId);
+            if (field) field.value = '';
+        });
+        
+        // Set default values
+        const leadType = document.getElementById('leadType');
+        const leadStatus = document.getElementById('leadStatus');
+        if (leadType) leadType.value = 'home';
+        if (leadStatus) leadStatus.value = 'new';
+    }
 
     // Show agent assignment field for admin
     if (currentUser && currentUser.role === 'admin') {
-      if (agentAssignField) agentAssignField.classList.remove('hidden');
-      populateAgentSelect();
+        if (agentAssignField) agentAssignField.classList.remove('hidden');
+        populateAgentSelect();
     } else {
-      if (agentAssignField) agentAssignField.classList.add('hidden');
+        if (agentAssignField) agentAssignField.classList.add('hidden');
     }
 
     const leadModal = document.getElementById('leadModal');
-    if (leadModal) leadModal.classList.add('active');
+    if (leadModal) {
+        leadModal.classList.add('active');
+        console.log('Add lead modal opened');
+    }
   }
 
   function populateAgentSelect() {
@@ -7392,6 +8526,8 @@
     const leadType = document.getElementById('leadType');
     const leadStatus = document.getElementById('leadStatus');
     const leadNotes = document.getElementById('leadNotes');
+    const leadCompany = document.getElementById('leadCompany');
+    const leadLocation = document.getElementById('leadLocation');
     const agentAssignField = document.getElementById('agentAssignField');
     const leadAgent = document.getElementById('leadAgent');
     const leadModal = document.getElementById('leadModal');
@@ -7407,6 +8543,8 @@
     if (leadType) leadType.value = editingLead.loanType || 'home';
     if (leadStatus) leadStatus.value = editingLead.status || 'new';
     if (leadNotes) leadNotes.value = editingLead.notes || '';
+    if (leadCompany) leadCompany.value = editingLead.company || '';
+    if (leadLocation) leadLocation.value = editingLead.location || '';
 
     // Show agent assignment field for admin
     if (currentUser && currentUser.role === 'admin') {
@@ -7440,11 +8578,27 @@
     const leadType = document.getElementById('leadType');
     const leadStatus = document.getElementById('leadStatus');
     const leadNotes = document.getElementById('leadNotes');
+    const leadCompany = document.getElementById('leadCompany');
+    const leadLocation = document.getElementById('leadLocation');
     const leadAgent = document.getElementById('leadAgent');
 
     // Validate required fields
     if (!leadName?.value || !leadEmail?.value || !leadPhone?.value || !leadAmount?.value) {
         showToast('Please fill in all required fields', 'error');
+        return;
+    }
+
+    // Validate phone number format
+    const phoneRegex = /^\+?[0-9]{10,12}$/;
+    if (!phoneRegex.test(leadPhone.value.replace(/[^0-9]/g, ''))) {
+        showToast('Please enter a valid phone number (10-12 digits)', 'error');
+        return;
+    }
+
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(leadEmail.value)) {
+        showToast('Please enter a valid email address', 'error');
         return;
     }
 
@@ -7456,47 +8610,111 @@
         loanType: leadType ? leadType.value : 'home',
         status: leadStatus ? leadStatus.value : 'new',
         notes: leadNotes ? leadNotes.value.trim() : '',
+        company: leadCompany ? leadCompany.value.trim() : '',
+        location: leadLocation ? leadLocation.value.trim() : '',
         createdDate: editingLead ? editingLead.createdDate : new Date().toISOString(),
-        assignedTo: currentUser && currentUser.role === 'admin' && leadAgent ? leadAgent.value : currentUser.username
+        lastContact: new Date().toISOString(),
+        assignedTo: currentUser && currentUser.role === 'admin' && leadAgent ? leadAgent.value : (currentUser ? currentUser.username : 'unassigned')
     };
 
-    if (editingLead) {
-        // Update existing lead
-        const index = leads.findIndex(l => l.id === editingLead.id);
-        if (index !== -1) {
-            leads[index] = { ...editingLead, ...leadData };
-            showToast('Lead updated successfully', 'success');
+    try {
+        if (editingLead) {
+            // Update existing lead
+            const index = leads.findIndex(l => l.id === editingLead.id);
+            if (index !== -1) {
+                leads[index] = { ...editingLead, ...leadData };
+                showToast('Lead updated successfully', 'success');
+            }
+        } else {
+            // Add new lead with unique ID
+            leadData.id = Date.now() + Math.floor(Math.random() * 1000);
+            leads.push(leadData);
+            showToast('Lead added successfully', 'success');
         }
-    } else {
-        // Add new lead
-        leadData.id = Date.now();
-        leads.push(leadData);
-        showToast('Lead added successfully', 'success');
+
+        // Save to localStorage
+        localStorage.setItem('crm_leads', JSON.stringify(leads));
+        console.log('New lead added:', leadData);
+
+        // Refresh ALL relevant pages and components
+        refreshAllLeadDisplays();
+
+        // Close modal after successful save
+        closeLeadModal();
+
+    } catch (error) {
+        console.error('Error saving lead:', error);
+        showToast('Error saving lead. Please try again.', 'error');
     }
+  }
 
-    // Save to localStorage
-    localStorage.setItem('crm_leads', JSON.stringify(leads));
-
-    // Refresh tables
+  // NEW FUNCTION: Refresh all lead displays
+  function refreshAllLeadDisplays() {
+    // Get current active page
+    const activePage = getCurrentActivePage();
+    
+    console.log('Refreshing displays for active page:', activePage);
+    
+    // Always refresh dashboard (shows recent leads)
     loadDashboardData();
-    loadAllLeads();
-    if (currentUser && currentUser.role === 'admin') {
-        loadAdminData();
+    
+    // Refresh based on current active page
+    switch(activePage) {
+        case 'leads':
+            loadAllLeads();
+            break;
+        case 'admin':
+            loadAdminData();
+            break;
+        case 'dashboard':
+            // Already refreshed above
+            break;
     }
+    
+    // Refresh pipeline if it exists
+    if (document.getElementById('pipelineView')) {
+        initializePipeline();
+    }
+    
+    // Update task notification badge
+    updateTaskNotificationBadge();
+  }
 
-    // Close modal
-    closeLeadModal();
+  // NEW FUNCTION: Get current active page
+  function getCurrentActivePage() {
+    const pages = document.querySelectorAll('.page');
+    for (let page of pages) {
+        if (!page.classList.contains('hidden')) {
+            return page.id.replace('Page', '');
+        }
+    }
+    return 'dashboard';
   }
 
   function closeLeadModal() {
     const leadModal = document.getElementById('leadModal');
     if (leadModal) {
         leadModal.classList.remove('active');
-        // Reset form
-        const leadForm = document.getElementById('leadForm');
-        if (leadForm) leadForm.reset();
+        console.log('Lead modal closed');
     }
+    
+    // Reset form and clear any validation errors
+    const leadForm = document.getElementById('leadForm');
+    if (leadForm) {
+        leadForm.reset();
+        const inputs = leadForm.querySelectorAll('input, select, textarea');
+        inputs.forEach(input => {
+            input.classList.remove('error');
+        });
+    }
+    
     editingLead = null;
+    
+    // Reset any global form state
+    const agentAssignField = document.getElementById('agentAssignField');
+    if (agentAssignField) {
+        agentAssignField.classList.add('hidden');
+    }
   }
 
   function deleteLead(id) {
@@ -7513,12 +8731,24 @@
   }
 
   function filterLeads(query) {
+    console.log('Filtering leads with query:', query);
+    
+    if (!query || query.trim() === '') {
+        // If query is empty, show all leads
+        renderLeadsTable('allLeadsTable', leads, true);
+        return;
+    }
+    
     const filteredLeads = leads.filter(lead =>
-      lead.customerName.toLowerCase().includes(query.toLowerCase()) ||
-      lead.email.toLowerCase().includes(query.toLowerCase()) ||
-      lead.phone.includes(query)
+        lead.customerName?.toLowerCase().includes(query.toLowerCase()) ||
+        lead.email?.toLowerCase().includes(query.toLowerCase()) ||
+        lead.phone?.includes(query) ||
+        lead.company?.toLowerCase().includes(query.toLowerCase()) ||
+        lead.location?.toLowerCase().includes(query.toLowerCase())
     );
-    renderLeadsTable('allLeadsTable', filteredLeads, false);
+    
+    console.log('Filtered leads count:', filteredLeads.length);
+    renderLeadsTable('allLeadsTable', filteredLeads, true);
   }
 
   function showAddAgentModal() {
@@ -7635,15 +8865,6 @@
 
     // Close modal
     closeAgentModal();
-  }
-
-  function deleteAgent(id) {
-    if (confirm('Are you sure you want to delete this agent? This will also remove their login access.')) {
-      agents = agents.filter(a => a.id !== id);
-      localStorage.setItem('crm_agents', JSON.stringify(agents));
-      showToast('Agent deleted successfully', 'success');
-      loadAdminData();
-    }
   }
 
   function openWhatsApp(phone, name) {
@@ -8049,25 +9270,13 @@
     }
   }
 
-  function toggleSelectAllLeads() {
-    const selectAll = document.getElementById('selectAllLeads');
-    const checkboxes = document.querySelectorAll('.lead-checkbox');
-    
-    if (selectAll) {
-      checkboxes.forEach(checkbox => {
-        checkbox.checked = selectAll.checked;
-      });
-    }
+  function getSelectedLeads() {
+    const checkboxes = document.querySelectorAll('.lead-checkbox:checked');
+    return Array.from(checkboxes).map(cb => parseInt(cb.value));
   }
 
   function exportLeads() {
-    const selectedLeads = [];
-    document.querySelectorAll('.lead-checkbox:checked').forEach(checkbox => {
-      const leadId = parseInt(checkbox.value);
-      const lead = leads.find(l => l.id === leadId);
-      if (lead) selectedLeads.push(lead);
-    });
-
+    const selectedLeads = getSelectedLeads();
     if (selectedLeads.length === 0) {
       showToast('Please select leads to export', 'warning');
       return;
@@ -8099,12 +9308,7 @@
   }
 
   function bulkDeleteLeads() {
-    const selectedLeads = [];
-    document.querySelectorAll('.lead-checkbox:checked').forEach(checkbox => {
-      const leadId = parseInt(checkbox.value);
-      selectedLeads.push(leadId);
-    });
-
+    const selectedLeads = getSelectedLeads();
     if (selectedLeads.length === 0) {
       showToast('Please select leads to delete', 'warning');
       return;
@@ -8169,7 +9373,6 @@
   function sendEmail(email, name) {
     const subject = encodeURIComponent('Regarding Your Loan Application - Loan Leads CRM');
     const body = encodeURIComponent(`Dear ${name},\n\nThank you for your interest in our loan services. We would like to discuss your loan application further.\n\nPlease let us know a convenient time for a discussion.\n\nBest regards,\nLoan Leads CRM Team`);
-
     window.open(`mailto:${email}?subject=${subject}&body=${body}`, '_blank');
     showToast(`Email composer opened for ${name}`, 'success');
   }
@@ -8613,6 +9816,9 @@
         otherStatusDetails.classList.remove('hidden');
       } else {
         otherStatusDetails.classList.add('hidden');
+        // Clear the other input when not needed
+        const otherInput = document.getElementById('otherStatusInput');
+        if (otherInput) otherInput.value = '';
       }
     }
     
@@ -8720,11 +9926,6 @@
     clearLeadSelection();
     closeBulkAssignModal();
     loadAdminData();
-  }
-
-  function getSelectedLeads() {
-    const checkboxes = document.querySelectorAll('.lead-checkbox:checked');
-    return Array.from(checkboxes).map(cb => parseInt(cb.value));
   }
 
   function updateAgentStats(agentUsername, leadsAssigned) {
@@ -10581,6 +11782,100 @@ ${document.getElementById('nextAction') ? document.getElementById('nextAction').
     console.log('Enhanced features initialized successfully');
   }
 
+  // Chart initialization function
+  function initializeCharts() {
+    const chartCanvas = document.getElementById('leadConversionChart');
+    if (!chartCanvas) return;
+    
+    // Simple chart initialization - in a real app, you'd use Chart.js
+    const ctx = chartCanvas.getContext('2d');
+    ctx.font = '14px Arial';
+    ctx.fillStyle = '#666';
+    ctx.textAlign = 'center';
+    ctx.fillText('Chart visualization would appear here', chartCanvas.width/2, chartCanvas.height/2);
+    
+    console.log('Chart initialized');
+  }
+
+  // Pipeline functions
+  function refreshPipeline() {
+    showToast('Pipeline refreshed', 'success');
+    // Implementation would refresh the pipeline view
+  }
+
+  function initializePipeline() {
+    const pipelineView = document.getElementById('pipelineView');
+    if (!pipelineView) return;
+    
+    const stages = [
+      { id: 'new', title: 'New Leads', color: '#3b82f6', count: leads.filter(l => l.status === 'new').length },
+      { id: 'contacted', title: 'Contacted', color: '#f59e0b', count: leads.filter(l => l.status === 'in-progress').length },
+      { id: 'qualified', title: 'Qualified', color: '#10b981', count: leads.filter(l => l.status === 'pending').length },
+      { id: 'proposal', title: 'Proposal Sent', color: '#8b5cf6', count: 0 },
+      { id: 'negotiation', title: 'Negotiation', color: '#ec4899', count: 0 },
+      { id: 'closed-won', title: 'Approved', color: '#059669', count: leads.filter(l => l.status === 'approved').length },
+      { id: 'closed-lost', title: 'Rejected', color: '#dc2626', count: leads.filter(l => l.status === 'rejected').length }
+    ];
+    
+    pipelineView.innerHTML = stages.map(stage => `
+      <div class="pipeline-stage">
+        <div class="pipeline-stage-header" style="border-color: ${stage.color}">
+          <div class="pipeline-stage-title" style="color: ${stage.color}">${stage.title}</div>
+          <div class="pipeline-stage-count">${stage.count}</div>
+        </div>
+        <div class="pipeline-leads-container" id="pipeline-${stage.id}">
+          ${getPipelineLeads(stage.id)}
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function getPipelineLeads(stageId) {
+    let filteredLeads = [];
+    
+    switch(stageId) {
+      case 'new':
+        filteredLeads = leads.filter(l => l.status === 'new');
+        break;
+      case 'contacted':
+        filteredLeads = leads.filter(l => l.status === 'in-progress');
+        break;
+      case 'qualified':
+        filteredLeads = leads.filter(l => l.status === 'pending');
+        break;
+      case 'closed-won':
+        filteredLeads = leads.filter(l => l.status === 'approved');
+        break;
+      case 'closed-lost':
+        filteredLeads = leads.filter(l => l.status === 'rejected');
+        break;
+      default:
+        filteredLeads = [];
+    }
+    
+    return filteredLeads.slice(0, 5).map(lead => `
+      <div class="pipeline-lead" data-lead-id="${lead.id}">
+        <div class="pipeline-lead-header">
+          <div class="pipeline-lead-name">${lead.customerName}</div>
+          <div class="pipeline-lead-amount">₹${(lead.loanAmount || 0).toLocaleString('en-IN')}</div>
+        </div>
+        <div class="pipeline-lead-company">${lead.company || 'N/A'}</div>
+        <div class="pipeline-lead-location">${lead.location || 'N/A'}</div>
+        <div class="pipeline-lead-footer">
+          <div class="pipeline-lead-date">${new Date(lead.createdDate).toLocaleDateString()}</div>
+          <div class="pipeline-lead-actions">
+            <button onclick="makeIVRCall('${lead.phone}', '${lead.customerName}')" class="pipeline-action-btn">
+              <i class="fas fa-phone text-green-500"></i>
+            </button>
+            <button onclick="showLeadDetails(${lead.id})" class="pipeline-action-btn">
+              <i class="fas fa-eye text-blue-500"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    `).join('');
+  }
+
   // Global error handler
   window.addEventListener('error', function(e) {
     console.error('Global error:', e.error);
@@ -10606,9 +11901,93 @@ ${document.getElementById('nextAction') ? document.getElementById('nextAction').
     };
   }
 
+  // Add form validation styles
+  function addFormValidationStyles() {
+    const style = document.createElement('style');
+    style.textContent = `
+        .form-input.error {
+            border-color: #ef4444;
+            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+        }
+        .error-message {
+            color: #ef4444;
+            font-size: 0.75rem;
+            margin-top: 0.25rem;
+        }
+    `;
+    document.head.appendChild(style);
+  }
+
+  // Close all modals
+  function closeAllModals() {
+    const modals = document.querySelectorAll('.modal');
+    modals.forEach(modal => {
+        modal.classList.remove('active');
+    });
+    
+    // Reset any editing states
+    editingLead = null;
+    editingAgent = null;
+    editingTask = null;
+    currentClientLead = null;
+  }
+
+  // Missing function implementations
+  function filterCallBacks(filter) {
+    // Remove active class from all buttons
+    document.querySelectorAll('#tasksPage .btn-secondary').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    
+    // Add active class to clicked button
+    event.target.classList.add('active');
+    
+    // Filter logic would go here
+    console.log('Filtering call backs by:', filter);
+    loadTasksPage(); // Reload with filter
+  }
+
+  function togglePersonalLoanTypeDocuments() {
+    const loanType = document.getElementById('personalLoanType');
+    if (!loanType) return;
+    
+    // Show/hide additional fields based on loan type
+    if (loanType.value === 'balance-transfer') {
+        // Show balance transfer specific fields
+        console.log('Balance transfer selected - show additional fields');
+    } else {
+        // Hide balance transfer fields
+        console.log('Fresh loan selected - hide additional fields');
+    }
+  }
+
+  function editLeadFromDetails() {
+    if (currentLeadDetails) {
+        closeLeadDetailsModal();  
+        editLead(currentLeadDetails.id);
+    }
+  }
+
+  // Initialize form validation on app start
+  document.addEventListener('DOMContentLoaded', function() {
+    addFormValidationStyles();
+    initializeApp();
+  });
+
   // Test credentials:
   // Admin: username: admin, password: admin123
   // Agent: username: agent1, password: agent123
+
+  // Debug function to check lead data
+  function debugLeads() {
+    console.log('=== LEADS DEBUG INFO ===');
+    console.log('Total leads:', leads.length);
+    console.log('Leads data:', leads);
+    console.log('Current active page:', getCurrentActivePage());
+    console.log('Client documents:', clientDocuments);
+    console.log('=======================');
+  }
+
 </script>
 </body>
 </html>
