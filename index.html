@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SVA Loan CRM - Professional Management System</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
   /* Reset and Base Styles */
@@ -1383,27 +1384,768 @@
       width: 100% !important;
     }
   }
+  /* Document Preview Styles */
+.loading-spinner {
+    border: 3px solid #f3f3f3;
+    border-top: 3px solid #3b82f6;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.image-preview-container {
+    position: relative;
+    display: inline-block;
+}
+
+.image-overlay {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: rgba(0,0,0,0.7);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+}
+
+.image-info {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.file-type-badge {
+    background: #3b82f6;
+    color: white;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 500;
+}
+
+.file-size {
+    color: #d1d5db;
+}
+
+.pdf-preview-container {
+    background: white;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    max-width: 800px;
+    width: 100%;
+}
+
+.pdf-page {
+    padding: 40px;
+    min-height: 600px;
+    position: relative;
+}
+
+.pdf-header {
+    text-align: center;
+    border-bottom: 2px solid #e5e7eb;
+    padding-bottom: 20px;
+    margin-bottom: 30px;
+}
+
+.pdf-header h4 {
+    color: #1f2937;
+    margin: 0 0 5px 0;
+    font-size: 24px;
+}
+
+.pdf-header p {
+    color: #6b7280;
+    margin: 0;
+    font-size: 14px;
+}
+
+.pdf-section {
+    margin-bottom: 25px;
+}
+
+.pdf-section h5 {
+    color: #374151;
+    border-bottom: 1px solid #e5e7eb;
+    padding-bottom: 8px;
+    margin-bottom: 15px;
+    font-size: 16px;
+}
+
+.pdf-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+.pdf-field {
+    display: flex;
+    justify-content: between;
+}
+
+.pdf-field label {
+    font-weight: 600;
+    color: #4b5563;
+    min-width: 120px;
+}
+
+.pdf-field span {
+    color: #6b7280;
+}
+
+.pdf-notice {
+    background: #fef3c7;
+    border: 1px solid #f59e0b;
+    border-radius: 6px;
+    padding: 15px;
+    color: #92400e;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.pdf-footer {
+    position: absolute;
+    bottom: 20px;
+    left: 40px;
+    right: 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid #e5e7eb;
+    padding-top: 15px;
+}
+
+.pdf-watermark {
+    color: #d1d5db;
+    font-size: 48px;
+    font-weight: bold;
+    opacity: 0.1;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(-45deg);
+    pointer-events: none;
+}
+
+.pdf-pagination {
+    color: #6b7280;
+    font-size: 14px;
+}
+
+.file-info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin: 20px 0;
+    max-width: 400px;
+}
+
+.file-info-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.file-info-label {
+    font-weight: 600;
+    color: #4b5563;
+}
+
+.file-info-value {
+    color: #6b7280;
+}
+
+#downloadProgress {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    z-index: 1000;
+    min-width: 300px;
+}
+
+.download-progress-bar {
+    width: 100%;
+    height: 8px;
+    background: #e5e7eb;
+    border-radius: 4px;
+    overflow: hidden;
+    margin: 10px 0;
+}
+
+.download-progress-fill {
+    height: 100%;
+    background: #10b981;
+    transition: width 0.3s ease;
+}
+
+/* Modal Styles */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal.active {
+    display: flex;
+}
+
+.modal-content {
+    background: white;
+    border-radius: 8px;
+    max-width: 90%;
+    max-height: 90%;
+    overflow: auto;
+    position: relative;
+}
+
+.modal-header {
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid #e5e7eb;
+    display: flex;
+    justify-content: between;
+    align-items: center;
+}
+
+.modal-body {
+    padding: 1.5rem;
+    max-height: 70vh;
+    overflow-y: auto;
+}
+
+.modal-footer {
+    padding: 1rem 1.5rem;
+    border-top: 1px solid #e5e7eb;
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+}
+
+/* Toast Styles */
+.toast {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 1rem 1.5rem;
+    border-radius: 6px;
+    color: white;
+    z-index: 1100;
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
+    min-width: 300px;
+}
+
+.toast.show {
+    transform: translateX(0);
+}
+
+.toast.success {
+    background: #10b981;
+}
+
+.toast.error {
+    background: #ef4444;
+}
+
+.toast.warning {
+    background: #f59e0b;
+}
+
+/* Upload/Download Areas */
+.upload-area {
+    border: 2px dashed #d1d5db;
+    border-radius: 6px;
+    padding: 2rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.upload-area:hover {
+    border-color: #3b82f6;
+    background: #f8fafc;
+}
+
+.upload-area.dragover {
+    border-color: #3b82f6;
+    background: #eff6ff;
+}
+
+/* Button Styles */
+.btn-primary {
+    background: #3b82f6;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.btn-primary:hover {
+    background: #2563eb;
+}
+
+.btn-secondary {
+    background: #6b7280;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.btn-secondary:hover {
+    background: #4b5563;
+}
+
+.btn-call {
+    background: #10b981;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-whatsapp {
+    background: #25D366;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+}
+
+/* Status Badges */
+.status-badge {
+    padding: 0.25rem 0.5rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    display: inline-block;
+}
+
+.status-new {
+    background: #dbeafe;
+    color: #1e40af;
+}
+
+.status-approved {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.status-pending {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.status-rejected {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.status-uploaded {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.status-in-progress {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+/* Form Styles */
+.form-input {
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid #d1d5db;
+    border-radius: 4px;
+    font-size: 0.875rem;
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.form-input.error {
+    border-color: #ef4444;
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}
+
+.error-message {
+    color: #ef4444;
+    font-size: 0.75rem;
+    margin-top: 0.25rem;
+}
+
+/* Document Item Styles */
+.document-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    margin-bottom: 0.5rem;
+}
+
+.document-info {
+    flex: 1;
+}
+
+.document-name {
+    font-weight: 600;
+    color: #1f2937;
+}
+
+.document-status {
+    font-size: 0.875rem;
+    color: #6b7280;
+}
+
+.document-actions {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+/* Utility Classes */
+.hidden {
+    display: none !important;
+}
+
+.flex {
+    display: flex;
+}
+
+.items-center {
+    align-items: center;
+}
+
+.justify-center {
+    justify-content: center;
+}
+
+.justify-between {
+    justify-content: space-between;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.mb-4 {
+    margin-bottom: 1rem;
+}
+
+.mt-4 {
+    margin-top: 1rem;
+}
+
+.p-4 {
+    padding: 1rem;
+}
+
+.rounded-lg {
+    border-radius: 8px;
+}
+
+.shadow-sm {
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+.bg-white {
+    background: white;
+}
+
+.bg-gray-50 {
+    background: #f9fafb;
+}
+
+.bg-gray-100 {
+    background: #f3f4f6;
+}
+.pdf-viewer-container {
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background: #f0f0f0;
+}
+
+.pdf-page {
+    margin: 10px auto;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    background: white;
+    transition: transform 0.3s ease;
+}
+
+.pdf-content {
+    padding: 40px;
+    min-height: 600px;
+    position: relative;
+}
+
+.pdf-header {
+    text-align: center;
+    border-bottom: 2px solid #e5e7eb;
+    padding-bottom: 20px;
+    margin-bottom: 30px;
+}
+
+.pdf-section {
+    margin-bottom: 25px;
+}
+
+.pdf-section h5 {
+    color: #374151;
+    border-bottom: 1px solid #e5e7eb;
+    padding-bottom: 8px;
+    margin-bottom: 15px;
+    font-size: 16px;
+}
+
+.pdf-notice {
+    background: #fef3c7;
+    border: 1px solid #f59e0b;
+    border-radius: 6px;
+    padding: 15px;
+    color: #92400e;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.pdf-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid #e5e7eb;
+    padding-top: 15px;
+}
+
+.pdf-watermark {
+    color: #d1d5db;
+    font-size: 48px;
+    font-weight: bold;
+    opacity: 0.1;
+    pointer-events: none;
+}
+
+.image-preview-container {
+    position: relative;
+    display: inline-block;
+}
+
+.image-overlay {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: rgba(0,0,0,0.7);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+}
+
+.image-info {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.file-type-badge {
+    background: #3b82f6;
+    color: white;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 500;
+}
+
+.file-size {
+    color: #d1d5db;
+}
+
+.file-info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin: 20px 0;
+    max-width: 400px;
+}
+
+.file-info-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.file-info-label {
+    font-weight: 600;
+    color: #4b5563;
+}
+
+.file-info-value {
+    color: #6b7280;
+}
+/* Additional styles for enhanced document preview */
+    .document-preview-container {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      background: #f8f9fa;
+    }
+
+    .document-preview-image {
+      max-width: 100%;
+      max-height: 80vh;
+      object-fit: contain;
+      border: 1px solid #e0e0e0;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+
+    .document-preview-placeholder {
+      text-align: center;
+      padding: 40px;
+    }
+
+    .document-preview-actions {
+      margin-top: 20px;
+      display: flex;
+      gap: 10px;
+    }
+
+    .upload-status {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.875rem;
+    }
+
+    .upload-progress {
+      width: 100%;
+      height: 6px;
+      background-color: #e5e7eb;
+      border-radius: 3px;
+      overflow: hidden;
+      margin-top: 4px;
+    }
+
+    .upload-progress-bar {
+      height: 100%;
+      background-color: #3b82f6;
+      transition: width 0.3s ease;
+    }
+    .pdf-viewer-container {
+      width: 100%;
+      height: 500px;
+      border: 1px solid #e5e7eb;
+      border-radius: 0.5rem;
+      overflow: auto;
+      background: #f8f9fa;
+    }
+    
+    .pdf-page-canvas {
+      display: block;
+      margin: 0 auto;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    
+    .document-preview-container {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      background: #f8f9fa;
+    }
+    
+    .document-preview-image {
+      max-width: 100%;
+      max-height: 80vh;
+      object-fit: contain;
+      border: 1px solid #e0e0e0;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    
+    .document-preview-placeholder {
+      text-align: center;
+      padding: 40px;
+    }
+    
+    .document-preview-actions {
+      margin-top: 20px;
+      display: flex;
+      gap: 10px;
+    }
+    
+    .upload-status {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.875rem;
+    }
+    
+    .upload-progress {
+      width: 100%;
+      height: 6px;
+      background-color: #e5e7eb;
+      border-radius: 3px;
+      overflow: hidden;
+      margin-top: 4px;
+    }
+    
+    .upload-progress-bar {
+      height: 100%;
+      background-color: #3b82f6;
+      transition: width 0.3s ease;
+    }
+    
+    /* Enhanced error handling */
+    .error-boundary {
+      padding: 1rem;
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      border-radius: 0.5rem;
+      margin: 1rem 0;
+    }
+    
+    .error-message {
+      color: #dc2626;
+      font-size: 0.875rem;
+    }
 </style>
 </head>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Loan Leads CRM</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        /* CSS styles would go here - removed for brevity */
-    </style>
-</head>
 <body class="bg-gray-50">
-    <!-- Toast Notification -->
-    <div id="toast" class="toast">
-        <i class="fas fa-check-circle text-green-500"></i>
-        <span id="toastMessage">Operation successful!</span>
-    </div>
-
     <!-- Enhanced IVR Call Modal -->
     <div id="callModal" class="call-modal">
         <div class="flex items-center justify-between mb-4">
@@ -4064,25 +4806,67 @@
                 </div>
             </div>
 
-            <!-- Document Preview Modal -->
-            <div id="documentPreviewModal" class="modal">
-                <div class="modal-content" style="max-width: 90%; max-height: 90%;">
-                    <div class="flex justify-between items-center mb-4">
-                        <h3 id="documentPreviewTitle" class="text-lg font-semibold text-gray-900">Document Preview</h3>
-                        <div class="flex gap-2">
-                            <button onclick="downloadDocument()" class="btn-secondary text-sm">
-                                <i class="fas fa-download mr-1"></i>Download
-                            </button>
-                            <button onclick="closeDocumentPreviewModal()" class="text-gray-400 hover:text-gray-600">
-                                <i class="fas fa-times text-xl"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <div id="documentPreviewContent" class="border rounded-lg overflow-auto" style="height: 70vh;">
-                        <!-- Document preview will be loaded here -->
-                    </div>
-                </div>
+            <!-- Enhanced Document Preview Modal -->
+  <div id="documentPreviewModal" class="modal">
+    <div class="modal-content" style="width: 95%; height: 95%; max-width: 1200px;">
+      <div class="modal-header">
+        <h3 id="documentPreviewTitle">Document Preview</h3>
+        <div class="flex items-center gap-4">
+          <!-- PDF Controls (hidden by default) -->
+          <div id="pdfControls" class="hidden flex items-center gap-2">
+            <button onclick="prevPage()" class="btn-secondary" id="prevBtn">
+              <i class="fas fa-chevron-left"></i>
+            </button>
+            <span class="text-sm">Page <span id="pageNum">1</span> of <span id="pageCount">0</span></span>
+            <button onclick="nextPage()" class="btn-secondary" id="nextBtn">
+              <i class="fas fa-chevron-right"></i>
+            </button>
+            <div class="flex items-center gap-2 ml-4">
+              <button onclick="zoomOut()" class="btn-secondary">
+                <i class="fas fa-search-minus"></i>
+              </button>
+              <span class="text-sm"><span id="zoomLevel">100%</span></span>
+              <button onclick="zoomIn()" class="btn-secondary">
+                <i class="fas fa-search-plus"></i>
+              </button>
             </div>
+          </div>
+          <button onclick="closeDocumentPreviewModal()" class="btn-secondary">
+            <i class="fas fa-times"></i> Close
+          </button>
+        </div>
+      </div>
+      <div class="modal-body" id="documentPreviewContent">
+        <!-- Document preview content will be loaded here -->
+      </div>
+      <div class="modal-footer">
+        <div class="flex justify-between items-center w-full">
+          <div class="text-sm text-gray-500" id="documentInfo">
+            <!-- Document info will be displayed here -->
+          </div>
+          <div class="flex gap-2">
+            <button onclick="rotateDocument()" class="btn-secondary" id="rotateBtn">
+              <i class="fas fa-redo"></i> Rotate
+            </button>
+            <button onclick="downloadCurrentDocument()" class="btn-primary">
+              <i class="fas fa-download"></i> Download
+            </button>
+            <button onclick="printDocument()" class="btn-secondary">
+              <i class="fas fa-print"></i> Print
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast">
+        <div class="flex items-center">
+            <i class="fas fa-check-circle mr-2"></i>
+            <span id="toastMessage"></span>
+        </div>
+    </div>
 
             <!-- Bulk Lead Assignment Modal (Admin Only) -->
             <div id="bulkAssignModal" class="modal">
@@ -4807,6 +5591,16 @@
   let isCallMuted = false;
   let isCallOnHold = false;
   let isRecording = false;
+  
+  // Document Preview Variables
+  let pdfDoc = null;
+  let currentPage = 1;
+  let pageRendering = false;
+  let pageNumPending = null;
+  let scale = 1.0;
+  let currentRotation = 0;
+  let currentScale = 1.0;
+  let totalPages = 3; // For PDF simulation
 
   // Initialize Application
   document.addEventListener('DOMContentLoaded', function() {
@@ -4815,6 +5609,9 @@
 
   function initializeApp() {
     console.log('Initializing application...');
+    
+    // Set up global error handler
+    setupGlobalErrorHandling();
     
     // Check if user is logged in
     const storedUser = localStorage.getItem('crm_user');
@@ -4850,6 +5647,25 @@
     
     console.log('Application initialized successfully');
   }
+  // Global error handling
+  function setupGlobalErrorHandling() {
+    window.addEventListener('error', function(e) {
+      console.error('Global error:', e.error);
+      // Don't show toast for navigation errors
+      if (!e.message.includes('undefined') && !e.message.includes('null')) {
+        showToast('An unexpected error occurred', 'error');
+      }
+    });
+
+    window.addEventListener('unhandledrejection', function(e) {
+      console.error('Unhandled promise rejection:', e.reason);
+      // Don't show toast for navigation errors
+      if (!e.reason?.message?.includes('undefined') && !e.reason?.message?.includes('null')) {
+        showToast('An operation failed', 'error');
+      }
+    });
+  }
+
 
   function setupEventListeners() {
     // Login form
@@ -4895,65 +5711,66 @@
     // Forms
     const leadForm = document.getElementById('leadForm');
     if (leadForm) {
-      leadForm.removeEventListener('submit', handleLeadSubmit);
       leadForm.addEventListener('submit', handleLeadSubmit);
     }
 
     const agentForm = document.getElementById('agentForm');
     if (agentForm) {
-      agentForm.removeEventListener('submit', handleAgentSubmit);
       agentForm.addEventListener('submit', handleAgentSubmit);
     }
 
     const taskForm = document.getElementById('taskForm');
     if (taskForm) {
-      taskForm.removeEventListener('submit', handleTaskSubmit);
       taskForm.addEventListener('submit', handleTaskSubmit);
+    }
+
+    // Profile forms
+    const profileForm = document.getElementById('profileForm');
+    if (profileForm) {
+      profileForm.addEventListener('submit', handleProfileUpdate);
+    }
+
+    const passwordForm = document.getElementById('passwordForm');
+    if (passwordForm) {
+      passwordForm.addEventListener('submit', handlePasswordChange);
     }
 
     // Search leads
     const searchLeads = document.getElementById('searchLeads');
     if (searchLeads) {
-      searchLeads.removeEventListener('input', searchLeadsHandler);
       searchLeads.addEventListener('input', searchLeadsHandler);
     }
 
     // Callback form submission
     const callbackForm = document.getElementById('callbackForm');
     if (callbackForm) {
-      callbackForm.removeEventListener('submit', scheduleCallbackFromForm);
       callbackForm.addEventListener('submit', scheduleCallbackFromForm);
     }
 
     // Quick action forms
     const quickTaskForm = document.getElementById('quickTaskForm');
     if (quickTaskForm) {
-      quickTaskForm.removeEventListener('submit', handleQuickTaskSubmit);
       quickTaskForm.addEventListener('submit', handleQuickTaskSubmit);
     }
 
     const quickScheduleForm = document.getElementById('quickScheduleForm');
     if (quickScheduleForm) {
-      quickScheduleForm.removeEventListener('submit', handleQuickScheduleSubmit);
       quickScheduleForm.addEventListener('submit', handleQuickScheduleSubmit);
     }
 
     const quickReminderForm = document.getElementById('quickReminderForm');
     if (quickReminderForm) {
-      quickReminderForm.removeEventListener('submit', handleQuickReminderSubmit);
       quickReminderForm.addEventListener('submit', handleQuickReminderSubmit);
     }
 
     // Bulk action forms
     const bulkEmailForm = document.getElementById('bulkEmailForm');
     if (bulkEmailForm) {
-      bulkEmailForm.removeEventListener('submit', handleBulkEmailSubmit);
       bulkEmailForm.addEventListener('submit', handleBulkEmailSubmit);
     }
 
     const whatsappShareForm = document.getElementById('whatsappShareForm');
     if (whatsappShareForm) {
-      whatsappShareForm.removeEventListener('submit', handleWhatsAppShareSubmit);
       whatsappShareForm.addEventListener('submit', handleWhatsAppShareSubmit);
     }
   }
@@ -4968,7 +5785,7 @@
     document.querySelectorAll('.modal').forEach(modal => {
         modal.addEventListener('click', function(e) {
             if (e.target === modal) {
-                modal.classList.remove('active');
+                closeModal(modal.id);
             }
         });
     });
@@ -4976,9 +5793,7 @@
     // Add ESC key handler to close modals
     document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape') {
-            document.querySelectorAll('.modal.active').forEach(modal => {
-                modal.classList.remove('active');
-            });
+            closeAllModals();
         }
     });
   }
@@ -5576,105 +6391,120 @@
     document.body.style.overflow = '';
   }
 
-  // Enhanced navigation function to handle dashboard specifically
-  // Replace the navigateToPage function with this corrected version
-function navigateToPage(page) {
-    if (!page) return;
-    
-    console.log('Navigating to page:', page);
-    
-    // Hide all pages
-    document.querySelectorAll('.page').forEach(p => {
-        p.classList.add('hidden');
-    });
+  // Enhanced navigation with error handling
+  function navigateToPage(page) {
+    try {
+        if (!page) return;
+        
+        console.log('Navigating to page:', page);
+        
+        // Hide all pages
+        document.querySelectorAll('.page').forEach(p => {
+            p.classList.add('hidden');
+        });
 
-    // Show selected page
-    const targetPage = document.getElementById(page + 'Page');
-    if (targetPage) {
-        targetPage.classList.remove('hidden');
-        console.log('Showing page:', targetPage.id);
-    } else {
-        console.error('Target page not found:', page + 'Page');
-        // Fallback to dashboard if page not found
-        const dashboardPage = document.getElementById('dashboardPage');
-        if (dashboardPage) {
-            dashboardPage.classList.remove('hidden');
-            page = 'dashboard';
+        // Show selected page
+        const targetPage = document.getElementById(page + 'Page');
+        if (targetPage) {
+            targetPage.classList.remove('hidden');
+            console.log('Showing page:', targetPage.id);
+        } else {
+            console.error('Target page not found:', page + 'Page');
+            // Fallback to dashboard if page not found
+            const dashboardPage = document.getElementById('dashboardPage');
+            if (dashboardPage) {
+                dashboardPage.classList.remove('hidden');
+                page = 'dashboard';
+            }
         }
-    }
 
-    // Update page title
-    const titles = {
-        dashboard: 'Dashboard',
-        leads: 'Leads Management',
-        tasks: 'Task Management',
-        callHistory: 'Call History',
-        files: 'File Management',
-        admin: 'Admin Panel',
-        reports: 'Reports',
-        profile: 'My Profile'
-    };
-    
-    const pageTitle = document.getElementById('pageTitle');
-    if (pageTitle) {
-        pageTitle.textContent = titles[page] || page;
-    }
-
-    // Update active sidebar link
-    document.querySelectorAll('.sidebar-link').forEach(link => {
-        link.classList.remove('active');
-        if (link.dataset.page === page) {
-            link.classList.add('active');
+        // Update page title
+        const titles = {
+            dashboard: 'Dashboard',
+            leads: 'Leads Management',
+            tasks: 'Task Management',
+            callHistory: 'Call History',
+            files: 'File Management',
+            admin: 'Admin Panel',
+            reports: 'Reports',
+            profile: 'My Profile'
+        };
+        
+        const pageTitle = document.getElementById('pageTitle');
+        if (pageTitle) {
+            pageTitle.textContent = titles[page] || page;
         }
-    });
 
-    // Update user info in sidebar
-    updateSidebarUserInfo();
+        // Update active sidebar link
+        document.querySelectorAll('.sidebar-link').forEach(link => {
+            link.classList.remove('active');
+            if (link.dataset.page === page) {
+                link.classList.add('active');
+            }
+        });
 
-    // Close mobile menu
-    closeMobileSidebar();
+        // Update user info in sidebar
+        updateSidebarUserInfo();
 
-    // Load page-specific data with delay to ensure DOM is ready
-    setTimeout(() => {
-        loadPageData(page);
-    }, 100);
-}
+        // Close mobile menu
+        closeMobileSidebar();
 
-// Also update the loadPageData function to ensure it handles all pages
-function loadPageData(page) {
+        // Load page-specific data with delay to ensure DOM is ready
+        setTimeout(() => {
+            try {
+                loadPageData(page);
+            } catch (error) {
+                console.error('Error loading page data:', error);
+                showToast('Error loading page content', 'error');
+            }
+        }, 100);
+    } catch (error) {
+        console.error('Error navigating to page:', error);
+        showToast('Navigation error occurred', 'error');
+    }
+  }
+
+  // Enhanced page data loading with error handling
+  function loadPageData(page) {
     console.log('Loading page data for:', page);
     
-    switch(page) {
-        case 'dashboard':
-            setTimeout(() => {
-                loadDashboardData();
-            }, 200);
-            break;
-        case 'leads':
-            loadAllLeads();
-            break;
-        case 'tasks':
-            loadTasksPage();
-            break;
-        case 'callHistory':
-            loadCallHistory();
-            break;
-        case 'files':
-            loadFiles();
-            break;
-        case 'admin':
-            loadAdminData();
-            break;
-        case 'reports':
-            loadReportsData();
-            break;
-        case 'profile':
-            updateProfilePage();
-            break;
-        default:
-            console.warn('Unknown page:', page);
+    try {
+        switch(page) {
+            case 'dashboard':
+                setTimeout(() => {
+                    loadDashboardData();
+                }, 200);
+                break;
+            case 'leads':
+                loadAllLeads();
+                break;
+            case 'tasks':
+                loadTasksPage();
+                break;
+            case 'callHistory':
+                loadCallHistory();
+                break;
+            case 'files':
+                loadFiles();
+                break;
+            case 'admin':
+                loadAdminData();
+                break;
+            case 'reports':
+                loadReportsData();
+                break;
+            case 'profile':
+                updateProfilePage();
+                break;
+            default:
+                console.warn('Unknown page:', page);
+        }
+    } catch (error) {
+        console.error('Error loading page data for', page, ':', error);
+        showToast(`Error loading ${page} data`, 'error');
     }
-}
+  }
+
 
   // Update sidebar user info
   function updateSidebarUserInfo() {
@@ -5828,7 +6658,7 @@ function loadPageData(page) {
     // Set default reminder
     if (taskReminder) taskReminder.value = '30';
 
-    if (taskModal) taskModal.classList.add('active');
+    if (taskModal) showModal('taskModal');
   }
 
   function handleTaskSubmit(e) {
@@ -6101,8 +6931,9 @@ function loadPageData(page) {
     
     tbody.innerHTML = '';
 
-    if (leadsData.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="${showCheckbox ? 9 : 8}" class="text-center py-8 text-gray-500">No leads found</td></tr>`;
+    if (!leadsData || leadsData.length === 0) {
+        const colspan = showCheckbox ? 9 : 8;
+        tbody.innerHTML = `<tr><td colspan="${colspan}" class="text-center py-8 text-gray-500">No leads found</td></tr>`;
         return;
     }
 
@@ -6110,9 +6941,8 @@ function loadPageData(page) {
         const row = document.createElement('tr');
         let checkboxHtml = showCheckbox ? `<td><input type="checkbox" class="lead-checkbox" value="${lead.id}" onchange="updateBulkActions()"></td>` : '';
 
-        // Get company name with multiple fallbacks
-        const companyName = lead.company || lead.businessName || lead.organization || 
-                            lead.customerName?.includes(' ') ? lead.customerName.split(' ')[0] + ' Co.' : 'Individual';
+        // Get company name with improved fallback logic
+        const companyName = getCompanyName(lead);
         
         // Get location with fallbacks
         const locationName = lead.location || lead.city || lead.address || 
@@ -6122,13 +6952,13 @@ function loadPageData(page) {
             ${checkboxHtml}
             <td class="font-medium">
                 <a href="#" onclick="showLeadDetails(${lead.id}); return false;" class="text-blue-600 hover:text-blue-800">
-                    ${lead.customerName}
+                    ${lead.customerName || 'Unknown'}
                 </a>
             </td>
             <td>
                 <div class="text-sm">
-                    <div>${lead.email}</div>
-                    <div class="text-gray-500">${lead.phone}</div>
+                    <div>${lead.email || 'N/A'}</div>
+                    <div class="text-gray-500">${lead.phone || 'N/A'}</div>
                 </div>
             </td>
             <td>${getLoanTypeBadge(lead.loanType)}</td>
@@ -6159,6 +6989,88 @@ function loadPageData(page) {
         `;
         tbody.appendChild(row);
     });
+  }
+
+  // Helper functions for company name processing
+  function getCompanyName(lead) {
+    // Direct company name fields (in order of preference)
+    const companyFields = ['company', 'businessName', 'organization', 'enterpriseName', 'firmName'];
+    
+    for (const field of companyFields) {
+        const value = lead[field];
+        if (isValidCompanyName(value)) {
+            return formatCompanyName(value);
+        }
+    }
+    
+    // Fallback to customer name processing
+    if (lead.customerName && isValidCompanyName(lead.customerName)) {
+        return formatCustomerNameAsCompany(lead.customerName);
+    }
+    
+    // Final fallback
+    return 'Individual';
+  }
+
+  function isValidCompanyName(name) {
+    return name && 
+           typeof name === 'string' && 
+           name.trim().length > 0 && 
+           !isLikelyIndividualName(name);
+  }
+
+  function isLikelyIndividualName(name) {
+    if (!name || typeof name !== 'string') return false;
+    
+    const trimmedName = name.trim();
+    const nameParts = trimmedName.split(/\s+/);
+    
+    // Likely individual if 2-3 words and no company indicators
+    if (nameParts.length >= 2 && nameParts.length <= 3) {
+        const companyIndicators = ['inc', 'llc', 'corp', 'co', 'ltd', 'company', 'group', 'enterprises'];
+        const lowerName = trimmedName.toLowerCase();
+        
+        return !companyIndicators.some(indicator => lowerName.includes(indicator));
+    }
+    
+    return false;
+  }
+
+  function formatCompanyName(name) {
+    if (!name) return name;
+    
+    const trimmed = name.trim();
+    
+    // Add "Co." if it looks like a company name but lacks corporate designation
+    if (!hasCorporateDesignation(trimmed) && !isLikelyIndividualName(trimmed)) {
+        return `${trimmed} Co.`;
+    }
+    
+    return trimmed;
+  }
+
+  function hasCorporateDesignation(name) {
+    const corporatePatterns = [
+        /\b(inc|incorporated|corp|corporation|llc|co|company|ltd|limited)\b/i,
+        /\.(com|org|net|io|co)\b/i
+    ];
+    
+    return corporatePatterns.some(pattern => pattern.test(name));
+  }
+
+  function formatCustomerNameAsCompany(customerName) {
+    if (!customerName) return 'Individual';
+    
+    const trimmed = customerName.trim();
+    const nameParts = trimmed.split(/\s+/);
+    
+    // If it's likely a person's name, use first name + "Co."
+    if (nameParts.length >= 2 && isLikelyIndividualName(trimmed)) {
+        return `${nameParts[0]} Co.`;
+    }
+    
+    // Otherwise use the full name as company name
+    return formatCompanyName(trimmed);
   }
 
   function setupBulkActions() {
@@ -6267,7 +7179,7 @@ function loadPageData(page) {
     tbody.innerHTML = '';
     
     if (agents.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="6" class="text-center py-8 text-gray-500">No agents found</td></tr>`;
+      tbody.innerHTML = '<tr><td colspan="6" class="text-center py-8 text-gray-500">No agents found</td></tr>';
       return;
     }
     
@@ -6915,73 +7827,192 @@ function loadPageData(page) {
     }
   }
 
-  // Enhanced File Upload System for Client Documents
+ // Enhanced file upload handlers for business loan documents
   function setupFileUploadHandlers() {
-    // Initialize all file inputs for client documents
-    document.querySelectorAll('.document-item input[type="file"]').forEach(input => {
-        input.addEventListener('change', function(e) {
-            handleFileUpload(this, e);
-        });
+    console.log('Setting up file upload handlers...');
+    
+    // Enhanced modal handling
+document.addEventListener('click', function(e) {
+    // Close modals when clicking outside
+    if (e.target.classList.contains('modal')) {
+        closeModal(e.target.id);
+    }
+    
+    // Close modals with escape key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            closeAllModals();
+        }
+    });
+});
+
+    // Handle file input changes
+    document.addEventListener('change', function(e) {
+      if (e.target.type === 'file' && e.target.id.includes('Upload')) {
+        handleFileUpload(e.target, e);
+      }
     });
 
     // General file upload area
     const fileUploadArea = document.getElementById('fileUploadArea');
     if (fileUploadArea) {
-        fileUploadArea.addEventListener('click', function() {
-            document.getElementById('fileInput').click();
-        });
-        
-        fileUploadArea.addEventListener('dragover', handleDragOver);
-        fileUploadArea.addEventListener('dragleave', handleDragLeave);
-        fileUploadArea.addEventListener('drop', handleDocumentDrop);
+      fileUploadArea.addEventListener('click', function() {
+        document.getElementById('fileInput').click();
+      });
+      
+      fileUploadArea.addEventListener('dragover', handleDragOver);
+      fileUploadArea.addEventListener('dragleave', handleDragLeave);
+      fileUploadArea.addEventListener('drop', handleDrop);
     }
 
     // Client document upload area
     const documentUploadArea = document.getElementById('documentUploadArea');
     if (documentUploadArea) {
-        documentUploadArea.addEventListener('click', function() {
-            document.getElementById('documentFileInput').click();
-        });
-        
-        // Add similar drag/drop handlers for document upload area
-        documentUploadArea.addEventListener('dragover', handleDragOver);
-        documentUploadArea.addEventListener('dragleave', handleDragLeave);
-        documentUploadArea.addEventListener('drop', handleDocumentDrop);
+      documentUploadArea.addEventListener('click', function() {
+        document.getElementById('documentFileInput').click();
+      });
+      
+      // Add similar drag/drop handlers for document upload area
+      documentUploadArea.addEventListener('dragover', handleDragOver);
+      documentUploadArea.addEventListener('dragleave', handleDragLeave);
+      documentUploadArea.addEventListener('drop', handleDocumentDrop);
     }
+    
+    console.log('File upload handlers setup complete');
   }
 
+  // Enhanced file upload area handlers
   function handleDocumentDrop(e) {
     e.preventDefault();
     e.stopPropagation();
     const area = document.getElementById('documentUploadArea');
     if (area) area.classList.remove('dragover');
-    handleFiles(e.dataTransfer.files);
+    
+    const files = e.dataTransfer.files;
+    if (files && files.length > 0) {
+        handleBulkDocumentUpload(files);
+    }
   }
 
-  function handleDragOver(e) {
+  function handleDocumentDragOver(e) {
     e.preventDefault();
     e.stopPropagation();
-    const area = document.getElementById('fileUploadArea');
+    const area = document.getElementById('documentUploadArea');
     if (area) area.classList.add('dragover');
   }
 
-  function handleDragLeave(e) {
+  function handleDocumentDragLeave(e) {
     e.preventDefault();
     e.stopPropagation();
-    const area = document.getElementById('fileUploadArea');
+    const area = document.getElementById('documentUploadArea');
     if (area) area.classList.remove('dragover');
   }
 
-  function handleFileSelect(e) {
-    handleFiles(e.target.files);
+  // Bulk document upload handler
+  function handleBulkDocumentUpload(files) {
+    if (!files || files.length === 0) return;
+    
+    let uploadedCount = 0;
+    let failedCount = 0;
+    
+    Array.from(files).forEach(file => {
+        if (validateFile(file)) {
+            // Find the appropriate document type based on file name or type
+            const docType = determineDocumentType(file);
+            
+            if (docType) {
+                // Simulate upload for this document type
+                simulateDocumentUpload(file, function(success, fileData) {
+                    if (success && currentClientLead) {
+                        const leadId = currentClientLead.id;
+                        if (!clientDocuments[leadId]) {
+                            clientDocuments[leadId] = {};
+                        }
+                        
+                        clientDocuments[leadId][docType] = {
+                            name: file.name,
+                            size: file.size,
+                            type: file.type,
+                            uploadDate: new Date().toISOString(),
+                            password: '',
+                            fileData: fileData,
+                            lastModified: file.lastModified
+                        };
+                        
+                        localStorage.setItem('crm_clientDocuments', JSON.stringify(clientDocuments));
+                        uploadedCount++;
+                        
+                        // Update UI for this specific document type
+                        updateDocumentStatus(docType, 'uploaded', file.name);
+                    } else {
+                        failedCount++;
+                    }
+                    
+                    // Show final result
+                    if (uploadedCount + failedCount === files.length) {
+                        updateProgress();
+                        showToast(`Uploaded ${uploadedCount} out of ${files.length} documents`, 
+                                 uploadedCount > 0 ? 'success' : 'error');
+                    }
+                });
+            } else {
+                failedCount++;
+            }
+        } else {
+            failedCount++;
+        }
+    });
+  }
+  // Helper function to determine document type based on file
+  function determineDocumentType(file) {
+    const fileName = file.name.toLowerCase();
+    
+    if (fileName.includes('aadhaar') || fileName.includes('uid')) return 'aadhaar';
+    if (fileName.includes('pan') || fileName.includes('income')) return 'pan';
+    if (fileName.includes('photo') || fileName.includes('picture')) return 'photo';
+    if (fileName.includes('bank') || fileName.includes('statement')) return 'bankStatement';
+    if (fileName.includes('itr') || fileName.includes('tax')) return 'itr';
+    if (fileName.includes('gst')) return 'gst';
+    if (fileName.includes('udyam')) return 'udyam';
+    
+    // For additional documents, we'll need a different approach
+    return null;
   }
 
-  function handleDocumentFileSelect(e) {
-    handleFiles(e.target.files);
+  // Update document status in UI
+  function updateDocumentStatus(docType, status, fileName) {
+    const documentItem = document.querySelector(`[id$="${docType}Upload"]`).closest('.document-item');
+    if (documentItem) {
+        const statusBadge = documentItem.querySelector('.status-badge');
+        const documentName = documentItem.querySelector('.document-name');
+        
+        if (statusBadge) {
+            statusBadge.textContent = status === 'uploaded' ? 'Uploaded' : 'Failed';
+            statusBadge.className = `status-badge ${status === 'uploaded' ? 'status-uploaded' : 'status-rejected'}`;
+        }
+        
+        if (documentName && fileName) {
+            documentName.textContent = fileName;
+        }
+    }
   }
 
-  // Enhanced file upload handler for client documents
+  // Initialize enhanced document features
+  function initializeEnhancedDocumentFeatures() {
+    // Set up file input change handlers for all document upload inputs
+    document.querySelectorAll('input[type="file"]').forEach(input => {
+        input.addEventListener('change', function(e) {
+            if (this.id.includes('Upload')) {
+                handleFileUpload(this, e);
+            }
+        });
+    });
+    
+    console.log('Enhanced document features initialized');
+  }
   function handleFileUpload(fileInput, event) {
+    console.log('File upload triggered for:', fileInput.id);
+    
     const files = event.target.files;
     if (!files || files.length === 0) return;
     
@@ -7016,8 +8047,26 @@ function loadPageData(page) {
         return;
     }
     
+    // Create progress indicator
+    const progressContainer = document.createElement('div');
+    progressContainer.className = 'upload-progress';
+    const progressBar = document.createElement('div');
+    progressBar.className = 'upload-progress-bar';
+    progressBar.style.width = '0%';
+    progressContainer.appendChild(progressBar);
+    
+    const uploadStatus = document.createElement('div');
+    uploadStatus.className = 'upload-status';
+    uploadStatus.innerHTML = `<span>Uploading...</span>`;
+    uploadStatus.appendChild(progressContainer);
+    
+    documentItem.appendChild(uploadStatus);
+    
     // Simulate upload progress
-    simulateDocumentUpload(file, function(success) {
+    simulateDocumentUpload(file, function(success, fileData) {
+        // Remove progress indicator
+        uploadStatus.remove();
+        
         if (success) {
             // Update status to uploaded
             if (statusBadge) {
@@ -7033,32 +8082,28 @@ function loadPageData(page) {
                     clientDocuments[leadId] = {};
                 }
                 
-                // Create a file reader to store file data
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    clientDocuments[leadId][docType] = {
-                        name: file.name,
-                        size: file.size,
-                        type: file.type,
-                        uploadDate: new Date().toISOString(),
-                        password: password,
-                        fileData: e.target.result, // Store as base64 for preview
-                        lastModified: file.lastModified
-                    };
-                    
-                    localStorage.setItem('crm_clientDocuments', JSON.stringify(clientDocuments));
-                    updateProgress();
-                    showToast(`Document ${file.name} uploaded successfully`, 'success');
-                    
-                    // Update the UI
-                    if (documentItem) {
-                        const documentName = documentItem.querySelector('.document-name');
-                        if (documentName) {
-                            documentName.textContent = file.name;
-                        }
-                    }
+                // Store document data
+                clientDocuments[leadId][docType] = {
+                    name: file.name,
+                    size: file.size,
+                    type: file.type,
+                    uploadDate: new Date().toISOString(),
+                    password: password,
+                    fileData: fileData,
+                    lastModified: file.lastModified
                 };
-                reader.readAsDataURL(file);
+                
+                localStorage.setItem('crm_clientDocuments', JSON.stringify(clientDocuments));
+                updateProgress();
+                showToast(`Document ${file.name} uploaded successfully`, 'success');
+                
+                // Update the UI
+                if (documentItem) {
+                    const documentName = documentItem.querySelector('.document-name');
+                    if (documentName) {
+                        documentName.textContent = file.name;
+                    }
+                }
             }
         } else {
             if (statusBadge) {
@@ -7067,7 +8112,36 @@ function loadPageData(page) {
             }
             showToast(`Failed to upload ${file.name}`, 'error');
         }
-    });
+    }, progressBar);
+}
+
+  // Enhanced upload simulation with progress tracking
+  function simulateDocumentUpload(file, callback, progressBar) {
+    let progress = 0;
+    const interval = setInterval(() => {
+        progress += Math.random() * 25;
+        if (progress >= 100) {
+            progress = 100;
+            clearInterval(interval);
+            
+            if (progressBar) progressBar.style.width = '100%';
+            
+            // Simulate processing time
+            setTimeout(() => {
+                // Create a FileReader to read the file as base64
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    callback(true, e.target.result); // Success with file data
+                };
+                reader.onerror = function() {
+                    callback(false); // Failure
+                };
+                reader.readAsDataURL(file);
+            }, 500);
+        } else {
+            if (progressBar) progressBar.style.width = progress + '%';
+        }
+    }, 200);
   }
 
   // Enhanced file validation
@@ -7106,6 +8180,34 @@ function loadPageData(page) {
     }
 
     return true;
+  }
+
+  // Enhanced document trigger function
+  function triggerClientDocUpload(docType, inputId, passwordId) {
+    try {
+        const fileInput = document.getElementById(inputId);
+        if (fileInput) {
+            // Clear any previous file selection
+            fileInput.value = '';
+            fileInput.click();
+            
+            // Set up password field if exists
+            if (passwordId) {
+                const passwordField = document.getElementById(passwordId);
+                if (passwordField) {
+                    setTimeout(() => {
+                        passwordField.focus();
+                    }, 500);
+                }
+            }
+        } else {
+            console.error('File input not found:', inputId);
+            showToast('Upload functionality not available', 'error');
+        }
+    } catch (error) {
+        console.error('Error triggering document upload:', error);
+        showToast('Error accessing upload functionality', 'error');
+    }
   }
 
   // Enhanced upload simulation
@@ -7240,8 +8342,7 @@ function loadPageData(page) {
         setupFileUploadHandlers();
     }, 100);
 
-    const clientDocumentsModal = document.getElementById('clientDocumentsModal');
-    if (clientDocumentsModal) clientDocumentsModal.classList.add('active');
+    showModal('clientDocumentsModal');
   }
 
   // NEW FUNCTION: Initialize client documents structure
@@ -7487,8 +8588,7 @@ function loadPageData(page) {
   }
 
   function closeClientDocumentsModal() {
-    const clientDocumentsModal = document.getElementById('clientDocumentsModal');
-    if (clientDocumentsModal) clientDocumentsModal.classList.remove('active');
+    closeModal('clientDocumentsModal');
     currentClientLead = null;
   }
 
@@ -7528,13 +8628,11 @@ function loadPageData(page) {
     const dialDisplay = document.getElementById('dialDisplay');
     if (dialDisplay) dialDisplay.textContent = 'Enter number';
     
-    const dialPadModal = document.getElementById('dialPadModal');
-    if (dialPadModal) dialPadModal.classList.add('active');
+    showModal('dialPadModal');
   }
 
   function closeDialPad() {
-    const dialPadModal = document.getElementById('dialPadModal');
-    if (dialPadModal) dialPadModal.classList.remove('active');
+    closeModal('dialPadModal');
     dialPadNumber = '';
   }
 
@@ -7579,17 +8677,17 @@ function loadPageData(page) {
     const profilePhone = document.getElementById('profilePhone');
     const profileInitials = document.getElementById('profileInitials');
     
-    if (profileName) profileName.textContent = currentUser.name;
-    if (profileEmail) profileEmail.textContent = currentUser.email;
+    if (profileName) profileName.textContent = currentUser.name || 'Unknown';
+    if (profileEmail) profileEmail.textContent = currentUser.email || 'Unknown';
     if (profileRole) {
       profileRole.textContent = currentUser.role === 'admin' ? 'Administrator' : 'Agent';
       profileRole.className = `status-badge ${currentUser.role === 'admin' ? 'status-approved' : 'status-new'}`;
     }
-    if (profileEmailDetail) profileEmailDetail.textContent = currentUser.email;
-    if (profilePhone) profilePhone.textContent = currentUser.phone;
+    if (profileEmailDetail) profileEmailDetail.textContent = currentUser.email || 'Unknown';
+    if (profilePhone) profilePhone.textContent = currentUser.phone || 'Unknown';
 
     // Update initials
-    const initials = currentUser.name.split(' ').map(n => n[0]).join('').toUpperCase();
+    const initials = (currentUser.name || 'UU').split(' ').map(n => n[0]).join('').toUpperCase();
     if (profileInitials) profileInitials.textContent = initials;
 
     // Update form inputs
@@ -7597,9 +8695,9 @@ function loadPageData(page) {
     const profileEmailInput = document.getElementById('profileEmailInput');
     const profilePhoneInput = document.getElementById('profilePhoneInput');
     
-    if (profileNameInput) profileNameInput.value = currentUser.name;
-    if (profileEmailInput) profileEmailInput.value = currentUser.email;
-    if (profilePhoneInput) profilePhoneInput.value = currentUser.phone;
+    if (profileNameInput) profileNameInput.value = currentUser.name || '';
+    if (profileEmailInput) profileEmailInput.value = currentUser.email || '';
+    if (profilePhoneInput) profilePhoneInput.value = currentUser.phone || '';
   }
 
   function handleProfileUpdate(e) {
@@ -7695,11 +8793,7 @@ function loadPageData(page) {
         if (agentAssignField) agentAssignField.classList.add('hidden');
     }
 
-    const leadModal = document.getElementById('leadModal');
-    if (leadModal) {
-        leadModal.classList.add('active');
-        console.log('Add lead modal opened');
-    }
+    showModal('leadModal');
   }
 
   function populateAgentSelect() {
@@ -7738,7 +8832,6 @@ function loadPageData(page) {
     const leadLocation = document.getElementById('leadLocation');
     const agentAssignField = document.getElementById('agentAssignField');
     const leadAgent = document.getElementById('leadAgent');
-    const leadModal = document.getElementById('leadModal');
     
     // Set modal title
     if (leadModalTitle) leadModalTitle.textContent = 'Edit Lead';
@@ -7771,9 +8864,7 @@ function loadPageData(page) {
     }
 
     // Show modal
-    if (leadModal) {
-        leadModal.classList.add('active');
-    }
+    showModal('leadModal');
   }
 
   function handleLeadSubmit(e) {
@@ -7900,11 +8991,7 @@ function loadPageData(page) {
   }
 
   function closeLeadModal() {
-    const leadModal = document.getElementById('leadModal');
-    if (leadModal) {
-        leadModal.classList.remove('active');
-        console.log('Lead modal closed');
-    }
+    closeModal('leadModal');
     
     // Reset form and clear any validation errors
     const leadForm = document.getElementById('leadForm');
@@ -7972,8 +9059,7 @@ function loadPageData(page) {
       agentPassword.required = true;
     }
     
-    const agentModal = document.getElementById('agentModal');
-    if (agentModal) agentModal.classList.add('active');
+    showModal('agentModal');
   }
 
   function editAgent(id) {
@@ -7986,7 +9072,6 @@ function loadPageData(page) {
       const agentPhone = document.getElementById('agentPhone');
       const agentStatus = document.getElementById('agentStatus');
       const agentPassword = document.getElementById('agentPassword');
-      const agentModal = document.getElementById('agentModal');
       
       if (agentModalTitle) agentModalTitle.textContent = 'Edit Agent';
       if (agentName) agentName.value = editingAgent.name;
@@ -7999,13 +9084,12 @@ function loadPageData(page) {
         agentPassword.placeholder = 'Leave blank to keep current password';
       }
       
-      if (agentModal) agentModal.classList.add('active');
+      showModal('agentModal');
     }
   }
 
   function closeAgentModal() {
-    const agentModal = document.getElementById('agentModal');
-    if (agentModal) agentModal.classList.remove('active');
+    closeModal('agentModal');
     editingAgent = null;
   }
 
@@ -8135,12 +9219,11 @@ function loadPageData(page) {
 
     // Show call modal
     const callingNumber = document.getElementById('callingNumber');
-    const callModal = document.getElementById('callModal');
     const callStatus = document.getElementById('callStatus');
     const callAnimation = document.getElementById('callAnimation');
     
     if (callingNumber) callingNumber.textContent = currentCall.contact;
-    if (callModal) callModal.classList.add('active');
+    showModal('callModal');
     if (callStatus) callStatus.innerHTML = '<span class="status-badge status-new">Connecting...</span>';
     
     // Reset call controls
@@ -8287,14 +9370,12 @@ function loadPageData(page) {
     const callbackDateTime = document.getElementById('callbackDateTime');
     if (callbackDateTime) callbackDateTime.value = now.toISOString().slice(0, 16);
     
-    const callbackModal = document.getElementById('callbackModal');
-    if (callbackModal) callbackModal.classList.add('active');
+    showModal('callbackModal');
   }
 
   // Close Callback Modal
   function closeCallbackModal() {
-    const callbackModal = document.getElementById('callbackModal');
-    if (callbackModal) callbackModal.classList.remove('active');
+    closeModal('callbackModal');
   }
 
   // Send SMS
@@ -8364,7 +9445,8 @@ function loadPageData(page) {
 
   // Close Call Modal
   function closeCallModal() {
-    const callModal = document.getElementById('callModal');
+    closeModal('callModal');
+    
     const callDuration = document.getElementById('callDuration');
     const callNotes = document.getElementById('callNotes');
     const callDisposition = document.getElementById('callDisposition');
@@ -8378,7 +9460,6 @@ function loadPageData(page) {
     const dispositionTime = document.getElementById('dispositionTime');
     const dispositionRemarks = document.getElementById('dispositionRemarks');
     
-    if (callModal) callModal.classList.remove('active');
     if (callDuration) callDuration.textContent = '00:00';
     if (callNotes) callNotes.value = '';
     if (callDisposition) callDisposition.value = '';
@@ -8554,32 +9635,39 @@ function loadPageData(page) {
     return badges[type] || type;
   }
 
-  // Show toast function
+  // Enhanced show toast function with error handling
   function showToast(message, type = 'success') {
-    const toast = document.getElementById('toast');
-    const toastMessage = document.getElementById('toastMessage');
-    const icon = toast ? toast.querySelector('i') : null;
+    try {
+        const toast = document.getElementById('toast');
+        const toastMessage = document.getElementById('toastMessage');
+        const icon = toast ? toast.querySelector('i') : null;
 
-    if (!toast || !toastMessage) return;
+        if (!toast || !toastMessage) return;
 
-    // Update toast content
-    toastMessage.textContent = message;
+        // Update toast content
+        toastMessage.textContent = message;
 
-    // Update toast type
-    toast.className = 'toast show ' + type;
+        // Update toast type
+        toast.className = 'toast show ' + type;
 
-    // Update icon
-    if (icon) {
-      icon.className = type === 'success' ? 'fas fa-check-circle text-green-500' :
-        type === 'error' ? 'fas fa-exclamation-circle text-red-500' :
-          'fas fa-exclamation-triangle text-yellow-500';
+        // Update icon
+        if (icon) {
+            icon.className = type === 'success' ? 'fas fa-check-circle text-green-500' :
+                type === 'error' ? 'fas fa-exclamation-circle text-red-500' :
+                'fas fa-exclamation-triangle text-yellow-500';
+        }
+
+        // Hide toast after 3 seconds
+        setTimeout(() => {
+            if (toast) {
+                toast.classList.remove('show');
+            }
+        }, 3000);
+    } catch (error) {
+        console.error('Error showing toast:', error);
     }
-
-    // Hide toast after 3 seconds
-    setTimeout(() => {
-      toast.classList.remove('show');
-    }, 3000);
   }
+
 
   function sendEmail(email, name) {
     const subject = encodeURIComponent('Regarding Your Loan Application - Loan Leads CRM');
@@ -9070,13 +10158,11 @@ function loadPageData(page) {
       }).filter(Boolean).join('');
     }
 
-    const bulkAssignModal = document.getElementById('bulkAssignModal');
-    if (bulkAssignModal) bulkAssignModal.classList.add('active');
+    showModal('bulkAssignModal');
   }
 
   function closeBulkAssignModal() {
-    const bulkAssignModal = document.getElementById('bulkAssignModal');
-    if (bulkAssignModal) bulkAssignModal.classList.remove('active');
+    closeModal('bulkAssignModal');
   }
 
   function processBulkAssignment() {
@@ -9340,13 +10426,11 @@ ${document.getElementById('nextAction') ? document.getElementById('nextAction').
     tomorrow.setHours(10, 0, 0, 0);
     if (quickTaskDueDate) quickTaskDueDate.value = tomorrow.toISOString().slice(0, 16);
     
-    const quickTaskModal = document.getElementById('quickTaskModal');
-    if (quickTaskModal) quickTaskModal.classList.add('active');
+    showModal('quickTaskModal');
   }
 
   function closeQuickTaskModal() {
-    const quickTaskModal = document.getElementById('quickTaskModal');
-    if (quickTaskModal) quickTaskModal.classList.remove('active');
+    closeModal('quickTaskModal');
   }
 
   // Quick Schedule Modal Functions
@@ -9364,13 +10448,11 @@ ${document.getElementById('nextAction') ? document.getElementById('nextAction').
     tomorrow.setHours(10, 0, 0, 0);
     if (quickScheduleDateTime) quickScheduleDateTime.value = tomorrow.toISOString().slice(0, 16);
     
-    const quickScheduleModal = document.getElementById('quickScheduleModal');
-    if (quickScheduleModal) quickScheduleModal.classList.add('active');
+    showModal('quickScheduleModal');
   }
 
   function closeQuickScheduleModal() {
-    const quickScheduleModal = document.getElementById('quickScheduleModal');
-    if (quickScheduleModal) quickScheduleModal.classList.remove('active');
+    closeModal('quickScheduleModal');
   }
 
   // Quick Reminder Modal Functions
@@ -9390,14 +10472,38 @@ ${document.getElementById('nextAction') ? document.getElementById('nextAction').
     tomorrow.setHours(9, 0, 0, 0);
     if (quickReminderDateTime) quickReminderDateTime.value = tomorrow.toISOString().slice(0, 16);
     
-    const quickReminderModal = document.getElementById('quickReminderModal');
-    if (quickReminderModal) quickReminderModal.classList.add('active');
+    showModal('quickReminderModal');
   }
 
   function closeQuickReminderModal() {
-    const quickReminderModal = document.getElementById('quickReminderModal');
-    if (quickReminderModal) quickReminderModal.classList.remove('active');
+    closeModal('quickReminderModal');
   }
+
+  // Chart functions
+function refreshChart() {
+    showToast('Refreshing chart data...', 'success');
+    // In a real implementation, this would reload chart data
+}
+
+function toggleChartView() {
+    showToast('Toggling chart view...', 'success');
+    // In a real implementation, this would switch between chart types
+}
+
+function refreshPipeline() {
+    showToast('Refreshing pipeline...', 'success');
+    // In a real implementation, this would reload pipeline data
+}
+
+function togglePipelineView() {
+    showToast('Toggling pipeline view...', 'success');
+    // In a real implementation, this would switch pipeline views
+}
+
+function initializePipeline() {
+    console.log('Initializing pipeline view');
+    // Pipeline initialization logic would go here
+}
 
   // Form submission handlers for quick actions
   function handleQuickTaskSubmit(e) {
@@ -9742,7 +10848,6 @@ ${document.getElementById('nextAction') ? document.getElementById('nextAction').
       const taskType = document.getElementById('taskType');
       const taskReminder = document.getElementById('taskReminder');
       const taskNotes = document.getElementById('taskNotes');
-      const taskModal = document.getElementById('taskModal');
       
       if (taskModalTitle) taskModalTitle.textContent = 'Edit Task';
       if (taskTitle) taskTitle.value = editingTask.title;
@@ -9753,13 +10858,12 @@ ${document.getElementById('nextAction') ? document.getElementById('nextAction').
       if (taskReminder) taskReminder.value = editingTask.reminder || '30';
       if (taskNotes) taskNotes.value = editingTask.notes || '';
       
-      if (taskModal) taskModal.classList.add('active');
+      showModal('taskModal');
     }
   }
 
   function closeTaskModal() {
-    const taskModal = document.getElementById('taskModal');
-    if (taskModal) taskModal.classList.remove('active');
+    closeModal('taskModal');
     editingTask = null;
   }
 
@@ -9835,13 +10939,11 @@ ${document.getElementById('nextAction') ? document.getElementById('nextAction').
     selectedLeadsForBulk = selectedLeads;
     updateEmailRecipientsList();
     
-    const bulkEmailModal = document.getElementById('bulkEmailModal');
-    if (bulkEmailModal) bulkEmailModal.classList.add('active');
+    showModal('bulkEmailModal');
   }
 
   function closeBulkEmailModal() {
-    const bulkEmailModal = document.getElementById('bulkEmailModal');
-    if (bulkEmailModal) bulkEmailModal.classList.remove('active');
+    closeModal('bulkEmailModal');
     selectedLeadsForBulk = [];
     emailAttachments = [];
   }
@@ -9887,15 +10989,6 @@ ${document.getElementById('nextAction') ? document.getElementById('nextAction').
     updateSelectedLeadsCount();
   }
 
-  function handleEmailAttachmentDrop(e) {
-    e.preventDefault();
-    e.stopPropagation();
-    const bulkEmailAttachments = document.getElementById('bulkEmailAttachments');
-    if (bulkEmailAttachments) bulkEmailAttachments.classList.remove('dragover');
-    const files = e.dataTransfer.files;
-    handleEmailAttachmentFiles(files);
-  }
-
   function handleEmailAttachmentDragOver(e) {
     e.preventDefault();
     e.stopPropagation();
@@ -9908,6 +11001,15 @@ ${document.getElementById('nextAction') ? document.getElementById('nextAction').
     e.stopPropagation();
     const bulkEmailAttachments = document.getElementById('bulkEmailAttachments');
     if (bulkEmailAttachments) bulkEmailAttachments.classList.remove('dragover');
+  }
+
+  function handleEmailAttachmentDrop(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    const bulkEmailAttachments = document.getElementById('bulkEmailAttachments');
+    if (bulkEmailAttachments) bulkEmailAttachments.classList.remove('dragover');
+    const files = e.dataTransfer.files;
+    handleEmailAttachmentFiles(files);
   }
 
   function handleEmailAttachmentSelect(e) {
@@ -10001,13 +11103,11 @@ ${document.getElementById('nextAction') ? document.getElementById('nextAction').
     selectedLeadsForBulk = selectedLeads;
     updateWhatsAppRecipientsList();
     
-    const whatsappShareModal = document.getElementById('whatsappShareModal');
-    if (whatsappShareModal) whatsappShareModal.classList.add('active');
+    showModal('whatsappShareModal');
   }
 
   function closeWhatsAppShareModal() {
-    const whatsappShareModal = document.getElementById('whatsappShareModal');
-    if (whatsappShareModal) whatsappShareModal.classList.remove('active');
+    closeModal('whatsappShareModal');
     selectedLeadsForBulk = [];
     whatsappAttachments = [];
   }
@@ -10053,15 +11153,6 @@ ${document.getElementById('nextAction') ? document.getElementById('nextAction').
     updateSelectedLeadsCount();
   }
 
-  function handleWhatsAppAttachmentDrop(e) {
-    e.preventDefault();
-    e.stopPropagation();
-    const whatsappAttachmentsEl = document.getElementById('whatsappAttachments');
-    if (whatsappAttachmentsEl) whatsappAttachmentsEl.classList.remove('dragover');
-    const files = e.dataTransfer.files;
-    handleWhatsAppAttachmentFiles(files);
-  }
-
   function handleWhatsAppAttachmentDragOver(e) {
     e.preventDefault();
     e.stopPropagation();
@@ -10074,6 +11165,15 @@ ${document.getElementById('nextAction') ? document.getElementById('nextAction').
     e.stopPropagation();
     const whatsappAttachmentsEl = document.getElementById('whatsappAttachments');
     if (whatsappAttachmentsEl) whatsappAttachmentsEl.classList.remove('dragover');
+  }
+
+  function handleWhatsAppAttachmentDrop(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    const whatsappAttachmentsEl = document.getElementById('whatsappAttachments');
+    if (whatsappAttachmentsEl) whatsappAttachmentsEl.classList.remove('dragover');
+    const files = e.dataTransfer.files;
+    handleWhatsAppAttachmentFiles(files);
   }
 
   function handleWhatsAppAttachmentSelect(e) {
@@ -10484,8 +11584,7 @@ ${document.getElementById('nextAction') ? document.getElementById('nextAction').
     }, 100);
     
     // Show modal
-    const leadDetailsModal = document.getElementById('leadDetailsModal');
-    if (leadDetailsModal) leadDetailsModal.classList.add('active');
+    showModal('leadDetailsModal');
   }
 
   // Edit General Information
@@ -10672,6 +11771,7 @@ ${document.getElementById('nextAction') ? document.getElementById('nextAction').
     }
   }
 
+  // Enhanced document management for lead details
   function getLeadDocuments(leadId) {
     const leadDocs = clientDocuments[leadId];
     if (!leadDocs || Object.keys(leadDocs).length === 0) {
@@ -10694,6 +11794,8 @@ ${document.getElementById('nextAction') ? document.getElementById('nextAction').
         const doc = leadDocs[docType];
         if (doc && doc.name) {
             const uploadDate = doc.uploadDate ? new Date(doc.uploadDate).toLocaleDateString() : 'Unknown date';
+            const hasPreview = doc.fileData ? true : false;
+            
             documentsHtml += `
                 <div class="border rounded-lg p-3 flex items-center justify-between hover:bg-gray-50 transition-colors">
                     <div class="flex items-center flex-1">
@@ -10705,13 +11807,20 @@ ${document.getElementById('nextAction') ? document.getElementById('nextAction').
                                 <span>•</span>
                                 <span class="ml-3">${uploadDate}</span>
                                 ${doc.password ? `<span class="ml-3">• Password protected</span>` : ''}
+                                ${hasPreview ? `<span class="ml-3">• Preview available</span>` : `<span class="ml-3">• No preview</span>`}
                             </div>
                         </div>
                     </div>
                     <div class="flex gap-2">
-                        <button onclick="previewDocument('${docType}', ${leadId})" class="btn-secondary text-sm" title="Preview">
-                            <i class="fas fa-eye"></i>
-                        </button>
+                        ${hasPreview ? `
+                            <button onclick="previewDocument('${docType}', ${leadId})" class="btn-secondary text-sm" title="Preview">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        ` : `
+                            <button class="btn-secondary text-sm opacity-50" title="Preview not available" disabled>
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        `}
                         <button onclick="downloadDocumentFromLead('${docType}', ${leadId})" class="btn-secondary text-sm" title="Download">
                             <i class="fas fa-download"></i>
                         </button>
@@ -10725,6 +11834,8 @@ ${document.getElementById('nextAction') ? document.getElementById('nextAction').
     if (leadDocs.additional && leadDocs.additional.length > 0) {
         leadDocs.additional.forEach((doc, index) => {
             const uploadDate = doc.uploadDate ? new Date(doc.uploadDate).toLocaleDateString() : 'Unknown date';
+            const hasPreview = doc.fileData ? true : false;
+            
             documentsHtml += `
                 <div class="border rounded-lg p-3 flex items-center justify-between hover:bg-gray-50 transition-colors">
                     <div class="flex items-center flex-1">
@@ -10736,13 +11847,20 @@ ${document.getElementById('nextAction') ? document.getElementById('nextAction').
                                 <span>•</span>
                                 <span class="ml-3">${uploadDate}</span>
                                 ${doc.password ? `<span class="ml-3">• Password: ${doc.password}</span>` : ''}
+                                ${hasPreview ? `<span class="ml-3">• Preview available</span>` : `<span class="ml-3">• No preview</span>`}
                             </div>
                         </div>
                     </div>
                     <div class="flex gap-2">
-                        <button onclick="previewAdditionalDocument(${index}, ${leadId})" class="btn-secondary text-sm" title="Preview">
-                            <i class="fas fa-eye"></i>
-                        </button>
+                        ${hasPreview ? `
+                            <button onclick="previewAdditionalDocument(${index}, ${leadId})" class="btn-secondary text-sm" title="Preview">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        ` : `
+                            <button class="btn-secondary text-sm opacity-50" title="Preview not available" disabled>
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        `}
                         <button onclick="downloadAdditionalDocumentFromLead(${index}, ${leadId})" class="btn-secondary text-sm" title="Download">
                             <i class="fas fa-download"></i>
                         </button>
@@ -10754,7 +11872,6 @@ ${document.getElementById('nextAction') ? document.getElementById('nextAction').
     
     return documentsHtml;
   }
-
   function getDocumentDisplayName(docType) {
     const names = {
       'aadhaar': 'Aadhaar Card',
@@ -10839,12 +11956,11 @@ ${document.getElementById('nextAction') ? document.getElementById('nextAction').
   }
 
   function closeLeadDetailsModal() {
-    const leadDetailsModal = document.getElementById('leadDetailsModal');
-    if (leadDetailsModal) leadDetailsModal.classList.remove('active');
+    closeModal('leadDetailsModal');
     currentLeadDetails = null;
   }
 
-  // Document Preview Functions
+  // Enhanced document preview functions
   function previewDocument(docType, leadId) {
     const leadDocs = clientDocuments[leadId];
     if (!leadDocs || !leadDocs[docType]) {
@@ -10878,12 +11994,15 @@ ${document.getElementById('nextAction') ? document.getElementById('nextAction').
     showDocumentPreview();
   }
 
+  // Enhanced document preview function
   function showDocumentPreview() {
     if (!currentDocumentPreview) return;
     
     const documentPreviewModal = document.getElementById('documentPreviewModal');
     const documentPreviewTitle = document.getElementById('documentPreviewTitle');
     const documentPreviewContent = document.getElementById('documentPreviewContent');
+    const documentInfo = document.getElementById('documentInfo');
+    const pdfControls = document.getElementById('pdfControls');
     
     if (!documentPreviewModal || !documentPreviewTitle || !documentPreviewContent) return;
     
@@ -10894,72 +12013,310 @@ ${document.getElementById('nextAction') ? document.getElementById('nextAction').
     
     documentPreviewTitle.textContent = `Document Preview: ${displayName}`;
     
+    // Set document info
+    if (documentInfo) {
+        const uploadDate = currentDocumentPreview.document.uploadDate 
+            ? new Date(currentDocumentPreview.document.uploadDate).toLocaleDateString() 
+            : 'Unknown date';
+        documentInfo.innerHTML = `
+            <div class="file-info-grid">
+                <div class="file-info-item">
+                    <span class="file-info-label">File Name:</span>
+                    <span class="file-info-value">${displayName}</span>
+                </div>
+                <div class="file-info-item">
+                    <span class="file-info-label">File Size:</span>
+                    <span class="file-info-value">${formatFileSize(currentDocumentPreview.document.size)}</span>
+                </div>
+                <div class="file-info-item">
+                    <span class="file-info-label">Upload Date:</span>
+                    <span class="file-info-value">${uploadDate}</span>
+                </div>
+                <div class="file-info-item">
+                    <span class="file-info-label">File Type:</span>
+                    <span class="file-info-value">${currentDocumentPreview.document.type || 'Unknown'}</span>
+                </div>
+            </div>
+        `;
+    }
+    
     // Clear previous content
     documentPreviewContent.innerHTML = '<div class="flex justify-center items-center h-full"><div class="loading-spinner"></div></div>';
     
     // Show modal
-    documentPreviewModal.classList.add('active');
+    showModal('documentPreviewModal');
     
-    // Simulate loading document preview
+    // Show/hide PDF controls based on file type
+    if (pdfControls) {
+        const isPDF = currentDocumentPreview.document.name.toLowerCase().endsWith('.pdf') || 
+                     currentDocumentPreview.document.type === 'application/pdf';
+        if (isPDF) {
+            pdfControls.classList.remove('hidden');
+            // Initialize PDF viewer
+            initializePDFViewer();
+        } else {
+            pdfControls.classList.add('hidden');
+        }
+    }
+    
+    // Load document preview after a short delay
     setTimeout(() => {
-      const fileExtension = currentDocumentPreview.document.name.split('.').pop().toLowerCase();
-      
-      if (['jpg', 'jpeg', 'png', 'gif'].includes(fileExtension)) {
-        // Image preview
-        documentPreviewContent.innerHTML = `
-          <div class="w-full h-full flex flex-col items-center justify-center bg-gray-100">
-            <i class="fas fa-file-image text-6xl text-blue-500 mb-4"></i>
-            <p class="text-lg font-medium">${displayName}</p>
-            <p class="text-gray-500 mt-2">Image preview would be displayed here</p>
-            <button onclick="downloadCurrentDocument()" class="btn-primary mt-4">
-              <i class="fas fa-download mr-2"></i>Download Document
-            </button>
-          </div>
-        `;
-      } else if (fileExtension === 'pdf') {
-        // PDF preview
-        documentPreviewContent.innerHTML = `
-          <div class="w-full h-full flex flex-col items-center justify-center bg-gray-100">
-            <i class="fas fa-file-pdf text-6xl text-red-500 mb-4"></i>
-            <p class="text-lg font-medium">${displayName}</p>
-            <p class="text-gray-500 mt-2">PDF preview is not available in this demo</p>
-            <button onclick="downloadCurrentDocument()" class="btn-primary mt-4">
-              <i class="fas fa-download mr-2"></i>Download Document
-            </button>
-          </div>
-        `;
-      } else {
-        // Other file types
-        documentPreviewContent.innerHTML = `
-          <div class="w-full h-full flex flex-col items-center justify-center bg-gray-100">
-            <i class="fas fa-file-alt text-6xl text-gray-500 mb-4"></i>
-            <p class="text-lg font-medium">${displayName}</p>
-            <p class="text-gray-500 mt-2">Preview is not available for this file type</p>
-            <button onclick="downloadCurrentDocument()" class="btn-primary mt-4">
-              <i class="fas fa-download mr-2"></i>Download Document
-            </button>
-          </div>
-        `;
-      }
-    }, 1000);
+        renderDocumentPreview();
+    }, 500);
   }
 
-  function closeDocumentPreviewModal() {
-    const documentPreviewModal = document.getElementById('documentPreviewModal');
-    if (documentPreviewModal) documentPreviewModal.classList.remove('active');
-    currentDocumentPreview = null;
+
+ // Initialize PDF.js viewer
+  function initializePDFViewer() {
+    // Reset PDF state
+    pdfDoc = null;
+    currentPage = 1;
+    scale = 1.0;
+    
+    // Set PDF.js worker path
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
   }
 
-  function downloadCurrentDocument() {
+  // Render document preview based on file type
+  function renderDocumentPreview() {
     if (!currentDocumentPreview) return;
     
+    const documentPreviewContent = document.getElementById('documentPreviewContent');
+    if (!documentPreviewContent) return;
+    
+    const fileExtension = currentDocumentPreview.document.name.split('.').pop().toLowerCase();
     const displayName = currentDocumentPreview.type === 'additional' 
       ? currentDocumentPreview.document.name 
       : getDocumentDisplayName(currentDocumentPreview.type);
     
-    showToast(`Downloading ${displayName}...`, 'success');
+    // Check if we have file data for preview
+    if (currentDocumentPreview.document.fileData) {
+        if (['jpg', 'jpeg', 'png', 'gif'].includes(fileExtension)) {
+            // Image preview
+            documentPreviewContent.innerHTML = `
+                <div class="document-preview-container">
+                    <div class="image-preview-container">
+                        <img src="${currentDocumentPreview.document.fileData}" alt="${displayName}" class="document-preview-image">
+                        <div class="image-overlay">
+                            <div class="image-info">
+                                <span class="file-type-badge">${fileExtension.toUpperCase()}</span>
+                                <span class="file-size">${formatFileSize(currentDocumentPreview.document.size)}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="document-preview-actions">
+                        <button onclick="downloadCurrentDocument()" class="btn-primary">
+                            <i class="fas fa-download mr-2"></i>Download Document
+                        </button>
+                        <button onclick="rotateDocument()" class="btn-secondary">
+                            <i class="fas fa-redo mr-2"></i>Rotate
+                        </button>
+                    </div>
+                </div>
+            `;
+        } else if (fileExtension === 'pdf') {
+            // PDF preview using PDF.js
+            renderPDFPreview();
+        } else {
+            // Other file types
+            documentPreviewContent.innerHTML = `
+                <div class="document-preview-container">
+                    <div class="document-preview-placeholder">
+                        <i class="fas fa-file-alt text-6xl text-gray-500 mb-4"></i>
+                        <p class="text-lg font-medium">${displayName}</p>
+                        <p class="text-gray-500 mt-2">Preview is not available for this file type</p>
+                        <p class="text-sm text-gray-400 mt-1">File size: ${formatFileSize(currentDocumentPreview.document.size)}</p>
+                    </div>
+                    <div class="document-preview-actions">
+                        <button onclick="downloadCurrentDocument()" class="btn-primary">
+                            <i class="fas fa-download mr-2"></i>Download Document
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+    } else {
+        // No file data available
+        documentPreviewContent.innerHTML = `
+            <div class="document-preview-container">
+                <div class="document-preview-placeholder">
+                    <i class="fas fa-exclamation-triangle text-6xl text-yellow-500 mb-4"></i>
+                    <p class="text-lg font-medium">Document Not Available</p>
+                    <p class="text-gray-500 mt-2">The document data is not available for preview.</p>
+                    <p class="text-sm text-gray-400 mt-1">This document may have been uploaded without file data storage.</p>
+                </div>
+            </div>
+        `;
+    }
   }
 
+  // Render PDF preview using PDF.js
+  function renderPDFPreview() {
+    if (!currentDocumentPreview || !currentDocumentPreview.document.fileData) return;
+    
+    const documentPreviewContent = document.getElementById('documentPreviewContent');
+    if (!documentPreviewContent) return;
+    
+    documentPreviewContent.innerHTML = `
+        <div class="document-preview-container">
+            <div class="pdf-viewer-container" id="pdfViewer">
+                <div class="flex justify-center items-center h-full">
+                    <div class="loading-spinner"></div>
+                </div>
+            </div>
+            <div class="document-preview-actions mt-4">
+                <button onclick="downloadCurrentDocument()" class="btn-primary">
+                    <i class="fas fa-download mr-2"></i>Download PDF
+                </button>
+                <button onclick="printDocument()" class="btn-secondary">
+                    <i class="fas fa-print mr-2"></i>Print
+                </button>
+            </div>
+        </div>
+    `;
+    
+    // Load PDF using PDF.js
+    try {
+        const pdfData = currentDocumentPreview.document.fileData.split(',')[1]; // Remove data URL prefix
+        const binaryData = atob(pdfData);
+        const bytes = new Uint8Array(binaryData.length);
+        for (let i = 0; i < binaryData.length; i++) {
+            bytes[i] = binaryData.charCodeAt(i);
+        }
+        
+        const loadingTask = pdfjsLib.getDocument({ data: bytes });
+        loadingTask.promise.then(function(pdf) {
+            pdfDoc = pdf;
+            totalPages = pdf.numPages;
+            
+            // Update page count
+            const pageCount = document.getElementById('pageCount');
+            if (pageCount) pageCount.textContent = totalPages;
+            
+            // Render first page
+            renderPDFPage();
+        }).catch(function(error) {
+            console.error('Error loading PDF:', error);
+            documentPreviewContent.innerHTML = `
+                <div class="document-preview-container">
+                    <div class="document-preview-placeholder">
+                        <i class="fas fa-exclamation-triangle text-6xl text-red-500 mb-4"></i>
+                        <p class="text-lg font-medium">Error Loading PDF</p>
+                        <p class="text-gray-500 mt-2">Unable to load the PDF document.</p>
+                        <p class="text-sm text-gray-400 mt-1">The file may be corrupted or in an unsupported format.</p>
+                    </div>
+                    <div class="document-preview-actions">
+                        <button onclick="downloadCurrentDocument()" class="btn-primary">
+                            <i class="fas fa-download mr-2"></i>Download PDF
+                        </button>
+                    </div>
+                </div>
+            `;
+        });
+    } catch (error) {
+        console.error('Error processing PDF:', error);
+        showToast('Error loading PDF document', 'error');
+    }
+  }
+
+  // Render PDF page
+  function renderPDFPage() {
+    if (!pdfDoc || pageRendering) return;
+    
+    pageRendering = true;
+    const pdfViewer = document.getElementById('pdfViewer');
+    if (!pdfViewer) return;
+    
+    // Show loading
+    pdfViewer.innerHTML = '<div class="flex justify-center items-center h-full"><div class="loading-spinner"></div></div>';
+    
+    pdfDoc.getPage(currentPage).then(function(page) {
+        const viewport = page.getViewport({ scale: scale });
+        
+        // Prepare canvas
+        const canvas = document.createElement('canvas');
+        const context = canvas.getContext('2d');
+        canvas.height = viewport.height;
+        canvas.width = viewport.width;
+        canvas.className = 'pdf-page-canvas';
+        
+        const renderContext = {
+            canvasContext: context,
+            viewport: viewport
+        };
+        
+        const renderTask = page.render(renderContext);
+        
+        renderTask.promise.then(function() {
+            pdfViewer.innerHTML = '';
+            pdfViewer.appendChild(canvas);
+            pageRendering = false;
+            
+            // Update page number
+            const pageNum = document.getElementById('pageNum');
+            if (pageNum) pageNum.textContent = currentPage;
+            
+            // Update zoom level
+            const zoomLevel = document.getElementById('zoomLevel');
+            if (zoomLevel) zoomLevel.textContent = Math.round(scale * 100) + '%';
+            
+            // Enable/disable navigation buttons
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            
+            if (prevBtn) prevBtn.disabled = currentPage <= 1;
+            if (nextBtn) nextBtn.disabled = currentPage >= totalPages;
+        });
+    }).catch(function(error) {
+        console.error('Error rendering PDF page:', error);
+        pdfViewer.innerHTML = '<div class="text-center text-red-500 p-4">Error rendering PDF page</div>';
+        pageRendering = false;
+    });
+  }
+
+  // PDF navigation functions
+  function prevPage() {
+    if (currentPage > 1) {
+        currentPage--;
+        renderPDFPage();
+    }
+  }
+
+  function nextPage() {
+    if (currentPage < totalPages) {
+        currentPage++;
+        renderPDFPage();
+    }
+  }
+
+  function zoomIn() {
+    scale = Math.min(scale + 0.1, 3.0);
+    renderPDFPage();
+  }
+
+  function zoomOut() {
+    scale = Math.max(scale - 0.1, 0.5);
+    renderPDFPage();
+  }
+
+  function renderPDFPage() {
+    // In a real implementation, this would render the actual PDF page
+    // For demo purposes, we'll just update the page indicators
+    const pageNum = document.getElementById('pageNum');
+    const pageCount = document.getElementById('pageCount');
+    const zoomLevel = document.getElementById('zoomLevel');
+    
+    if (pageNum) pageNum.textContent = currentPage;
+    if (pageCount) pageCount.textContent = totalPages;
+    if (zoomLevel) zoomLevel.textContent = Math.round(scale * 100) + '%';
+    
+    // Enable/disable navigation buttons
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    
+    if (prevBtn) prevBtn.disabled = currentPage <= 1;
+    if (nextBtn) nextBtn.disabled = currentPage >= totalPages;
+  }
   function downloadDocumentFromLead(docType, leadId) {
     const leadDocs = clientDocuments[leadId];
     if (!leadDocs || !leadDocs[docType]) {
@@ -10982,15 +12339,19 @@ ${document.getElementById('nextAction') ? document.getElementById('nextAction').
     showToast(`Downloading ${displayName}...`, 'success');
   }
 
-  // Initialize enhanced features
+ // Initialize enhanced features
   function initializeEnhancedFeatures() {
-    // Initialize file upload handlers
-    setupFileUploadHandlers();
-    
-    // Add bulk actions to leads page
-    addBulkActionButtons();
-    
-    console.log('Enhanced features initialized successfully');
+    try {
+        // Initialize file upload handlers
+        setupFileUploadHandlers();
+        
+        // Add bulk actions to leads page
+        addBulkActionButtons();
+        
+        console.log('Enhanced features initialized successfully');
+    } catch (error) {
+        console.error('Error initializing enhanced features:', error);
+    }
   }
 
   // Missing function implementations
@@ -11050,7 +12411,7 @@ ${document.getElementById('nextAction') ? document.getElementById('nextAction').
   function closeAllModals() {
     const modals = document.querySelectorAll('.modal');
     modals.forEach(modal => {
-        modal.classList.remove('active');
+        closeModal(modal.id);
     });
     
     // Reset any editing states
@@ -11060,33 +12421,24 @@ ${document.getElementById('nextAction') ? document.getElementById('nextAction').
     currentClientLead = null;
   }
 
-  // Add this debug function to help identify issues
-  function debugDashboard() {
-    console.log('=== DASHBOARD DEBUG INFO ===');
-    console.log('Leads count:', leads.length);
-    console.log('Tasks count:', tasks.length);
-    console.log('Current user:', currentUser);
-    console.log('Chart element exists:', !!document.getElementById('leadConversionChart'));
-    console.log('Pipeline element exists:', !!document.getElementById('pipelineView'));
-    console.log('Recent leads table exists:', !!document.getElementById('recentLeadsTable'));
-    console.log('Upcoming tasks list exists:', !!document.getElementById('upcomingTasksList'));
-    console.log('==========================');
+  // Modal utility functions
+  function showModal(modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal) {
+        modal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
   }
 
-  // Call this from browser console to debug
-  window.debugDashboard = debugDashboard;
-
-  // Debug function to check lead data
-  function debugLeads() {
-    console.log('=== LEADS DEBUG INFO ===');
-    console.log('Total leads:', leads.length);
-    console.log('Leads data:', leads);
-    console.log('Current active page:', getCurrentActivePage());
-    console.log('Client documents:', clientDocuments);
-    console.log('=======================');
+  function closeModal(modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal) {
+        modal.classList.remove('active');
+        document.body.style.overflow = '';
+    }
   }
 
-  // Global error handler
+  // Add global error handler
   window.addEventListener('error', function(e) {
     console.error('Global error:', e.error);
     showToast('An unexpected error occurred', 'error');
@@ -11098,289 +12450,75 @@ ${document.getElementById('nextAction') ? document.getElementById('nextAction').
     showToast('An operation failed', 'error');
   });
 
-  // Debounce utility function
-  function debounce(func, wait) {
-    let timeout;
-    return function executedFunction(...args) {
-      const later = () => {
-        clearTimeout(timeout);
-        func(...args);
-      };
-      clearTimeout(timeout);
-      timeout = setTimeout(later, wait);
-    };
-  }
-
-  // Enhanced dashboard loading function
+  // Dashboard loading function
   function loadDashboardData() {
     console.log('Loading dashboard data...');
     
     try {
-      // Calculate comprehensive metrics
-      const totalLeads = leads.length;
-      const approvedLeads = leads.filter(l => l.status === 'approved').length;
-      const rejectedLeads = leads.filter(l => l.status === 'rejected').length;
-      const pendingLeads = leads.filter(l => ['new', 'in-progress', 'pending'].includes(l.status)).length;
-      const activeLoans = approvedLeads;
-      const pendingTasks = tasks.filter(t => t.status === 'pending').length;
-      const totalAmount = leads.reduce((sum, l) => sum + (l.loanAmount || 0), 0);
-      const approvalAmount = leads.filter(l => l.status === 'approved')
-                                .reduce((sum, l) => sum + (l.loanAmount || 0), 0);
-      const disbursementAmount = approvalAmount * 0.8; // Simulate 80% disbursement
-      
-      // Calculate conversion rate safely
-      const conversionRate = totalLeads > 0 ? Math.round((approvedLeads / totalLeads) * 100) : 0;
+        // Calculate comprehensive metrics
+        const totalLeads = leads.length;
+        const approvedLeads = leads.filter(l => l.status === 'approved').length;
+        const rejectedLeads = leads.filter(l => l.status === 'rejected').length;
+        const pendingLeads = leads.filter(l => ['new', 'in-progress', 'pending'].includes(l.status)).length;
+        const activeLoans = approvedLeads;
+        const pendingTasks = tasks.filter(t => t.status === 'pending').length;
+        const totalAmount = leads.reduce((sum, l) => sum + (l.loanAmount || 0), 0);
+        const approvalAmount = leads.filter(l => l.status === 'approved')
+                                  .reduce((sum, l) => sum + (l.loanAmount || 0), 0);
+        const disbursementAmount = approvalAmount * 0.8; // Simulate 80% disbursement
+        
+        // Calculate conversion rate safely
+        const conversionRate = totalLeads > 0 ? Math.round((approvedLeads / totalLeads) * 100) : 0;
 
-      console.log('Dashboard metrics calculated:', {
-        totalLeads, approvedLeads, rejectedLeads, pendingLeads,
-        pendingTasks, totalAmount, conversionRate
-      });
+        console.log('Dashboard metrics calculated:', {
+            totalLeads, approvedLeads, rejectedLeads, pendingLeads,
+            pendingTasks, totalAmount, conversionRate
+        });
 
-      // Update all metric elements with null checks
-      const metrics = {
-        'totalLeads': totalLeads.toString(),
-        'approvalCount': approvedLeads.toString(),
-        'pendingFollowups': pendingLeads.toString(),
-        'activeLoans': activeLoans.toString(),
-        'pendingTasks': pendingTasks.toString(),
-        'totalAmount': '₹' + totalAmount.toLocaleString('en-IN'),
-        'approvalAmount': '₹' + approvalAmount.toLocaleString('en-IN'),
-        'disbursementAmount': '₹' + disbursementAmount.toLocaleString('en-IN'),
-        'conversionRate': conversionRate + '%'
-      };
+        // Update all metric elements with null checks
+        const metrics = {
+            'totalLeads': totalLeads.toString(),
+            'approvalCount': approvedLeads.toString(),
+            'pendingFollowups': pendingLeads.toString(),
+            'activeLoans': activeLoans.toString(),
+            'pendingTasks': pendingTasks.toString(),
+            'totalAmount': '₹' + totalAmount.toLocaleString('en-IN'),
+            'approvalAmount': '₹' + approvalAmount.toLocaleString('en-IN'),
+            'disbursementAmount': '₹' + disbursementAmount.toLocaleString('en-IN'),
+            'conversionRate': conversionRate + '%'
+        };
 
-      Object.keys(metrics).forEach(key => {
-        const element = document.getElementById(key);
-        if (element) {
-          element.textContent = metrics[key];
-        } else {
-          console.warn('Dashboard metric element not found:', key);
-        }
-      });
-
-      // Calculate trends
-      updateMetricTrends();
-
-      // Load recent leads with error handling
-      try {
-        const recentLeads = [...leads]
-          .sort((a, b) => new Date(b.createdDate) - new Date(a.createdDate))
-          .slice(0, 5);
-        renderLeadsTable('recentLeadsTable', recentLeads, false);
-      } catch (e) {
-        console.error('Error loading recent leads:', e);
-      }
-
-      // Load upcoming tasks
-      loadUpcomingTasks();
-      
-      // Initialize charts safely
-      initializeCharts();
-      
-      // Initialize pipeline
-      initializePipeline();
-      
-      console.log('Dashboard loaded successfully');
-      
-    } catch (error) {
-      console.error('Error loading dashboard:', error);
-      showToast('Error loading dashboard data', 'error');
-    }
-  }
-
-  // Chart initialization
-  function initializeCharts() {
-    try {
-      const chartCanvas = document.getElementById('leadConversionChart');
-      if (!chartCanvas) {
-        console.log('Chart canvas not found, skipping chart initialization');
-        return;
-      }
-      
-      // Check if Chart.js is available
-      if (typeof Chart === 'undefined') {
-        console.log('Chart.js not available, using fallback');
-        const ctx = chartCanvas.getContext('2d');
-        ctx.font = '14px Arial';
-        ctx.fillStyle = '#666';
-        ctx.textAlign = 'center';
-        ctx.fillText('Chart visualization would appear here', chartCanvas.width/2, chartCanvas.height/2);
-        return;
-      }
-      
-      // Destroy existing chart if it exists
-      if (window.leadConversionChart) {
-        window.leadConversionChart.destroy();
-      }
-      
-      // Create simple chart data
-      const chartData = {
-        labels: ['Approved', 'Rejected', 'Pending', 'New'],
-        datasets: [{
-          data: [
-            leads.filter(l => l.status === 'approved').length,
-            leads.filter(l => l.status === 'rejected').length,
-            leads.filter(l => l.status === 'pending').length,
-            leads.filter(l => l.status === 'new').length
-          ],
-          backgroundColor: [
-            '#10b981',
-            '#ef4444',
-            '#f59e0b',
-            '#3b82f6'
-          ],
-          borderWidth: 2,
-          borderColor: '#fff'
-        }]
-      };
-      
-      window.leadConversionChart = new Chart(chartCanvas, {
-        type: 'doughnut',
-        data: chartData,
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            legend: {
-              position: 'bottom'
-            },
-            title: {
-              display: true,
-              text: 'Lead Status Distribution'
+        Object.keys(metrics).forEach(key => {
+            const element = document.getElementById(key);
+            if (element) {
+                element.textContent = metrics[key];
+            } else {
+                console.warn('Dashboard metric element not found:', key);
             }
-          }
+        });
+
+        // Load recent leads with error handling
+        try {
+            const recentLeads = [...leads]
+                .sort((a, b) => new Date(b.createdDate) - new Date(a.createdDate))
+                .slice(0, 5);
+                
+            const recentLeadsTable = document.getElementById('recentLeadsTable');
+            if (recentLeadsTable) {
+                renderLeadsTable('recentLeadsTable', recentLeads, false);
+            }
+        } catch (e) {
+            console.error('Error loading recent leads:', e);
         }
-      });
-      
-    } catch (error) {
-      console.error('Error initializing charts:', error);
-    }
-  }
 
-  // Pipeline initialization
-  function initializePipeline() {
-    try {
-      const pipelineView = document.getElementById('pipelineView');
-      if (!pipelineView) {
-        console.log('Pipeline view not found');
-        return;
-      }
-      
-      const stages = [
-        { id: 'new', title: 'New Leads', color: '#3b82f6', count: leads.filter(l => l.status === 'new').length },
-        { id: 'contacted', title: 'Contacted', color: '#f59e0b', count: leads.filter(l => l.status === 'in-progress').length },
-        { id: 'qualified', title: 'Qualified', color: '#10b981', count: leads.filter(l => l.status === 'pending').length },
-        { id: 'proposal', title: 'Proposal Sent', color: '#8b5cf6', count: Math.floor(leads.length * 0.1) }, // Simulated
-        { id: 'negotiation', title: 'Negotiation', color: '#ec4899', count: Math.floor(leads.length * 0.05) }, // Simulated
-        { id: 'closed-won', title: 'Approved', color: '#059669', count: leads.filter(l => l.status === 'approved').length },
-        { id: 'closed-lost', title: 'Rejected', color: '#dc2626', count: leads.filter(l => l.status === 'rejected').length }
-      ];
-      
-      pipelineView.innerHTML = stages.map(stage => `
-        <div class="pipeline-stage">
-          <div class="pipeline-stage-header" style="border-bottom-color: ${stage.color}">
-            <div class="pipeline-stage-title" style="color: ${stage.color}">${stage.title}</div>
-            <div class="pipeline-stage-count">${stage.count}</div>
-          </div>
-          <div class="pipeline-leads-container" id="pipeline-${stage.id}">
-            ${getPipelineLeads(stage.id)}
-          </div>
-        </div>
-      `).join('');
-      
+        // Load upcoming tasks
+        loadUpcomingTasks();
+        
+        console.log('Dashboard loaded successfully');
+        
     } catch (error) {
-      console.error('Error initializing pipeline:', error);
-    }
-  }
-
-  // Function to get pipeline leads
-  function getPipelineLeads(stageId) {
-    let filteredLeads = [];
-    
-    switch(stageId) {
-      case 'new':
-        filteredLeads = leads.filter(l => l.status === 'new');
-        break;
-      case 'contacted':
-        filteredLeads = leads.filter(l => l.status === 'in-progress');
-        break;
-      case 'qualified':
-        filteredLeads = leads.filter(l => l.status === 'pending');
-        break;
-      case 'closed-won':
-        filteredLeads = leads.filter(l => l.status === 'approved');
-        break;
-      case 'closed-lost':
-        filteredLeads = leads.filter(l => l.status === 'rejected');
-        break;
-      default:
-        // For simulated stages, show some leads
-        filteredLeads = leads.slice(0, 2);
-    }
-    
-    if (filteredLeads.length === 0) {
-      return '<div class="pipeline-empty">No leads</div>';
-    }
-    
-    return filteredLeads.slice(0, 5).map(lead => `
-      <div class="pipeline-lead" data-lead-id="${lead.id}">
-        <div class="pipeline-lead-header">
-          <div class="pipeline-lead-name">${lead.customerName || 'Unknown'}</div>
-          <div class="pipeline-lead-amount">₹${(lead.loanAmount || 0).toLocaleString('en-IN')}</div>
-        </div>
-        <div class="pipeline-lead-company">${lead.company || 'N/A'}</div>
-        <div class="pipeline-lead-location">${lead.location || 'N/A'}</div>
-        <div class="pipeline-lead-footer">
-          <div class="pipeline-lead-date">${new Date(lead.createdDate).toLocaleDateString()}</div>
-          <div class="pipeline-lead-actions">
-            ${lead.phone ? `<button onclick="makeIVRCall('${lead.phone}', '${lead.customerName || 'Customer'}')" class="pipeline-action-btn">
-              <i class="fas fa-phone text-green-500"></i>
-            </button>` : ''}
-            <button onclick="showLeadDetails(${lead.id})" class="pipeline-action-btn">
-              <i class="fas fa-eye text-blue-500"></i>
-            </button>
-          </div>
-        </div>
-      </div>
-    `).join('');
-  }
-
-  // Metric trends function
-  function updateMetricTrends() {
-    try {
-      // Simplified trend calculation with null checks
-      const trends = [
-        'totalLeadsTrend',
-        'approvalCountTrend',
-        'rejectionCountTrend',
-        'pendingFollowupsTrend',
-        'activeLoansTrend',
-        'pendingTasksTrend',
-        'approvalAmountTrend',
-        'disbursementAmountTrend',
-        'totalAmountTrend',
-        'conversionRateTrend'
-      ];
-      
-      trends.forEach(trendId => {
-        const element = document.getElementById(trendId);
-        if (element) {
-          // Random trend for demo purposes
-          const random = Math.random();
-          if (random > 0.6) {
-            element.innerHTML = '<i class="fas fa-arrow-up mr-1"></i>+' + Math.floor(Math.random() * 15) + '%';
-            element.className = 'text-xs metric-trend-up mt-1';
-          } else if (random > 0.3) {
-            element.innerHTML = '<i class="fas fa-arrow-down mr-1"></i>-' + Math.floor(Math.random() * 10) + '%';
-            element.className = 'text-xs metric-trend-down mt-1';
-          } else {
-            element.innerHTML = '<i class="fas fa-minus mr-1"></i>No change';
-            element.className = 'text-xs metric-trend-neutral mt-1';
-          }
-        }
-      });
-    } catch (error) {
-      console.error('Error updating metric trends:', error);
+        console.error('Error loading dashboard:', error);
+        showToast('Error loading dashboard data', 'error');
     }
   }
 
@@ -11447,31 +12585,139 @@ ${document.getElementById('nextAction') ? document.getElementById('nextAction').
     }
   }
 
-  // Pipeline refresh function
-  function refreshPipeline() {
-    initializePipeline();
-    showToast('Pipeline refreshed', 'success');
-  }
-
-  // Pipeline view toggle function
-  function togglePipelineView() {
-    const pipelineView = document.getElementById('pipelineView');
-    if (pipelineView) {
-      // Toggle between grid and list view
-      if (pipelineView.classList.contains('pipeline-container')) {
-        pipelineView.classList.remove('pipeline-container');
-        pipelineView.classList.add('pipeline-list-view');
-      } else {
-        pipelineView.classList.remove('pipeline-list-view');
-        pipelineView.classList.add('pipeline-container');
-      }
-    }
-  }
-
   // Test credentials:
   // Admin: username: admin, password: admin123
   // Agent: username: agent1, password: agent123
-  
+  // Missing function implementations
+function handleDragOver(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    const area = e.target.closest('.file-upload-area') || e.target;
+    area.classList.add('dragover');
+}
+
+function handleDragLeave(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    const area = e.target.closest('.file-upload-area') || e.target;
+    area.classList.remove('dragover');
+}
+
+function handleDrop(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    const area = e.target.closest('.file-upload-area') || e.target;
+    area.classList.remove('dragover');
+    
+    const files = e.dataTransfer.files;
+    if (files && files.length > 0) {
+        handleFiles(files);
+    }
+}
+
+function handleFileSelect(e) {
+    const files = e.target.files;
+    if (files && files.length > 0) {
+        handleFiles(files);
+    }
+}
+
+function handleDocumentFileSelect(e) {
+    const files = e.target.files;
+    if (files && files.length > 0) {
+        handleBulkDocumentUpload(files);
+    }
+}
+
+function handleEmailAttachmentDragOver(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    const area = document.getElementById('bulkEmailAttachments');
+    if (area) area.classList.add('dragover');
+}
+
+function handleEmailAttachmentDragLeave(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    const area = document.getElementById('bulkEmailAttachments');
+    if (area) area.classList.remove('dragover');
+}
+
+function handleEmailAttachmentDrop(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    const area = document.getElementById('bulkEmailAttachments');
+    if (area) area.classList.remove('dragover');
+    const files = e.dataTransfer.files;
+    handleEmailAttachmentFiles(files);
+}
+
+function handleEmailAttachmentSelect(e) {
+    const files = e.target.files;
+    handleEmailAttachmentFiles(files);
+    e.target.value = '';
+}
+
+function handleEmailAttachmentFiles(files) {
+    if (!files || files.length === 0) return;
+    
+    Array.from(files).forEach(file => {
+        if (file.size > 10 * 1024 * 1024) {
+            showToast(`File ${file.name} is too large (max 10MB)`, 'error');
+            return;
+        }
+
+        const allowedTypes = [
+            'application/pdf', 
+            'application/msword', 
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            'image/jpeg',
+            'image/png',
+            'image/jpg'
+        ];
+        
+        if (!allowedTypes.includes(file.type)) {
+            showToast(`File ${file.name} is not a supported format`, 'error');
+            return;
+        }
+
+        const existingFile = emailAttachments.find(att => att.name === file.name && att.size === file.size);
+        if (existingFile) {
+            showToast(`File ${file.name} is already added`, 'warning');
+            return;
+        }
+
+        emailAttachments.push({
+            id: Date.now() + Math.random(),
+            name: file.name,
+            size: file.size,
+            type: file.type
+        });
+    });
+
+    updateEmailAttachmentsList();
+    showToast(`Added ${files.length} file(s) to attachments`, 'success');
+}
+
+function downloadCurrentDocument() {
+    if (!currentDocumentPreview) return;
+    showToast(`Downloading ${currentDocumentPreview.document.name}...`, 'success');
+}
+
+function printDocument() {
+    showToast('Print functionality would open print dialog', 'success');
+}
+
+function rotateDocument() {
+    currentRotation = (currentRotation + 90) % 360;
+    showToast(`Document rotated to ${currentRotation} degrees`, 'success');
+}
+
+function closeDocumentPreviewModal() {
+    closeModal('documentPreviewModal');
+    currentDocumentPreview = null;
+    currentRotation = 0;
+}
 </script>
 </body>
 </html>
